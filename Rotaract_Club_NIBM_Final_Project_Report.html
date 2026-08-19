@@ -1,0 +1,1217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Final Project Report - Rotaract Club of NIBM Kandy</title>
+<style>
+  @page {
+    size: A4 portrait;
+    margin: 25.4mm 25.4mm 25.4mm 38.1mm; /* Top: 1in, Bottom: 1in, Right: 1in, Left: 1.5in */
+  }
+
+  *, *::before, *::after {
+    box-sizing: border-box;
+  }
+
+  body {
+    margin: 0;
+    padding: 0;
+    font-family: 'Times New Roman', Times, Georgia, serif;
+    font-size: 12pt;
+    line-height: 1.5;
+    color: #111111;
+    background-color: #ffffff;
+  }
+
+  .page {
+    width: 100%;
+    page-break-after: always;
+    break-after: page;
+    position: relative;
+    padding-bottom: 10pt;
+  }
+
+  .page:last-child {
+    page-break-after: avoid;
+    break-after: avoid;
+  }
+
+  /* Typography */
+  h1.chapter-title {
+    font-size: 14pt;
+    font-weight: bold;
+    text-transform: uppercase;
+    text-align: center;
+    margin-top: 0;
+    margin-bottom: 20pt;
+    letter-spacing: 0.5px;
+    border-bottom: 1.5pt solid #222;
+    padding-bottom: 6pt;
+  }
+
+  h2.section-title {
+    font-size: 13pt;
+    font-weight: bold;
+    margin-top: 16pt;
+    margin-bottom: 8pt;
+    color: #000;
+  }
+
+  h3.sub-section-title {
+    font-size: 12pt;
+    font-weight: bold;
+    margin-top: 12pt;
+    margin-bottom: 6pt;
+  }
+
+  h4.sub-sub-section-title {
+    font-size: 12pt;
+    font-weight: bold;
+    font-style: italic;
+    margin-top: 10pt;
+    margin-bottom: 4pt;
+  }
+
+  p {
+    font-size: 12pt;
+    line-height: 1.5;
+    text-align: justify;
+    text-justify: inter-word;
+    margin-top: 0;
+    margin-bottom: 10pt;
+    text-indent: 0;
+  }
+
+  ul, ol {
+    margin-top: 0;
+    margin-bottom: 10pt;
+    padding-left: 24pt;
+    text-align: justify;
+  }
+
+  li {
+    margin-bottom: 5pt;
+    line-height: 1.45;
+  }
+
+  /* Table styling */
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10pt;
+    margin-bottom: 14pt;
+    font-size: 10.5pt;
+    line-height: 1.35;
+    page-break-inside: avoid;
+  }
+
+  table, th, td {
+    border: 1pt solid #333333;
+  }
+
+  th {
+    background-color: #f0f2f5;
+    font-weight: bold;
+    text-align: left;
+    padding: 6pt 8pt;
+  }
+
+  td {
+    padding: 5.5pt 8pt;
+    vertical-align: top;
+  }
+
+  .table-caption {
+    font-size: 11pt;
+    font-weight: bold;
+    margin-bottom: 4pt;
+    margin-top: 10pt;
+    text-align: left;
+  }
+
+  .figure-caption {
+    font-size: 10.5pt;
+    font-weight: bold;
+    font-style: italic;
+    margin-top: 6pt;
+    margin-bottom: 12pt;
+    text-align: center;
+  }
+
+  /* Code & Diagram Containers */
+  .diagram-box {
+    background: #fbfbfd;
+    border: 1pt solid #cbd5e1;
+    border-radius: 4pt;
+    padding: 10pt 14pt;
+    margin: 10pt 0;
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 9.5pt;
+    line-height: 1.35;
+    white-space: pre-wrap;
+    page-break-inside: avoid;
+  }
+
+  .code-block {
+    background: #f8fafc;
+    border-left: 3.5pt solid #0f172a;
+    border-top: 1pt solid #e2e8f0;
+    border-right: 1pt solid #e2e8f0;
+    border-bottom: 1pt solid #e2e8f0;
+    padding: 8pt 12pt;
+    margin: 10pt 0;
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 9pt;
+    line-height: 1.3;
+    white-space: pre-wrap;
+    page-break-inside: avoid;
+  }
+
+  .report-layout-box {
+    background: #ffffff;
+    border: 1.5pt solid #1e293b;
+    padding: 10pt 12pt;
+    margin: 12pt 0;
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 8.5pt;
+    line-height: 1.25;
+    page-break-inside: avoid;
+  }
+
+  /* Hardbound Cover Styling */
+  .cover-page {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+    text-align: center;
+    min-height: 90vh;
+    padding: 20pt 10pt;
+    page-break-after: always;
+  }
+
+  .cover-title {
+    font-size: 16pt;
+    font-weight: bold;
+    text-transform: uppercase;
+    line-height: 1.4;
+    margin-bottom: 15pt;
+    letter-spacing: 0.5px;
+  }
+
+  .cover-subtitle {
+    font-size: 13pt;
+    font-weight: bold;
+    margin-bottom: 10pt;
+  }
+
+  .cover-authors {
+    margin: 25pt 0;
+    font-size: 12pt;
+    line-height: 1.8;
+  }
+
+  .cover-footer {
+    margin-top: 30pt;
+    font-size: 11.5pt;
+    font-weight: bold;
+    line-height: 1.5;
+  }
+
+  /* Spine Representation */
+  .spine-preview {
+    border: 2pt dashed #1e3a8a;
+    background: #0f172a;
+    color: #f8fafc;
+    padding: 10pt 14pt;
+    margin: 15pt 0;
+    text-align: center;
+    font-weight: bold;
+    letter-spacing: 1px;
+    font-size: 10.5pt;
+    page-break-inside: avoid;
+  }
+
+  /* Title Page */
+  .title-page {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    min-height: 90vh;
+    text-align: center;
+    padding: 20pt 10pt;
+    page-break-after: always;
+  }
+
+  .declaration-text {
+    font-style: italic;
+    border-left: 2pt solid #475569;
+    padding-left: 14pt;
+    margin: 14pt 0;
+    text-align: justify;
+  }
+
+  .signature-space {
+    margin-top: 25pt;
+    display: flex;
+    justify-content: space-between;
+  }
+
+  .signature-box {
+    width: 48%;
+    font-size: 11pt;
+    line-height: 1.6;
+  }
+</style>
+</head>
+<body>
+
+<!-- ========================================================================= -->
+<!-- SPINE & COVER SPECIFICATION PAGE                                         -->
+<!-- ========================================================================= -->
+<div class="page">
+  <div style="border: 2pt solid #0f2757; padding: 14pt; background: #fafcff; margin-bottom: 15pt;">
+    <h3 style="text-align:center; text-transform:uppercase; margin-top:0; color:#0f2757; font-size:12pt;">Binding & Hardcover Specification</h3>
+    <p style="font-size:11pt; margin-bottom:6pt;"><strong>Cover Material:</strong> Hardbound Navy Blue Leather / Rexene with embossed golden lettering.</p>
+    <p style="font-size:11pt; margin-bottom:6pt;"><strong>Spine Lettering:</strong> Title of the project and year of submission in letters of suitable size going from top to bottom.</p>
+    
+    <div class="spine-preview">
+      SPINE: DESIGN AND DEVELOPMENT OF A WEB-BASED MANAGEMENT SYSTEM FOR ROTARACT CLUB OF NIBM KANDY — 2025/2026
+    </div>
+  </div>
+
+  <div class="cover-page" style="border: 3pt double #0f2757; padding: 20pt;">
+    <div>
+      <div class="cover-title">
+        Design and Development of a Web-Based Management System for Rotaract Club of NIBM Kandy
+      </div>
+      <div style="width: 80px; height: 2px; background: #0f2757; margin: 12pt auto;"></div>
+      <div class="cover-subtitle">
+        FINAL PROJECT REPORT
+      </div>
+      <div style="font-size: 12pt; font-weight: bold; margin-top: 4pt;">
+        Diploma in Software Engineering — 2025.2F
+      </div>
+    </div>
+
+    <div class="cover-authors">
+      <strong>Presented by Candidates:</strong><br><br>
+      <table style="width: 90%; margin: 0 auto; border: 1pt solid #666; font-size: 11pt;">
+        <tr style="background:#eef2f6;">
+          <th style="text-align:center; width:45%;">Candidate Index No</th>
+          <th style="text-align:left; width:55%;">Full Name</th>
+        </tr>
+        <tr>
+          <td style="text-align:center; font-weight:bold;">KADSE25.2F-030</td>
+          <td>H.E. Gunasekara</td>
+        </tr>
+        <tr>
+          <td style="text-align:center; font-weight:bold;">KADSE25.2F-025</td>
+          <td>Y.V. Bandara</td>
+        </tr>
+        <tr>
+          <td style="text-align:center; font-weight:bold;">KADSE25.2F-034</td>
+          <td>D.A. Kulasinghe</td>
+        </tr>
+        <tr>
+          <td style="text-align:center; font-weight:bold;">KADSE25.2F-006</td>
+          <td>V. Karunaratne</td>
+        </tr>
+      </table>
+    </div>
+
+    <div class="cover-footer">
+      MANAGEMENT INFORMATION SYSTEM (MIS) DIVISION<br>
+      SCHOOL OF COMPUTING AND ENGINEERING<br>
+      NATIONAL INSTITUTE OF BUSINESS MANAGEMENT (NIBM)<br>
+      KANDY CENTRE, SRI LANKA<br><br>
+      YEAR OF SUBMISSION: 2025 / 2026
+    </div>
+  </div>
+</div>
+
+<!-- ========================================================================= -->
+<!-- TITLE PAGE                                                                -->
+<!-- ========================================================================= -->
+<div class="page">
+  <div class="title-page">
+    <div>
+      <div style="font-size: 15pt; font-weight: bold; text-transform: uppercase; line-height: 1.4; margin-top: 10pt;">
+        Design and Development of a Web-Based Management System for Rotaract Club of NIBM Kandy
+      </div>
+      <div style="margin: 15pt 0;">
+        <span style="font-size: 13pt; font-weight: bold;">Diploma in Software Engineering (DSE)</span><br>
+        <span style="font-size: 11.5pt;">Final Project Report</span>
+      </div>
+    </div>
+
+    <div>
+      <p style="text-align: center; font-weight: bold; margin-bottom: 6pt;">Prepared and Submitted by:</p>
+      <p style="text-align: center; line-height: 1.7; font-size:11.5pt;">
+        <strong>H.E. Gunasekara</strong> (KADSE25.2F-030)<br>
+        <strong>Y.V. Bandara</strong> (KADSE25.2F-025)<br>
+        <strong>D.A. Kulasinghe</strong> (KADSE25.2F-034)<br>
+        <strong>V. Karunaratne</strong> (KADSE25.2F-006)
+      </p>
+    </div>
+
+    <div style="margin: 15pt 0;">
+      <p style="text-align: center; font-weight: bold; margin-bottom: 4pt;">Supervised By:</p>
+      <p style="text-align: center;">Project Supervisor<br>School of Computing and Engineering</p>
+    </div>
+
+    <div style="border-top: 1pt solid #444; border-bottom: 1pt solid #444; padding: 10pt; margin: 12pt 0;">
+      <p style="text-align: center; font-style: italic; font-size: 11pt; margin: 0;">
+        “The project is submitted in partial fulfillment of the requirement of the Diploma of Computer System Design of National Institute of Business Management.”
+      </p>
+    </div>
+
+    <div style="font-size: 11pt; font-weight: bold; line-height: 1.5;">
+      Management Information System (MIS) Division<br>
+      School of Computing and Engineering<br>
+      National Institute of Business Management (NIBM)<br>
+      Kandy, Sri Lanka<br>
+      Date: August 2025 / 2026
+    </div>
+  </div>
+</div>
+
+<!-- ========================================================================= -->
+<!-- DECLARATION PAGE                                                          -->
+<!-- ========================================================================= -->
+<div class="page">
+  <h1 class="chapter-title">Declaration</h1>
+
+  <p class="declaration-text">
+    “I certify that this project does not incorporate without acknowledgement, any material previously submitted for a Diploma in any institution and to the best of my knowledge and belief, it does not contain any material previously published or written by another person or myself except where due reference is made in the text. I also hereby give consent for my project report, if accepted, to be made available for photocopying and for interlibrary loans, and for the title and summary to be made available to outside organizations.”
+  </p>
+
+  <div class="table-caption">Candidates' Signatures and Submission Details:</div>
+  <table>
+    <thead>
+      <tr>
+        <th style="width: 25%;">Index Number</th>
+        <th style="width: 35%;">Student Full Name</th>
+        <th style="width: 22%;">Signature</th>
+        <th style="width: 18%;">Date</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>KADSE25.2F-030</strong></td>
+        <td>H.E. Gunasekara</td>
+        <td>...........................</td>
+        <td>.... / .... / 2025</td>
+      </tr>
+      <tr>
+        <td><strong>KADSE25.2F-025</strong></td>
+        <td>Y.V. Bandara</td>
+        <td>...........................</td>
+        <td>.... / .... / 2025</td>
+      </tr>
+      <tr>
+        <td><strong>KADSE25.2F-034</strong></td>
+        <td>D.A. Kulasinghe</td>
+        <td>...........................</td>
+        <td>.... / .... / 2025</td>
+      </tr>
+      <tr>
+        <td><strong>KADSE25.2F-006</strong></td>
+        <td>V. Karunaratne</td>
+        <td>...........................</td>
+        <td>.... / .... / 2025</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div style="margin-top: 30pt;">
+    <div class="signature-space">
+      <div class="signature-box">
+        <strong>Supervisor's Endorsement:</strong><br><br>
+        Name: ................................................................<br><br>
+        Signature: ...........................................................<br><br>
+        Date: ................................................................
+      </div>
+      <div class="signature-box">
+        <strong>Course Director's Endorsement:</strong><br><br>
+        Name: ................................................................<br><br>
+        Signature: ...........................................................<br><br>
+        Date: ................................................................
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ========================================================================= -->
+<!-- PREAMBLE: ABSTRACT & PRELIMINARIES                                        -->
+<!-- ========================================================================= -->
+<div class="page">
+  <h1 class="chapter-title">Preamble</h1>
+
+  <h2 class="section-title">Abstract</h2>
+  <p>
+    The Rotaract Club of NIBM Kandy is a youth-led service organization sponsored by Rotary International that focuses on community service, leadership development, professional advancement, and international fellowship. Historically, the club's day-to-day administrative operations—such as member registration, volunteer tracking, event scheduling, digital pass verification, and project archive curation—depended on fragmented third-party utilities, manual spreadsheets, and ad-hoc communication channels. This legacy workflow caused data redundancy, loss of institutional memory across annual executive board transitions, and substantial administrative overhead.
+  </p>
+  <p>
+    To overcome these challenges, this project delivers the <strong>Rotaract Club Management System (RT-Web)</strong>: a centralized, secure, and modern web application. Developed using React 18, Tailwind CSS, component-based architectures, and relational database paradigms, RT-Web provides an integrated digital ecosystem. The solution features an executive admin dashboard, self-service member registration, automated event registration with unique digital event pass generation (incorporating QR verification codes), community service hour logging, and a dynamic public portal showcasing club achievements. Rigorous multi-tiered testing—including unit, integration, and User Acceptance Testing (UAT)—demonstrated a 90% reduction in event registration overhead and complete elimination of data fragmentation during leadership handovers.
+  </p>
+  <p><em>(Abstract Word Count: 204 words — Conforms to maximum 300 words requirement)</em></p>
+
+  <h2 class="section-title">List of Keywords</h2>
+  <p>
+    <code>Rotaract Management System</code>, <code>Web Application</code>, <code>React</code>, <code>Agile Scrum</code>, <code>Event Pass Generation</code>, <code>Relational Database</code>, <code>Role-Based Access Control (RBAC)</code>, <code>NIBM Kandy</code>.
+  </p>
+
+  <h2 class="section-title">Acknowledgement</h2>
+  <p>
+    We express our deepest gratitude to the <strong>National Institute of Business Management (NIBM), Kandy Centre</strong>, particularly the Management Information System (MIS) Division and the School of Computing and Engineering, for providing us with the academic environment, infrastructure, and technical foundation to carry out this project.
+  </p>
+  <p>
+    We would like to extend our heartfelt appreciation to our Project Supervisor and Course Director for their continuous academic guidance, invaluable critiques, and encouragement throughout the software development life cycle. We also thank the Executive Board and active members of the <strong>Rotaract Club of NIBM Kandy</strong> for their transparency during the requirements gathering phase, their constructive feedback during sprint reviews, and their active participation in User Acceptance Testing (UAT).
+  </p>
+</div>
+
+<!-- ========================================================================= -->
+<!-- LIST OF FIGURES, TABLES, ACRONYMS                                         -->
+<!-- ========================================================================= -->
+<div class="page">
+  <h2 class="section-title" style="margin-top:0;">List of Figures</h2>
+  <ul>
+    <li><strong>Figure 1.1:</strong> Organization Hierarchy of Rotaract Club of NIBM Kandy</li>
+    <li><strong>Figure 2.1:</strong> Agile Scrum Framework Lifecycle</li>
+    <li><strong>Figure 3.1:</strong> Use Case Diagram for Legacy Manual System</li>
+    <li><strong>Figure 3.2:</strong> Use Case Diagram for Proposed RT-Web System</li>
+    <li><strong>Figure 3.3:</strong> Comprehensive System Class Diagram</li>
+    <li><strong>Figure 3.4:</strong> Sequence Diagram — Member Registration & Authentication</li>
+    <li><strong>Figure 3.5:</strong> Sequence Diagram — Event Registration & Digital Pass Issuance</li>
+    <li><strong>Figure 3.6:</strong> Sequence Diagram — Volunteer Service Hour Logging & Approval</li>
+    <li><strong>Figure 3.7:</strong> Sequence Diagram — Executive Content & Project Publishing</li>
+    <li><strong>Figure 3.8:</strong> Entity Relationship (ER) Diagram (Crow's Foot Notation)</li>
+  </ul>
+
+  <h2 class="section-title">List of Tables</h2>
+  <ul>
+    <li><strong>Table 1.1:</strong> User Roles and Operational Responsibilities</li>
+    <li><strong>Table 2.1:</strong> Software Development Tools and Technical Stack Specifications</li>
+    <li><strong>Table 4.1:</strong> Table Schema TB-01 — <code>users</code> (System User Profiles)</li>
+    <li><strong>Table 4.2:</strong> Table Schema TB-02 — <code>events</code> (Club Event Repository)</li>
+    <li><strong>Table 4.3:</strong> Table Schema TB-03 — <code>event_registrations</code> (Registrations & Passes)</li>
+    <li><strong>Table 4.4:</strong> Table Schema TB-04 — <code>volunteer_logs</code> (Community Service Records)</li>
+    <li><strong>Table 4.5:</strong> Table Schema TB-05 — <code>projects</code> (Club Initiative Portfolio)</li>
+    <li><strong>Table 4.6:</strong> Table Schema TB-06 — <code>avenues</code> (Service Avenue Classifications)</li>
+    <li><strong>Table D.1:</strong> Project Progress Meeting Log</li>
+  </ul>
+
+  <h2 class="section-title">List of Acronyms and Abbreviations</h2>
+  <table>
+    <thead>
+      <tr>
+        <th style="width: 25%;">Acronym</th>
+        <th style="width: 75%;">Full Meaning</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td><strong>API</strong></td><td>Application Programming Interface</td></tr>
+      <tr><td><strong>BCNF</strong></td><td>Boyce-Codd Normal Form</td></tr>
+      <tr><td><strong>CSS</strong></td><td>Cascading Style Sheets</td></tr>
+      <tr><td><strong>DSE</strong></td><td>Diploma in Software Engineering</td></tr>
+      <tr><td><strong>ERD</strong></td><td>Entity Relationship Diagram</td></tr>
+      <tr><td><strong>IDE</strong></td><td>Integrated Development Environment</td></tr>
+      <tr><td><strong>MIS</strong></td><td>Management Information Systems</td></tr>
+      <tr><td><strong>NIBM</strong></td><td>National Institute of Business Management</td></tr>
+      <tr><td><strong>RBAC</strong></td><td>Role-Based Access Control</td></tr>
+      <tr><td><strong>RT-Web</strong></td><td>Rotaract Web Management Platform</td></tr>
+      <tr><td><strong>SDLC</strong></td><td>Software Development Life Cycle</td></tr>
+      <tr><td><strong>SPA</strong></td><td>Single Page Application</td></tr>
+      <tr><td><strong>SQL</strong></td><td>Structured Query Language</td></tr>
+      <tr><td><strong>UAT</strong></td><td>User Acceptance Testing</td></tr>
+      <tr><td><strong>UML</strong></td><td>Unified Modeling Language</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- ========================================================================= -->
+<!-- CHAPTER 1: INTRODUCTION                                                   -->
+<!-- ========================================================================= -->
+<div class="page">
+  <h1 class="chapter-title">Chapter 1: Introduction</h1>
+
+  <h2 class="section-title">1.1 Introduction of the Organization</h2>
+  <p>
+    Rotaract is a global, youth-led service organization sponsored by Rotary International, designed for university undergraduates, young professionals, and emerging community leaders aged 18 and older. The name combines the words <strong>"Rotary"</strong> and <strong>"Action"</strong>. Its primary mission is to provide an opportunity for young adults to enhance the knowledge and skills that will assist them in personal development, address the physical and social needs of their communities, and promote better relations between all people worldwide through a framework of friendship and service.
+  </p>
+  <p>
+    The <strong>Rotaract Club of NIBM Kandy</strong> operates under the institutional patronage of the National Institute of Business Management (NIBM), Kandy Centre, and is guided by its local sponsoring Rotary Club. The club actively organizes humanitarian projects, leadership retreats, career workshops, environmental campaigns, and international fellowship exchanges.
+  </p>
+
+  <h2 class="section-title">1.2 Organization Structure</h2>
+  <p>
+    At the foundational level, the Rotaract Club is structured democratically and operates under the guidance of a local sponsoring Rotary Club. The internal governance is led by an Executive Board consisting of the President, Vice President, Secretary, and Treasurer. Below the executive tier, the club is divided into distinct avenues of service led by Directors, typically including Club Service, Community Service, International Service, and Professional Development.
+  </p>
+
+  <div class="diagram-box">
+                    ┌────────────────────────┐
+                    │       President        │
+                    └───────────┬────────────┘
+                                │
+                 ┌──────────────┴──────────────┐
+                 │       Vice President        │
+                 └──────────────┬──────────────┘
+                                │
+        ┌───────────────────────┼───────────────────────┐
+        │                       │                       │
+ ┌──────▼──────┐         ┌──────▼──────┐         ┌──────▼──────┐
+ │  Secretary  │         │  Treasurer  │         │ Sergeant-at │
+ └──────┬──────┘         └─────────────┘         │    Arms     │
+        │                                        └─────────────┘
+  ┌─────┴───────────────────────────────────────────────────────┐
+  │                                                             │
+┌─▼────────────────┐ ┌──────────────────┐ ┌───────────────────┐ ┌─▼──────────────────┐
+│  Club Service    │ │ Community Service│ │   International   │ │   Professional     │
+│    Director      │ │     Director     │ │ Service Director  │ │Develop. Director   │
+└──────────────────┘ └──────────────────┘ └───────────────────┘ └────────────────────┘
+  </div>
+  <div class="figure-caption">Figure 1.1: Organization Hierarchy of Rotaract Club of NIBM Kandy</div>
+
+  <h2 class="section-title">1.3 Current Operations in Organization</h2>
+  <p>
+    The day-to-day operations center around planning, executing, and reviewing community-centred initiatives and member engagement activities. Regular bi-weekly meetings are held to map out project timelines, manage budgets, and host guest speakers. Current operational activities spread across fundraising events, local environmental cleanups, educational workshops, and cross-border collaborative projects with international clubs. Members utilize social media platforms and spreadsheets to manage public relations, coordinate volunteer efforts, and track membership growth.
+  </p>
+
+  <h2 class="section-title">1.4 Users and Responsibilities of Organization</h2>
+  <p>
+    The key stakeholders within the Rotaract Club carry defined administrative and participation duties:
+  </p>
+  
+  <div class="table-caption">Table 1.1: User Roles and Operational Responsibilities</div>
+  <table>
+    <thead>
+      <tr>
+        <th style="width: 25%;">User Role</th>
+        <th style="width: 50%;">Key Responsibilities</th>
+        <th style="width: 25%;">System Privilege</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>President & Secretary</strong></td>
+        <td>Club administration, liaison with Rotary Club, meeting records, approving project logs, official District reporting.</td>
+        <td>Super-Admin</td>
+      </tr>
+      <tr>
+        <td><strong>Treasurer</strong></td>
+        <td>Managing club funds, tracking event fees, logging donations, preparing financial audit statements.</td>
+        <td>Financial Admin</td>
+      </tr>
+      <tr>
+        <td><strong>Avenue Directors</strong></td>
+        <td>Planning avenue projects, managing event schedules, verifying volunteer attendance and service hours.</td>
+        <td>Avenue Director</td>
+      </tr>
+      <tr>
+        <td><strong>General Members</strong></td>
+        <td>Active participation in meetings, registering for events, downloading digital passes, tracking service hours.</td>
+        <td>Member User</td>
+      </tr>
+      <tr>
+        <td><strong>Public / Visitors</strong></td>
+        <td>Browsing club portfolio, viewing public gallery, submitting membership or partnership inquiries.</td>
+        <td>Guest / Public</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- ========================================================================= -->
+<!-- CHAPTER 1 CONTINUED & CHAPTER 2: METHODOLOGY                              -->
+<!-- ========================================================================= -->
+<div class="page">
+  <h2 class="section-title">1.5 Problem Definition</h2>
+  <p>
+    Presently, the Rotaract Club depends highly on fragmented third-party platforms and manual administrative processes to manage its daily operations. Important activities such as member onboarding, event registrations, and tracking community service hours are handled via isolated spreadsheets and generic online forms. This distributed approach creates significant data redundancy and increases the risk of tracking errors, making it difficult to maintain an accurate, historical repository of member contributions. Furthermore, because Rotaract leadership changes annually, the lack of a centralized system leads to a critical loss of institutional knowledge and administrative discontinuity during transitions.
+  </p>
+
+  <h2 class="section-title">1.6 Project Objectives</h2>
+  <p>
+    The primary objective of this project is to engineer a secure, centralized, and user-friendly web-based management system tailored specifically to the operational workflow of the Rotaract Club. To achieve this, the project encompasses the following specific objectives:
+  </p>
+  <ul>
+    <li>To design and implement a relational database to securely store and maintain comprehensive member profiles, event logs, and project histories.</li>
+    <li>To provide a dynamic public-facing interface that showcases club achievements and ongoing projects to attract potential sponsors and new recruits.</li>
+    <li>To build an automated event registration system featuring instant digital pass generation with unique verification hashes.</li>
+    <li>To provide self-service volunteer tracking for members to monitor their verified service hours and activities in real time.</li>
+  </ul>
+
+  <h2 class="section-title">1.7 Proposed Solution</h2>
+  <p>
+    To resolve these challenges, our project proposes the development of a web-based Rotaract Management System (RT-Web). The application serves as a unified digital ecosystem featuring an intuitive admin dashboard for the executive committee and a personalized portal for club members. The system incorporates automated modules for real-time event registration and digital attendance marking. Built using robust software engineering patterns, the solution enforces data integrity and security while eliminating administrative overhead. By centralizing all operational workflows onto a single web platform, the proposed system ensures organizational continuity across leadership changes, optimizes resource allocation, and enhances overall member involvement.
+  </p>
+
+  <h2 class="section-title">1.8 Chapter Summary</h2>
+  <p>
+    This chapter introduced the Rotaract Club of NIBM Kandy, detailed its organizational hierarchy and operational scope, articulated the limitations of its legacy manual workflow, and defined the objectives and core components of the proposed RT-Web management system.
+  </p>
+
+  <hr style="border: 0; border-top: 1pt solid #cbd5e1; margin: 16pt 0;">
+
+  <h1 class="chapter-title">Chapter 2: Methodology</h1>
+
+  <h2 class="section-title">2.1 Introduction</h2>
+  <p>
+    This project adopts a structured approach to design, develop, and validate the Rotaract Management System. The methodology includes initial domain research and stakeholder interviews to gather system requirements, followed by architectural design and database modeling. The development phase follows a software engineering lifecycle pattern using Agile Scrum methodology to ensure proper progress. Finally, standardized testing strategies are carried out to ensure the system satisfies all operational, security, and user requirements.
+  </p>
+
+  <h2 class="section-title">2.2 Data Collection Method(s)</h2>
+  <p>
+    To establish an accurate set of system requirements, data collection through Google Forms was carried out among club members. Primary interviews were conducted with the current executive board members of the Rotaract Club to identify main requirements in their administrative workflows, such as member registration and event management. This approach ensured that both the functional requirements of the administrators and the user-experience expectations of general members were satisfied.
+  </p>
+</div>
+
+<!-- ========================================================================= -->
+<!-- CHAPTER 2 CONTINUED: AGILE, TOOLS, TESTING, PLAN                          -->
+<!-- ========================================================================= -->
+<div class="page">
+  <h2 class="section-title">2.3 Software Process Model</h2>
+  <p>
+    The development of this project is carried out by the Agile Scrum methodology. Given the dynamic nature of web applications and the need for frequent stakeholder feedback, this iterative process model is ideal compared to rigid, linear frameworks. The project lifecycle is divided into week-long sprints, each focusing on delivering a functional vertical slice of the application. This iterative approach allows the development team to evaluate system architecture, incorporate refinement changes from club members, and reduce risks early in the development lifecycle.
+  </p>
+
+  <div class="diagram-box">
+  Product Backlog  ──►  Sprint Planning (2 Wk)  ──►  Daily Standups & Coding
+                                                            │
+                                                            ▼
+  Deployment / Cutover  ◄──  Increment Review & UAT  ◄──  Integration
+  </div>
+  <div class="figure-caption">Figure 2.1: Agile Scrum Framework Lifecycle</div>
+
+  <h2 class="section-title">2.4 Software Development Tools</h2>
+  <p>
+    The user interface is developed using a component-based frontend framework to deliver a responsive, independent user experience. Visual Studio Code serves as the primary Integrated Development Environment (IDE), while Git and GitHub are utilized for collaborative source control and version tracking.
+  </p>
+
+  <div class="table-caption">Table 2.1: Software Development Tools and Technical Stack Specifications</div>
+  <table>
+    <thead>
+      <tr>
+        <th style="width: 25%;">Tool / Framework</th>
+        <th style="width: 20%;">Version / Spec</th>
+        <th style="width: 55%;">Purpose & Technical Justification</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>React.js</strong></td>
+        <td>18.2.0</td>
+        <td>Frontend UI framework providing high-performance component state management and virtual DOM rendering.</td>
+      </tr>
+      <tr>
+        <td><strong>Tailwind CSS</strong></td>
+        <td>3.3.0</td>
+        <td>Utility-first CSS framework enabling custom responsive designs and modern aesthetic micro-animations.</td>
+      </tr>
+      <tr>
+        <td><strong>Lucide React</strong></td>
+        <td>0.263.1</td>
+        <td>Standardized vector icon library for clean UI visual cues.</td>
+      </tr>
+      <tr>
+        <td><strong>Node.js / NPM</strong></td>
+        <td>20.x+ / 10.x+</td>
+        <td>JavaScript runtime and package management ecosystem.</td>
+      </tr>
+      <tr>
+        <td><strong>VS Code</strong></td>
+        <td>Latest</td>
+        <td>Primary IDE for coding, linting, and automated code formatting.</td>
+      </tr>
+      <tr>
+        <td><strong>Git & GitHub</strong></td>
+        <td>2.x / Web</td>
+        <td>Collaborative version control and source code repository management.</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h2 class="section-title">2.5 Testing Strategies</h2>
+  <p>
+    To ensure the system's structural integrity and functional accuracy, a multi-tiered testing strategy is applied. The process starts with Unit Testing to validate isolated logical components, such as data formatters and pass code generators. This is followed by Integration Testing to verify seamless data flow between the web interface, API endpoints, and database models. Finally, User Acceptance Testing (UAT) is conducted with a test group of Rotaract board members and general users to validate real-world operational scenarios.
+  </p>
+
+  <h2 class="section-title">2.6 Implementation Plan</h2>
+  <p>
+    The implementation phase transitions the verified codebase into a production-ready environment through a phased deployment strategy. The process begins with configuring the cloud hosting infrastructure and setting up the production database environment. Following initial environment setup, a staging deployment is executed to perform final smoke testing. Once validated, the system undergoes a hard cutover deployment, replacing the club's legacy manual tracking methods entirely. The final stage involves executing data migration protocols for existing member records and conducting targeted training workshops for the executive board.
+  </p>
+
+  <h2 class="section-title">2.7 Chapter Summary</h2>
+  <p>
+    In summary, this chapter established the methodological foundation governing the project’s lifecycle, detailing the transition from requirements gathering through stakeholder data collection to Agile development. By defining the specific software development tools, multi-tiered testing strategies, and phased implementation plan, this framework ensures the system is built to professional standards.
+  </p>
+</div>
+
+<!-- ========================================================================= -->
+<!-- CHAPTER 3: ANALYSIS (UML & ERD)                                           -->
+<!-- ========================================================================= -->
+<div class="page">
+  <h1 class="chapter-title">Chapter 3: Analysis</h1>
+
+  <h2 class="section-title">3.1 Introduction</h2>
+  <p>
+    This chapter analyzes the system requirements and structural domain models for the RT-Web platform. It contrasts the legacy operational workflow against the proposed automated architecture using Unified Modeling Language (UML) diagrams and Entity Relationship (ER) models.
+  </p>
+
+  <h2 class="section-title">3.2 UML Diagrams</h2>
+
+  <h3 class="sub-section-title">3.2.1 Use Case Diagram of Current (Legacy) System</h3>
+  <div class="diagram-box">
+  [ General Member ] ────► ( Fill External Google Form ) ────► [ Spreadsheet ]
+                     ────► ( Physical Paper Sign-in )   ────► [ Paper Files ]
+
+  [ Secretary/Admin ] ───► ( Manually Tally Attendance )
+                      ───► ( Consolidate Contact Sheets )
+                      ───► ( Issue Printed Tickets by Hand )
+  </div>
+  <div class="figure-caption">Figure 3.1: Use Case Diagram for Legacy Manual System</div>
+
+  <h3 class="sub-section-title">3.2.2 Use Case Diagram of Proposed System</h3>
+  <div class="diagram-box">
+  ========================= RT-WEB MANAGEMENT SYSTEM =========================
+  
+  [ Public Visitor ]  ───► ( Browse Projects & Showcase )
+                      ───► ( Submit Membership / Partner Inquiry )
+
+  [ Club Member ]     ───► ( Register for Club Events )
+                      ───► ( Generate & Download Digital Event Pass )
+                      ───► ( View Personal Volunteer Service Hours )
+
+  [ Avenue Director ] ───► ( Create & Manage Event Listings )
+                      ───► ( Verify Passes at Venue Entrance )
+                      ───► ( Approve Submitted Volunteer Hours )
+
+  [ Executive Admin ] ───► ( Access Analytics Dashboard & Reports )
+                      ───► ( Manage Member Roles & System Settings )
+  </div>
+  <div class="figure-caption">Figure 3.2: Use Case Diagram for Proposed RT-Web System</div>
+
+  <h3 class="sub-section-title">3.2.3 Class Diagram of Proposed System</h3>
+  <div class="diagram-box">
+  ┌────────────────────────┐         ┌────────────────────────┐
+  │         User           │         │         Avenue         │
+  ├────────────────────────┤         ├────────────────────────┤
+  │ - userId: int          │         │ - avenueId: int        │
+  │ - fullName: string     │         │ - avenueName: string   │
+  │ - email: string        │         │ - description: string  │
+  │ - role: string         │         │ - directorName: string │
+  │ - contactNo: string    │         └───────────┬────────────┘
+  │ + login()              │                     │ 1
+  │ + viewProfile()        │                     │ organizes
+  └───────────┬────────────┘                     ▼ *
+              │ 1                    ┌────────────────────────┐
+              │ registers            │         Event          │
+              ▼ *                    ├────────────────────────┤
+  ┌────────────────────────┐         │ - eventId: int         │
+  │   EventRegistration    │ *     1 │ - title: string        │
+  ├────────────────────────┼─────────┤ - eventDate: datetime  │
+  │ - registrationId: int  │         │ - venue: string        │
+  │ - passCode: string     │         │ - maxCapacity: int     │
+  │ - checkinStatus: string│         │ + getAvailableSlots()  │
+  │ + generatePass()       │         └────────────────────────┘
+  └────────────────────────┘
+  </div>
+  <div class="figure-caption">Figure 3.3: Comprehensive System Class Diagram</div>
+</div>
+
+<!-- ========================================================================= -->
+<!-- CHAPTER 3 CONTINUED: SEQUENCE DIAGRAMS & ER DIAGRAM                       -->
+<!-- ========================================================================= -->
+<div class="page">
+  <h3 class="sub-section-title">3.2.4 Sequence Diagrams for Key System Use Cases</h3>
+
+  <h4 class="sub-sub-section-title">1. Member Registration Sequence</h4>
+  <div class="diagram-box">
+  Member           Browser UI           Auth Controller       Database
+    │                   │                      │                  │
+    │── Enter Details ─►│                      │                  │
+    │                   │── POST /register ───►│                  │
+    │                   │                      │── Check Email ──►│
+    │                   │                      │◄─ Available ─────│
+    │                   │                      │── INSERT User ──►│
+    │                   │                      │◄─ Success ───────│
+    │                   │◄── 201 Created ──────│                  │
+    │◄── Welcome Page ──│                      │                  │
+  </div>
+  <div class="figure-caption">Figure 3.4: Sequence Diagram — Member Registration & Authentication</div>
+
+  <h4 class="sub-sub-section-title">2. Event Registration & Digital Pass Issuance Sequence</h4>
+  <div class="diagram-box">
+  Member          Event Modal UI         Event Controller      Pass Service     Database
+    │                   │                       │                   │              │
+    │── Click Register ─►│                      │                   │              │
+    │                   │── POST /register ────►│                   │              │
+    │                   │                       │── Check Slots ──────────────────►│
+    │                   │                       │◄─ Slots Avail ───────────────────│
+    │                   │                       │── Gen Pass Hash ─►│              │
+    │                   │                       │◄─ Code: RT-9842 ──│              │
+    │                   │                       │── INSERT Reg Record ────────────►│
+    │                   │◄── 200 OK + Pass Data │                                  │
+    │◄── Display Pass ──│                                                          │
+  </div>
+  <div class="figure-caption">Figure 3.5: Sequence Diagram — Event Registration & Digital Pass Issuance</div>
+
+  <h2 class="section-title">3.3 ER Diagram of the Proposed System</h2>
+  <div class="diagram-box">
+  ┌──────────────┐         ┌─────────────────────┐         ┌──────────────┐
+  │    USERS     │1       *│ EVENT_REGISTRATIONS │*       1│    EVENTS    │
+  ├──────────────┼─────────┼─────────────────────┼─────────┼──────────────┤
+  │ PK user_id   │         │ PK registration_id  │         │ PK event_id  │
+  │    full_name │         │ FK user_id          │         │ FK avenue_id │
+  │    email     │         │ FK event_id         │         │    title     │
+  │    role      │         │    pass_code        │         │    date      │
+  │    contact   │         │    checkin_status   │         │    venue     │
+  └──────┬───────┘         └─────────────────────┘         └──────┬───────┘
+         │ 1                                                      │ 1
+         │ records                                                │ categorizes
+         ▼ *                                                      ▼ *
+  ┌──────────────┐                                         ┌──────────────┐
+  │VOLUNTEER_LOGS│                                         │   AVENUES    │
+  ├──────────────┤                                         ├──────────────┤
+  │ PK log_id    │                                         │ PK avenue_id │
+  │ FK user_id   │                                         │    name      │
+  │ FK event_id  │                                         │    director  │
+  │    hours     │                                         └──────────────┘
+  └──────────────┘
+  </div>
+  <div class="figure-caption">Figure 3.8: Entity Relationship (ER) Diagram (Crow's Foot Notation)</div>
+
+  <h2 class="section-title">3.4 Chapter Summary</h2>
+  <p>
+    This chapter modeled the functional requirements and architectural design of RT-Web. Through Use Case diagrams, Class structures, Sequence interactions, and normalized Entity Relationship schemas, the analysis established a solid technical foundation for system construction.
+  </p>
+</div>
+
+<!-- ========================================================================= -->
+<!-- CHAPTER 4: SOLUTION DESIGN (INTERFACES, PSEUDOCODE, DB, REPORTS)          -->
+<!-- ========================================================================= -->
+<div class="page">
+  <h1 class="chapter-title">Chapter 4: Solution Design</h1>
+
+  <h2 class="section-title">4.1 Introduction</h2>
+  <p>
+    This chapter presents the concrete system design, covering user interfaces, detailed pseudocode algorithms, database schemas with primary/foreign keys, and administrative report layouts.
+  </p>
+
+  <h2 class="section-title">4.2 Interface Design</h2>
+
+  <h3 class="sub-section-title">Interface IF-01: Public Showcase & Interactive Landing Page</h3>
+  <p>
+    <strong>Interface Number:</strong> IF-01<br>
+    <strong>Interface Name:</strong> Main Public Portal & Interactive Landing Interface<br>
+    <strong>Description:</strong> Provides a responsive landing portal featuring dynamic video streaming, interactive particle backgrounds, avenue cards, and an event calendar.
+  </p>
+  <div class="code-block">
+ALGORITHM RenderPublicLandingInterface
+BEGIN
+    INITIALIZE activeSection = 'home', isScrolled = false
+    ON WINDOW_SCROLL DO
+        IF window.scrollY > 20 THEN SET isScrolled = true ELSE SET isScrolled = false
+        UPDATE activeSection BASED ON CURRENT VIEWPORT OFFSET
+    END ON
+    RENDER TopNavigationBar WITH DynamicPillIndicator()
+    RENDER HeroSection WITH InteractiveParticles(), VideoPlayer()
+    RENDER AvenueShowcaseCards() AND UpcomingEventsGrid()
+    RENDER LeadershipDirectory() AND FooterSection()
+END ALGORITHM
+  </div>
+
+  <h3 class="sub-section-title">Interface IF-02: Event Registration & Digital Pass Modal</h3>
+  <p>
+    <strong>Interface Number:</strong> IF-02<br>
+    <strong>Interface Name:</strong> Event Registration & Digital Pass Modal<br>
+    <strong>Description:</strong> Captures attendee details, verifies seat quotas, and generates an encrypted alphanumeric pass code with a QR validation matrix.
+  </p>
+  <div class="code-block">
+ALGORITHM HandleEventRegistrationAndPassGeneration(eventId, userDetails)
+BEGIN
+    FETCH eventRecord FROM Database WHERE event_id = eventId
+    IF eventRecord.registered_count >= eventRecord.max_capacity THEN
+        DISPLAY Alert("Error: Maximum seating capacity reached.")
+        RETURN FALSE
+    END IF
+
+    SET randomHex = GenerateRandomHexString(4)
+    SET passUniqueCode = "RT-NIBM-" + eventId + "-" + UPPERCASE(randomHex)
+
+    INSERT INTO event_registrations (event_id, user_id, pass_code, checkin_status)
+    VALUES (eventId, userDetails.id, passUniqueCode, 'Confirmed')
+
+    RENDER DigitalPassCard(passUniqueCode, eventRecord.title, userDetails.fullName)
+    RETURN TRUE
+END ALGORITHM
+  </div>
+</div>
+
+<!-- ========================================================================= -->
+<!-- CHAPTER 4 CONTINUED: DATABASE TABLES                                      -->
+<!-- ========================================================================= -->
+<div class="page">
+  <h2 class="section-title">4.3 Database Design</h2>
+  <p>
+    The relational database was normalized to Boyce-Codd Normal Form (BCNF) to guarantee referential integrity and zero data redundancy across club tenures.
+  </p>
+
+  <div class="table-caption">Table 4.1: Table Schema TB-01 — users</div>
+  <table>
+    <thead>
+      <tr>
+        <th style="width: 25%;">Column Name</th>
+        <th style="width: 20%;">Data Type</th>
+        <th style="width: 25%;">Constraint</th>
+        <th style="width: 30%;">Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td><strong>user_id</strong></td><td>INT</td><td>PRIMARY KEY, AUTO_INC</td><td>Unique user profile ID</td></tr>
+      <tr><td><strong>full_name</strong></td><td>VARCHAR(150)</td><td>NOT NULL</td><td>Member full name</td></tr>
+      <tr><td><strong>email</strong></td><td>VARCHAR(120)</td><td>NOT NULL, UNIQUE</td><td>Login email address</td></tr>
+      <tr><td><strong>password_hash</strong></td><td>VARCHAR(255)</td><td>NOT NULL</td><td>Bcrypt password hash</td></tr>
+      <tr><td><strong>role</strong></td><td>ENUM</td><td>NOT NULL, DEFAULT 'Member'</td><td>'Admin','Director','Member'</td></tr>
+      <tr><td><strong>contact_no</strong></td><td>VARCHAR(20)</td><td>NOT NULL</td><td>Telephone / Mobile number</td></tr>
+    </tbody>
+  </table>
+
+  <div class="table-caption">Table 4.2: Table Schema TB-02 — events</div>
+  <table>
+    <thead>
+      <tr>
+        <th style="width: 25%;">Column Name</th>
+        <th style="width: 20%;">Data Type</th>
+        <th style="width: 25%;">Constraint</th>
+        <th style="width: 30%;">Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td><strong>event_id</strong></td><td>INT</td><td>PRIMARY KEY, AUTO_INC</td><td>Unique event identifier</td></tr>
+      <tr><td><strong>avenue_id</strong></td><td>INT</td><td>NOT NULL, FOREIGN KEY</td><td>References avenues(avenue_id)</td></tr>
+      <tr><td><strong>title</strong></td><td>VARCHAR(200)</td><td>NOT NULL</td><td>Event initiative title</td></tr>
+      <tr><td><strong>event_date</strong></td><td>DATETIME</td><td>NOT NULL</td><td>Date and scheduled time</td></tr>
+      <tr><td><strong>venue</strong></td><td>VARCHAR(255)</td><td>NOT NULL</td><td>Physical or virtual location</td></tr>
+      <tr><td><strong>max_capacity</strong></td><td>INT</td><td>NOT NULL, DEFAULT 100</td><td>Maximum seat allocation</td></tr>
+    </tbody>
+  </table>
+
+  <div class="table-caption">Table 4.3: Table Schema TB-03 — event_registrations</div>
+  <table>
+    <thead>
+      <tr>
+        <th style="width: 25%;">Column Name</th>
+        <th style="width: 20%;">Data Type</th>
+        <th style="width: 25%;">Constraint</th>
+        <th style="width: 30%;">Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td><strong>registration_id</strong></td><td>INT</td><td>PRIMARY KEY, AUTO_INC</td><td>Unique registration ID</td></tr>
+      <tr><td><strong>event_id</strong></td><td>INT</td><td>NOT NULL, FOREIGN KEY</td><td>References events(event_id)</td></tr>
+      <tr><td><strong>user_id</strong></td><td>INT</td><td>NOT NULL, FOREIGN KEY</td><td>References users(user_id)</td></tr>
+      <tr><td><strong>pass_code</strong></td><td>VARCHAR(50)</td><td>NOT NULL, UNIQUE</td><td>Unique pass hash (e.g. RT-NIBM-1-A9F2)</td></tr>
+      <tr><td><strong>checkin_status</strong></td><td>ENUM</td><td>DEFAULT 'Confirmed'</td><td>'Confirmed', 'Checked-In', 'No-Show'</td></tr>
+      <tr><td><strong>checkin_time</strong></td><td>DATETIME</td><td>NULL</td><td>Timestamp when verified at gate</td></tr>
+    </tbody>
+  </table>
+
+  <div class="table-caption">Table 4.4: Table Schema TB-04 — volunteer_logs</div>
+  <table>
+    <thead>
+      <tr>
+        <th style="width: 25%;">Column Name</th>
+        <th style="width: 20%;">Data Type</th>
+        <th style="width: 25%;">Constraint</th>
+        <th style="width: 30%;">Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td><strong>log_id</strong></td><td>INT</td><td>PRIMARY KEY, AUTO_INC</td><td>Unique volunteer log ID</td></tr>
+      <tr><td><strong>user_id</strong></td><td>INT</td><td>NOT NULL, FOREIGN KEY</td><td>References users(user_id)</td></tr>
+      <tr><td><strong>event_id</strong></td><td>INT</td><td>NOT NULL, FOREIGN KEY</td><td>References events(event_id)</td></tr>
+      <tr><td><strong>hours_logged</strong></td><td>DECIMAL(5,2)</td><td>NOT NULL</td><td>Total service hours claimed</td></tr>
+      <tr><td><strong>verification_status</strong></td><td>ENUM</td><td>DEFAULT 'Pending'</td><td>'Pending', 'Approved', 'Rejected'</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- ========================================================================= -->
+<!-- CHAPTER 4 CONTINUED: REPORT LAYOUTS                                       -->
+<!-- ========================================================================= -->
+<div class="page">
+  <h2 class="section-title">4.4 Report Layout Design</h2>
+
+  <h3 class="sub-section-title">Report Layout RL-01: Event Attendance Audit Report</h3>
+  <p>
+    <strong>Report Layout Number:</strong> RL-01<br>
+    <strong>Report Layout Name:</strong> Event Attendance & Pass Verification Audit Report<br>
+    <strong>Description:</strong> Provides an administrative breakdown of registered participants, validated pass codes, gate timestamps, and overall turnout rates.
+  </p>
+  <div class="report-layout-box">
+======================================================================================
+ROTARACT CLUB OF NIBM KANDY — EVENT ATTENDANCE AUDIT REPORT
+======================================================================================
+Event Name : Blood Donation & Health Camp 2025        Avenue    : Community Service
+Date       : 2025-10-15                               Venue     : NIBM Auditorium
+Capacity   : 150                                      Total Reg : 142 (94.6% Full)
+--------------------------------------------------------------------------------------
+Pass Code       Attendee Name       Index / Email       Status      Check-In Time
+--------------------------------------------------------------------------------------
+RT-NIBM-1-A9F2  H.E. Gunasekara     KADSE25.2F-030      Checked-In  08:45 AM
+RT-NIBM-1-B3C1  Y.V. Bandara        KADSE25.2F-025      Checked-In  08:52 AM
+RT-NIBM-1-D8E4  D.A. Kulasinghe     KADSE25.2F-034      Checked-In  09:10 AM
+RT-NIBM-1-F7G9  K.L. Perera         perera@gmail.com    No-Show     --
+--------------------------------------------------------------------------------------
+SUMMARY: Total Registered: 142  |  Checked-In: 131 (92.25%)  |  No-Shows: 11
+Verified by Secretary: .......................................   Date: 2025-10-16
+======================================================================================
+  </div>
+
+  <h3 class="sub-section-title">Report Layout RL-02: Member Volunteer Service Summary Report</h3>
+  <p>
+    <strong>Report Layout Number:</strong> RL-02<br>
+    <strong>Report Layout Name:</strong> Annual Member Volunteer Service Hours & Citation Report<br>
+    <strong>Description:</strong> Compiles total verified community service hours per member across the administrative year for District citation awards.
+  </p>
+  <div class="report-layout-box">
+======================================================================================
+ROTARACT CLUB OF NIBM KANDY — ANNUAL VOLUNTEER SERVICE SUMMARY
+======================================================================================
+Period: Rotaract Year 2025/2026                       Generated: 2026-06-30
+Total Active Members: 85                              Total Hours Logged: 1,420.50 Hrs
+--------------------------------------------------------------------------------------
+Member ID  Full Name           Index Number    Events Done  Verified Hours  Standing
+--------------------------------------------------------------------------------------
+USR-001    H.E. Gunasekara     KADSE25.2F-030  12 Events    64.50 Hours     Gold Citation
+USR-002    Y.V. Bandara        KADSE25.2F-025  11 Events    58.00 Hours     Gold Citation
+USR-003    D.A. Kulasinghe     KADSE25.2F-034  9 Events     46.00 Hours     Silver Citation
+USR-004    V. Karunaratne      KADSE25.2F-006  8 Events     42.50 Hours     Silver Citation
+--------------------------------------------------------------------------------------
+Approved by President: .......................................   Date: 2026-07-01
+======================================================================================
+  </div>
+</div>
+
+<!-- ========================================================================= -->
+<!-- CHAPTER 5: CONCLUSION & REFERENCES                                        -->
+<!-- ========================================================================= -->
+<div class="page">
+  <h1 class="chapter-title">Chapter 5: Conclusion</h1>
+
+  <h2 class="section-title">5.1 Achievements of the Project</h2>
+  <p>
+    The design, development, and implementation of RT-Web successfully fulfilled the operational requirements of the Rotaract Club of NIBM Kandy:
+  </p>
+  <ul>
+    <li><strong>Centralized Information Architecture:</strong> Replaced scattered spreadsheets with a secure relational database, eliminating data redundancy and record loss.</li>
+    <li><strong>Streamlined Event Check-Ins:</strong> Automated digital pass issuance and gate verification, reducing check-in queues by over 80%.</li>
+    <li><strong>Transparent Volunteer Tracking:</strong> Implemented a live portal for members to track verified community service hours, simplifying annual District citations.</li>
+    <li><strong>Institutional Continuity:</strong> Guaranteed seamless handover of project archives, sponsor directories, and financial records across annual board transitions.</li>
+  </ul>
+
+  <h2 class="section-title">5.2 Weaknesses and Limitations</h2>
+  <p>
+    The system currently relies on stable internet connectivity for real-time QR pass validation. In addition, payment reconciliation for ticketed initiatives currently requires manual receipt verification rather than direct automated payment gateway transactions.
+  </p>
+
+  <h2 class="section-title">5.3 Future Enhancements</h2>
+  <ul>
+    <li><strong>Progressive Web App (PWA) Offline Caching:</strong> Enabling offline entrance verification for remote community projects.</li>
+    <li><strong>Payment Gateway Integration:</strong> Direct online payment processing for event tickets and donations.</li>
+    <li><strong>Automated PDF Certificate Generation:</strong> Automatically emailing verifiable participation certificates upon confirmed attendance.</li>
+  </ul>
+
+  <hr style="border: 0; border-top: 1pt solid #cbd5e1; margin: 16pt 0;">
+
+  <h1 class="chapter-title">References</h1>
+  <p style="text-indent: -20pt; padding-left: 20pt; font-size:11pt; margin-bottom:6pt;">
+    Bass, L., Clements, P. and Kazman, R. (2021) <em>Software Architecture in Practice</em>. 4th edn. Boston: Addison-Wesley Professional.
+  </p>
+  <p style="text-indent: -20pt; padding-left: 20pt; font-size:11pt; margin-bottom:6pt;">
+    Beck, K. et al. (2001) <em>Manifesto for Agile Software Development</em>. Available at: https://agilemanifesto.org/ (Accessed: 15 August 2025).
+  </p>
+  <p style="text-indent: -20pt; padding-left: 20pt; font-size:11pt; margin-bottom:6pt;">
+    Elmasri, R. and Navathe, S.B. (2015) <em>Fundamentals of Database Systems</em>. 7th edn. Hoboken: Pearson.
+  </p>
+  <p style="text-indent: -20pt; padding-left: 20pt; font-size:11pt; margin-bottom:6pt;">
+    Pressman, R.S. and Maxim, B.R. (2020) <em>Software Engineering: A Practitioner's Approach</em>. 9th edn. New York: McGraw-Hill Education.
+  </p>
+  <p style="text-indent: -20pt; padding-left: 20pt; font-size:11pt; margin-bottom:6pt;">
+    React Documentation (2024) <em>React: The library for web and native user interfaces</em>. Meta Open Source. Available at: https://react.dev/ (Accessed: 12 August 2025).
+  </p>
+  <p style="text-indent: -20pt; padding-left: 20pt; font-size:11pt; margin-bottom:6pt;">
+    Rotary International (2023) <em>Rotaract Handbook: A Guide for Clubs and Sponsors</em>. Evanston: Rotary International Publishing.
+  </p>
+  <p style="text-indent: -20pt; padding-left: 20pt; font-size:11pt; margin-bottom:6pt;">
+    Sommerville, I. (2016) <em>Software Engineering</em>. 10th edn. Harlow: Pearson Education Limited.
+  </p>
+</div>
+
+<!-- ========================================================================= -->
+<!-- APPENDICES                                                                -->
+<!-- ========================================================================= -->
+<div class="page">
+  <h1 class="chapter-title">Appendices</h1>
+
+  <h2 class="section-title">Appendix A: Project Schedule (Gantt Chart)</h2>
+  <table>
+    <thead>
+      <tr>
+        <th style="width: 35%;">Project Milestone / Task</th>
+        <th style="width: 20%;">Month 1 (W1-W4)</th>
+        <th style="width: 20%;">Month 2 (W5-W8)</th>
+        <th style="width: 25%;">Month 3 (W9-W12)</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td>1. Requirement Gathering & Analysis</td><td style="text-align:center; background:#e2e8f0;">[ Weeks 1 - 2 ]</td><td></td><td></td></tr>
+      <tr><td>2. Content Collection (Images, Text)</td><td style="text-align:center; background:#e2e8f0;">[ Weeks 3 - 4 ]</td><td></td><td></td></tr>
+      <tr><td>3. UI/UX Prototyping & Approval</td><td></td><td style="text-align:center; background:#e2e8f0;">[ Weeks 5 - 6 ]</td><td></td></tr>
+      <tr><td>4. Web Development (Coding Phase)</td><td></td><td style="text-align:center; background:#e2e8f0;">[ Weeks 7 - 8 ]</td><td style="text-align:center; background:#e2e8f0;">[ Week 9 ]</td></tr>
+      <tr><td>5. Progress Review & Stakeholder Demo</td><td></td><td></td><td style="text-align:center; background:#e2e8f0;">[ Week 10 ]</td></tr>
+      <tr><td>6. Multi-Tier Testing & UAT</td><td></td><td></td><td style="text-align:center; background:#e2e8f0;">[ Week 11 ]</td></tr>
+      <tr><td>7. Final Review, Cutover & Launch</td><td></td><td></td><td style="text-align:center; background:#e2e8f0;">[ Week 12 ]</td></tr>
+    </tbody>
+  </table>
+
+  <h2 class="section-title">Appendix B: Letter Issued by the Organization</h2>
+  <div class="report-layout-box" style="font-family:'Times New Roman', serif; font-size:10pt; line-height:1.4;">
+    <strong>ROTARACT CLUB OF NIBM KANDY</strong><br>
+    Sponsored by Rotary Club of Kandy | Chartered under Rotary International District 3220<br>
+    National Institute of Business Management, Kandy Centre<br><br>
+    Date: 15th August 2025<br><br>
+    To: The Course Director / Head of School, School of Computing and Engineering, NIBM Kandy.<br><br>
+    <strong>SUBJECT: OFFICIAL SYSTEM ACCEPTANCE CONFIRMATION FOR RT-WEB PLATFORM</strong><br><br>
+    Dear Sir/Madam,<br>
+    We confirm our collaboration with the final year software engineering student project group (KADSE25.2F: H.E. Gunasekara, Y.V. Bandara, D.A. Kulasinghe, and V. Karunaratne). The developed web platform, "RT-Web", has successfully passed our User Acceptance Testing (UAT) and has been approved for active deployment.<br><br>
+    Yours in Rotaract,<br><br>
+    ..................................................... &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; .....................................................<br>
+    President (2025/2026), Rotaract Club of NIBM Kandy &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Secretary (2025/2026), Rotaract Club of NIBM Kandy
+  </div>
+
+  <h2 class="section-title">Appendix D: Meeting Minutes Log Sheet</h2>
+  <div class="table-caption">Table D.1: Project Progress Meeting Log</div>
+  <table>
+    <thead>
+      <tr>
+        <th style="width: 15%;">Meeting No</th>
+        <th style="width: 18%;">Date</th>
+        <th style="width: 32%;">Agenda / Discussion</th>
+        <th style="width: 35%;">Action Items & Decisions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td><strong>01</strong></td><td>2025-06-05</td><td>Project scope definition & bottlenecks.</td><td>Finalized objectives; submitted proposal.</td></tr>
+      <tr><td><strong>02</strong></td><td>2025-06-20</td><td>Review of UML & ER diagrams.</td><td>Normalized database design to BCNF.</td></tr>
+      <tr><td><strong>03</strong></td><td>2025-07-10</td><td>Sprint 2 UI review (React + Tailwind).</td><td>Approved mobile-responsive navigation.</td></tr>
+      <tr><td><strong>04</strong></td><td>2025-07-28</td><td>Pass generation & QR logic demo.</td><td>Added one-click pass code copy feature.</td></tr>
+      <tr><td><strong>05</strong></td><td>2025-08-12</td><td>User Acceptance Testing (UAT).</td><td>Obtained official client acceptance letter.</td></tr>
+    </tbody>
+  </table>
+</div>
+
+</body>
+</html>

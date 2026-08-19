@@ -1,0 +1,186 @@
+{
+  "users": [
+    {
+      "user_id": 1,
+      "full_name": "H.E. Gunasekara",
+      "email": "president@rt-nibm.org",
+      "password_hash": "fcf7bb6d546cfb82d2e55486984ae7a1862a666acb441e0cf8b4ed34a4fcf9d7",
+      "nibm_index_no": "KADSE25.2F-030",
+      "role": "Admin",
+      "contact_no": "+94 77 123 4567",
+      "created_at": "2025-01-10T08:00:00.000Z"
+    },
+    {
+      "user_id": 2,
+      "full_name": "Y.V. Bandara",
+      "email": "secretary@rt-nibm.org",
+      "password_hash": "e876ca14c1ddfebf2cacbe322a832dd551099885c8c42abc61b85e84168472d0",
+      "nibm_index_no": "KADSE25.2F-025",
+      "role": "Admin",
+      "contact_no": "+94 71 987 6543",
+      "created_at": "2025-01-12T09:30:00.000Z"
+    },
+    {
+      "user_id": 3,
+      "full_name": "D.A. Kulasinghe",
+      "email": "community@rt-nibm.org",
+      "password_hash": "e4aaed712eb8f1d35a79acd365a1434e8a799d9748b1979785f7352c03746dd0",
+      "nibm_index_no": "KADSE25.2F-034",
+      "role": "Director",
+      "contact_no": "+94 76 555 1234",
+      "created_at": "2025-01-15T10:00:00.000Z"
+    },
+    {
+      "user_id": 4,
+      "full_name": "V. Karunaratne",
+      "email": "member@rt-nibm.org",
+      "password_hash": "ef2caf996c52645505ca6bdb73078538389f7a3cc67c9d9cc3019b043cb0bca7",
+      "nibm_index_no": "KADSE25.2F-006",
+      "role": "Member",
+      "contact_no": "+94 75 444 8899",
+      "created_at": "2025-02-01T11:20:00.000Z"
+    }
+  ],
+  "avenues": [
+    {
+      "avenue_id": 1,
+      "avenue_name": "Community Service",
+      "description": "Focuses on addressing health, social, environmental, and humanitarian needs in local communities.",
+      "director_name": "D.A. Kulasinghe"
+    },
+    {
+      "avenue_id": 2,
+      "avenue_name": "Club Service",
+      "description": "Strengthens fellowship, leadership development, member engagement, and internal club administration.",
+      "director_name": "H.E. Gunasekara"
+    },
+    {
+      "avenue_id": 3,
+      "avenue_name": "Professional Development",
+      "description": "Enhances vocational competencies, career preparedness, and technical skill-building workshops.",
+      "director_name": "Y.V. Bandara"
+    },
+    {
+      "avenue_id": 4,
+      "avenue_name": "International Service",
+      "description": "Fosters global goodwill, cultural understanding, and cross-border international club collaborations.",
+      "director_name": "V. Karunaratne"
+    }
+  ],
+  "events": [
+    {
+      "event_id": 1,
+      "avenue_id": 1,
+      "title": "Blood Donation & Health Screening Camp 2025",
+      "description": "Annual flagship humanitarian initiative in collaboration with Kandy National Blood Transfusion Service.",
+      "event_date": "2025-10-15T09:00:00Z",
+      "venue": "NIBM Main Auditorium, Kandy Centre",
+      "max_capacity": 150,
+      "registered_count": 33,
+      "status": "Upcoming"
+    },
+    {
+      "event_id": 2,
+      "avenue_id": 3,
+      "title": "CodeCraft Full-Stack Hackathon 2025",
+      "description": "24-hour national hackathon for undergraduates solving real-world community development problems.",
+      "event_date": "2025-11-05T08:00:00Z",
+      "venue": "NIBM Computing Lab 01 & Virtual Sandbox",
+      "max_capacity": 100,
+      "registered_count": 65,
+      "status": "Upcoming"
+    },
+    {
+      "event_id": 3,
+      "avenue_id": 1,
+      "title": "Green Roots Reforestation Drive",
+      "description": "Planting over 500 indigenous trees in the Central Highlands to preserve watersheds.",
+      "event_date": "2025-08-28T07:30:00Z",
+      "venue": "Hantana Mountain Range Nature Reserve, Kandy",
+      "max_capacity": 80,
+      "registered_count": 80,
+      "status": "Upcoming"
+    }
+  ],
+  "event_registrations": [
+    {
+      "registration_id": 1,
+      "event_id": 1,
+      "user_id": 4,
+      "attendee_name": "V. Karunaratne",
+      "attendee_email": "member@rt-nibm.org",
+      "pass_code": "RT-NIBM-1-E92A",
+      "registered_at": "2025-08-01T14:20:00Z",
+      "checkin_status": "Confirmed",
+      "checkin_time": null
+    },
+    {
+      "event_id": 1,
+      "user_id": null,
+      "attendee_name": "Test Student Volunteer",
+      "attendee_email": "teststudent@nibm.lk",
+      "contact_no": "+94 77 999 8888",
+      "pass_code": "RT-NIBM-1-1200",
+      "registered_at": "2026-08-19T09:45:54.676Z",
+      "checkin_status": "Confirmed",
+      "checkin_time": null,
+      "registration_id": 2
+    },
+    {
+      "event_id": 1,
+      "user_id": null,
+      "attendee_name": "Dinidu Kulasinghe",
+      "attendee_email": "dinidukulasinghe01@gmail.com",
+      "contact_no": "+94787811976",
+      "pass_code": "RT-NIBM-1-D831",
+      "registered_at": "2026-08-19T09:46:46.720Z",
+      "checkin_status": "Confirmed",
+      "checkin_time": null,
+      "registration_id": 3
+    }
+  ],
+  "volunteer_logs": [
+    {
+      "log_id": 1,
+      "user_id": 4,
+      "event_id": 3,
+      "activity_name": "Tree Planting & Watershed Maintenance",
+      "hours_logged": 6.5,
+      "description": "Assisted in soil preparation, transport of saplings, and coordinate volunteer sign-in.",
+      "verification_status": "Approved",
+      "verified_by": 1,
+      "submitted_at": "2025-07-20T16:00:00Z"
+    },
+    {
+      "log_id": 2,
+      "user_id": 4,
+      "event_id": 2,
+      "activity_name": "Hackathon Technical Infrastructure Setup",
+      "hours_logged": 4,
+      "description": "Configured local networking switches and verified participant developer workstations.",
+      "verification_status": "Approved",
+      "verified_by": 2,
+      "submitted_at": "2025-07-25T18:30:00Z"
+    }
+  ],
+  "projects": [
+    {
+      "project_id": 1,
+      "avenue_id": 1,
+      "title": "Project Hope: Clean Water for Rural Schools",
+      "impact_summary": "Installed water purification filtration units in 3 underprivileged schools in Kandy district.",
+      "funds_raised": 150000,
+      "featured_image": "/rotaract.png",
+      "status": "Completed"
+    },
+    {
+      "project_id": 2,
+      "avenue_id": 3,
+      "title": "Career Launchpad: AI & Software Engineering Series",
+      "impact_summary": "Conducted 4 industry seminars with keynote speakers from top tech firms impacting 250+ students.",
+      "funds_raised": 45000,
+      "featured_image": "/rotaract.png",
+      "status": "Completed"
+    }
+  ]
+}

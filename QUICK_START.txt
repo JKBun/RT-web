@@ -1,0 +1,87 @@
+=====================================
+ROTARACT WEBSITE - QUICK START
+=====================================
+
+YOU HAVE ALL THE FILES NOW!
+
+Here's what to do:
+
+STEP 1: Download Node.js
+========================
+Go to: https://nodejs.org
+Click the green LTS button
+Download and install
+Restart your computer
+
+
+STEP 2: Organize Your Files
+===========================
+Look at FOLDER_STRUCTURE.txt - follow that exactly.
+
+Create this:
+rotaract-website/
+├── public/index.html
+├── src/App.jsx
+├── src/index.js
+├── src/index.css
+├── package.json (rename package-complete.json)
+├── tailwind.config.js
+├── postcss.config.js
+├── .env.example
+└── (other files)
+
+
+STEP 3: Open Terminal/Command Prompt
+====================================
+In Windows: Right-click in the rotaract-website folder → Open PowerShell
+In Mac: Open Terminal app → cd rotaract-website
+
+
+STEP 4: Install Everything
+===========================
+Type: npm install
+Press Enter
+Wait 3-5 minutes (lots of text = normal)
+
+
+STEP 5: Run Your Website
+========================
+Type: npm start
+Press Enter
+Your website opens automatically!
+
+
+STEP 6: Edit & Customize
+========================
+Open: rotaract-website.jsx (or App.jsx)
+Find the text you want to change
+Change it
+Save the file
+Website updates automatically in your browser!
+
+
+DONE!
+=====
+You now have a working website.
+You can edit, change, and customize everything.
+
+
+TO LAUNCH ONLINE
+================
+When ready to go live:
+
+Option A - Easiest (Vercel):
+1. Go to https://vercel.com
+2. Sign up
+3. Upload your rotaract-website folder
+4. Done! You get a live URL
+
+Option B - Your College Server:
+1. Type: npm run build
+2. Upload the "build" folder to your server
+3. Done!
+
+
+NEED HELP?
+==========
+Read FOLDER_STRUCTURE.txt - it explains everything clearly.
