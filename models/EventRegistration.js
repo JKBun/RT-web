@@ -1,4 +1,4 @@
-const db = require('../config/db');
+const db = require('../database/db');
 const crypto = require('crypto');
 
 class EventRegistration {

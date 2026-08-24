@@ -1,4 +1,4 @@
-const db = require('../config/db');
+const db = require('../database/db');
 
 class Event {
   static async findAll() {

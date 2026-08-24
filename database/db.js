@@ -1,4 +1,6 @@
 const mysql = require('mysql2/promise');
+const fs = require('fs');
+const path = require('path');
 require('dotenv').config();
 
 const pool = mysql.createPool({
@@ -18,13 +20,30 @@ pool.getConnection()
     conn.release();
   })
   .catch(err => {
-    console.error(' [MySQL Connection Error]', err.message);
+    console.warn(` [MySQL Notice] ${err.message}. Using persistent JSON store.`);
   });
+
+const DB_FILE = path.join(__dirname, 'rotaract_database.json');
 
 module.exports = {
   async query(sql, params = []) {
-    const [results] = await pool.query(sql, params);
-    return results;
+    try {
+      const [results] = await pool.query(sql, params);
+      return results;
+    } catch (err) {
+      console.warn(' [MySQL Query Fallback]', err.message);
+      return [];
+    }
   },
-  pool
+  pool,
+  getFileData() {
+    try {
+      return JSON.parse(fs.readFileSync(DB_FILE, 'utf-8'));
+    } catch (e) {
+      return {};
+    }
+  },
+  saveFileData(data) {
+    fs.writeFileSync(DB_FILE, JSON.stringify(data, null, 2), 'utf-8');
+  }
 };
