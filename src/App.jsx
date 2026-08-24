@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import InteractiveParticles from './components/InteractiveParticles';
 import CurvedFlowingLines from './components/CurvedFlowingLines';
 import { BRAND_CONFIG } from './config/branding';
+import { TEAM_MEMBERS } from './config/members';
 import { 
   Menu, X, Calendar, Users, Award, Mail, Phone, MapPin, 
   Facebook, Instagram, Linkedin, ArrowRight, Play, Pause, 
@@ -432,16 +433,7 @@ const RotaractWebsite = () => {
     { year: '2020-2021', title: 'Outstanding Crisis Response Initiative', org: 'Rotaract District Citation' }
   ];
 
-  const teamMembers = [
-    { position: 'President', name: 'Rtr. Kaveen Silva', bio: 'Directing strategic vision & club growth', img: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=400' },
-    { position: 'Vice President', name: 'Rtr. Anuki Perera', bio: 'Leading operations and project execution', img: 'https://images.unsplash.com/photo-1580489944761-15a19d654956?auto=format&fit=crop&q=80&w=400' },
-    { position: 'Secretary', name: 'Rtr. Dineth Wickramasinghe', bio: 'Managing club communications & records', img: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&q=80&w=400' },
-    { position: 'Treasurer', name: 'Rtr. Nimasha Fernando', bio: 'Overseeing finance, budgets & compliance', img: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&q=80&w=400' },
-    { position: 'Dir. Community Service', name: 'Rtr. Senuri Jayawardena', bio: 'Head of humanitarian & social impact', img: 'https://images.unsplash.com/photo-1567532939604-b6b5b0db2604?auto=format&fit=crop&q=80&w=400' },
-    { position: 'Dir. Professional Dev', name: 'Rtr. Malith De Silva', bio: 'Spearheading career & leadership workshops', img: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&q=80&w=400' },
-    { position: 'Dir. Club Service', name: 'Rtr. Tharushi Alwis', bio: 'Fostering member fellowship & engagement', img: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&q=80&w=400' },
-    { position: 'Dir. International Service', name: 'Rtr. Rahul Rodrigo', bio: 'Connecting with global Rotaract networks', img: 'https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?auto=format&fit=crop&q=80&w=400' }
-  ];
+  const teamMembers = TEAM_MEMBERS;
 
   const filteredProjects = projectCategory === 'all' 
     ? projects 
