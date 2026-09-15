@@ -157,27 +157,33 @@
   "projects": [
     {
       "id": 1,
+      "title": "Feed the Paw: Stray Animal Welfare Drive",
+      "avenue_id": 2,
+      "summary": "A compassionate community welfare drive providing nutritious food, hydration, and care to 75-100 stray dogs and cats in Kandy.",
+      "funds_raised": 45000.0,
+      "image_url": "/photos/feed-the-paw.png",
+      "impact": "75-100 Animals Fed",
+      "status": "Completed"
+    },
+    {
+      "id": 2,
+      "title": "Coffee and Chill: Member Networking Evening",
+      "avenue_id": 3,
+      "summary": "An informal networking evening for brainstorming, skill sharing, and building lifelong professional friendships over coffee with 25+ attendees.",
+      "funds_raised": 15000.0,
+      "image_url": "/photos/coffee-and-chill.jpeg",
+      "impact": "25+ Attendees",
+      "status": "Completed"
+    },
+    {
+      "id": 3,
       "title": "Miles of Memories: Hanthana Mountain Hike",
       "avenue_id": 1,
       "summary": "An adventurous hiking expedition up the scenic Hanthana mountain range fostering outdoor fellowship and team spirit.",
       "funds_raised": 25000.0,
-      "image_url": "/photos/miles-of-memories.jpeg"
-    },
-    {
-      "id": 2,
-      "title": "Feed the Paw: Stray Animal Welfare Drive",
-      "avenue_id": 2,
-      "summary": "A compassionate community welfare drive providing nutritious food, hydration, and care to stray dogs and cats in Kandy.",
-      "funds_raised": 45000.0,
-      "image_url": "/photos/feed-the-paw.png"
-    },
-    {
-      "id": 3,
-      "title": "Coffee and Chill: Member Networking Evening",
-      "avenue_id": 3,
-      "summary": "An informal networking evening for brainstorming, skill sharing, and building lifelong professional friendships over coffee.",
-      "funds_raised": 15000.0,
-      "image_url": "/photos/coffee-and-chill.jpeg"
+      "image_url": "/photos/miles-of-memories.jpeg",
+      "impact": "40+ Members Summited",
+      "status": "Completed"
     }
   ]
 }

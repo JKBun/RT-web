@@ -313,7 +313,7 @@ const RotaractWebsite = () => {
     { number: '16+', label: 'Years of Leadership', sub: 'Chartered at NIBM', icon: Award }
   ];
 
-    const upcomingEvents = [
+      const upcomingEvents = [
     {
       id: 1,
       date: 'Oct 18, 2026',
@@ -322,7 +322,9 @@ const RotaractWebsite = () => {
       location: 'Kandy Lake Round & NIBM Campus Grounds',
       category: 'Health',
       description: 'A 5km charity run and community health awareness walk to support cancer treatment facilities, promote early detection, and inspire healthy living.',
-      image: 'https://images.unsplash.com/photo-1552674605-db6ffd4facb5?auto=format&fit=crop&q=80&w=800'
+      image: 'https://images.unsplash.com/photo-1552674605-db6ffd4facb5?auto=format&fit=crop&q=80&w=800',
+      isRegisterable: true,
+      status: 'Upcoming'
     },
     {
       id: 2,
@@ -332,37 +334,45 @@ const RotaractWebsite = () => {
       location: 'Bogambara Stadium, Kandy',
       category: 'Club Service',
       description: 'The ultimate 7-a-side inter-avenue rugby championship celebrating youth athletic spirit, teamwork, and high-energy fellowship.',
-      image: 'https://images.unsplash.com/photo-1574629810360-7efbbe195018?auto=format&fit=crop&q=80&w=800'
+      image: 'https://images.unsplash.com/photo-1574629810360-7efbbe195018?auto=format&fit=crop&q=80&w=800',
+      isRegisterable: true,
+      status: 'Upcoming'
     }
   ];
 
   const projects = [
     {
       id: 'proj1',
-      title: 'Miles of Memories: Hanthana Mountain Hike',
-      category: 'Club Service',
-      desc: 'An adventurous hiking expedition up the scenic Hanthana mountain range fostering outdoor fellowship and team spirit.',
-      impact: '45+ Members Summited',
-      image: '/photos/miles-of-memories.jpeg',
-      details: 'Miles of Memories brought club members together for an unforgettable trek across the peaks of Hanthana. The expedition emphasized environmental conservation with a zero-litter trail policy and strengthened inter-member bonds.'
-    },
-    {
-      id: 'proj2',
       title: 'Feed the Paw: Stray Animal Welfare Drive',
       category: 'Community',
       desc: 'A compassionate community welfare drive providing nutritious food, hydration, and care to stray dogs and cats in Kandy.',
-      impact: '150+ Animals Fed & Protected',
+      impact: '75-100 Animals Fed',
       image: '/photos/feed-the-paw.png',
-      details: 'Feed the Paw addressed the pressing needs of street animals across major urban hubs in Kandy. Volunteers prepared nutritious meals and distributed water stations, creating widespread public awareness about humane animal treatment.'
+      isRegisterable: false,
+      status: 'Completed',
+      details: 'Feed the Paw addressed the pressing needs of street animals across major urban hubs in Kandy. Volunteers prepared nutritious meals and distributed water stations, feeding between 75 to 100 stray dogs and cats.'
     },
     {
-      id: 'proj3',
+      id: 'proj2',
       title: 'Coffee and Chill: Member Networking Evening',
       category: 'Professional Dev',
       desc: 'An informal networking evening for brainstorming, skill sharing, and building lifelong professional friendships over coffee.',
-      impact: '60+ Attendees Engaged',
+      impact: '25+ Attendees',
       image: '/photos/coffee-and-chill.jpeg',
-      details: 'Coffee and Chill provided a relaxed, welcoming environment for new and senior Rotaractors to connect. Discussions covered career planning, upcoming Rotary district initiatives, and creative project development.'
+      isRegisterable: false,
+      status: 'Completed',
+      details: 'Coffee and Chill provided a relaxed, welcoming environment for new and senior Rotaractors to connect. Discussions covered career planning, upcoming Rotary district initiatives, and creative project development with over 25+ active participants.'
+    },
+    {
+      id: 'proj3',
+      title: 'Miles of Memories: Hanthana Mountain Hike',
+      category: 'Club Service',
+      desc: 'An adventurous hiking expedition up the scenic Hanthana mountain range fostering outdoor fellowship and team spirit.',
+      impact: '40+ Members Summited',
+      image: '/photos/miles-of-memories.jpeg',
+      isRegisterable: false,
+      status: 'Completed',
+      details: 'Miles of Memories brought club members together for an unforgettable trek across the peaks of Hanthana. The expedition emphasized environmental conservation with a zero-litter trail policy and strengthened inter-member bonds.'
     },
     {
       id: 'proj4',
@@ -371,6 +381,8 @@ const RotaractWebsite = () => {
       desc: 'Setting up mini digital libraries and donating books to rural primary schools.',
       impact: '12 Schools Supported',
       image: 'https://images.unsplash.com/photo-1503676260728-1c00da094a0b?auto=format&fit=crop&q=80&w=800',
+      isRegisterable: false,
+      status: 'Completed',
       details: 'Project Hope focuses on creating accessible educational resources by equipping rural schools with modern digital tablets and curated book collections.'
     },
     {
@@ -380,6 +392,8 @@ const RotaractWebsite = () => {
       desc: 'Tree planting campaigns, nature trail cleanups, and sustainability education for school youth.',
       impact: '500+ Saplings Planted',
       image: 'https://images.unsplash.com/photo-1618477247222-acbdb0e159b3?auto=format&fit=crop&q=80&w=800',
+      isRegisterable: false,
+      status: 'Completed',
       details: 'SustainEarth engages youth volunteers in environmental preservation through active planting drives, green habit awareness, and recycling partnerships.'
     },
     {
@@ -389,6 +403,8 @@ const RotaractWebsite = () => {
       desc: 'Free health screenings, eye care diagnostics, and essential medicine distribution for underprivileged families.',
       impact: '800+ Beneficiaries Served',
       image: 'https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?auto=format&fit=crop&q=80&w=800',
+      isRegisterable: false,
+      status: 'Completed',
       details: 'Organized in collaboration with medical experts, Heal&Care delivers free basic health checks, eye test clinics, and wellness seminars.'
     }
   ];
