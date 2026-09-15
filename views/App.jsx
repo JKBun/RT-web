@@ -413,8 +413,7 @@ const RotaractWebsite = () => {
     { id: 1, title: 'Miles of Memories Summit Trek', category: 'Club Service', img: '/photos/miles-of-memories.jpeg' },
     { id: 2, title: 'Feed the Paw Welfare Drive', category: 'Community', img: '/photos/feed-the-paw.png' },
     { id: 3, title: 'Coffee and Chill Networking Meetup', category: 'Professional Dev', img: '/photos/coffee-and-chill.jpeg' },
-    { id: 4, title: 'Rotaract Installation Ceremony', category: 'Leadership', img: 'https://images.unsplash.com/photo-1511578314322-379afb476865?auto=format&fit=crop&q=80&w=800' },
-    { id: 5, title: 'Youth Leadership & Teamwork', category: 'Leadership', img: 'https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&q=80&w=800' },
+    { id: 4, title: 'Rotaract Installation Ceremony', category: 'Leadership', img: 'https://images.unsplash.com/photo-1511578314322-379afb476865?auto=format&fit=crop&q=80&w=800' }
   ];
 
   const achievements = [
