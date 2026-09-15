@@ -1566,46 +1566,64 @@ const RotaractWebsite = () => {
 
             <div className="p-4 rounded-xl bg-slate-50 border border-slate-200 text-xs font-bold text-[#4B0082] mb-4 flex items-center justify-between">
               <span>Project Impact: {showProjectModal.impact}</span>
-              <span className="bg-emerald-100 text-emerald-800 text-[10px] uppercase tracking-wider px-2.5 py-1 rounded-full font-extrabold">Actively Recruiting Volunteers</span>
+              {showProjectModal.status === 'Completed' || showProjectModal.isRegisterable === false ? (
+                <span className="bg-purple-100 text-[#4B0082] text-[10px] uppercase tracking-wider px-2.5 py-1 rounded-full font-extrabold border border-purple-200">
+                  Event Completed • Closed
+                </span>
+              ) : (
+                <span className="bg-emerald-100 text-emerald-800 text-[10px] uppercase tracking-wider px-2.5 py-1 rounded-full font-extrabold">
+                  Actively Recruiting Volunteers
+                </span>
+              )}
             </div>
 
             <p className="text-sm text-slate-700 leading-relaxed mb-6">
               {showProjectModal.details}
             </p>
 
-            <form onSubmit={(e) => handleFormSubmit('Project Volunteer', e, showProjectModal)} className="space-y-3 pt-4 border-t border-slate-200">
-              <h4 className="text-xs font-extrabold uppercase tracking-wider text-slate-800 flex items-center gap-1.5">
-                <HeartHandshake size={16} className="text-[#4B0082]" />
-                <span>Volunteer For This Project</span>
-              </h4>
-              <div className="grid sm:grid-cols-2 gap-3">
-                <input 
-                  type="text" 
-                  name="volunteerName"
-                  required
-                  value={formData.volunteerName}
-                  onChange={handleInputChange}
-                  placeholder="Your Full Name *"
-                  className="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 border border-slate-300 text-slate-900 text-xs focus:outline-none focus:border-[#7A3B9E]"
-                />
-                <input 
-                  type="email" 
-                  name="volunteerEmail"
-                  required
-                  value={formData.volunteerEmail}
-                  onChange={handleInputChange}
-                  placeholder="Your Email *"
-                  className="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 border border-slate-300 text-slate-900 text-xs focus:outline-none focus:border-[#7A3B9E]"
-                />
+            {showProjectModal.status === 'Completed' || showProjectModal.isRegisterable === false ? (
+              <div className="p-4 rounded-2xl bg-purple-50 border border-purple-100 flex items-center justify-between text-xs text-[#4B0082]">
+                <div className="flex items-center space-x-2 font-bold">
+                  <CheckCircle2 size={16} className="text-[#4B0082]" />
+                  <span>This initiative has concluded successfully!</span>
+                </div>
+                <span className="text-[11px] font-semibold text-slate-500">Archived Milestone</span>
               </div>
-              <button 
-                type="submit"
-                className="w-full py-3 bg-[#4B0082] hover:bg-[#0B0514] text-white font-bold rounded-xl text-xs transition shadow-md flex items-center justify-center space-x-2"
-              >
-                <Sparkles size={16} />
-                <span>Sign Up as Volunteer for {showProjectModal.title}</span>
-              </button>
-            </form>
+            ) : (
+              <form onSubmit={(e) => handleFormSubmit('Project Volunteer', e, showProjectModal)} className="space-y-3 pt-4 border-t border-slate-200">
+                <h4 className="text-xs font-extrabold uppercase tracking-wider text-slate-800 flex items-center gap-1.5">
+                  <HeartHandshake size={16} className="text-[#4B0082]" />
+                  <span>Volunteer For This Project</span>
+                </h4>
+                <div className="grid sm:grid-cols-2 gap-3">
+                  <input 
+                    type="text" 
+                    name="volunteerName"
+                    required
+                    value={formData.volunteerName}
+                    onChange={handleInputChange}
+                    placeholder="Your Full Name *"
+                    className="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 border border-slate-300 text-slate-900 text-xs focus:outline-none focus:border-[#7A3B9E]"
+                  />
+                  <input 
+                    type="email" 
+                    name="volunteerEmail"
+                    required
+                    value={formData.volunteerEmail}
+                    onChange={handleInputChange}
+                    placeholder="Your Email *"
+                    className="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 border border-slate-300 text-slate-900 text-xs focus:outline-none focus:border-[#7A3B9E]"
+                  />
+                </div>
+                <button 
+                  type="submit"
+                  className="w-full py-3 bg-[#4B0082] hover:bg-[#0B0514] text-white font-bold rounded-xl text-xs transition shadow-md flex items-center justify-center space-x-2"
+                >
+                  <Sparkles size={16} />
+                  <span>Sign Up as Volunteer for {showProjectModal.title}</span>
+                </button>
+              </form>
+            )}
           </div>
         </div>
       )}
