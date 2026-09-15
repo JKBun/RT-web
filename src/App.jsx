@@ -1069,26 +1069,58 @@ const RotaractWebsite = () => {
             <p className="text-slate-600 mt-2">Meet the passionate Rotaractors leading Rotaract Club NIBM.</p>
           </div>
 
+                    {/* 3D POPUP INTERACTIVE LEADERSHIP GRID */}
           <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-8">
             {teamMembers.map((member, idx) => (
               <div 
                 key={idx}
-                className="group p-6 rounded-2xl bg-white border border-slate-200 hover:border-[#7A3B9E] transition-all duration-300 text-center shadow-sm"
+                className="group relative rounded-3xl bg-white p-6 border border-slate-200/90 shadow-sm hover:shadow-[0_20px_50px_-15px_rgba(122,59,158,0.3)] hover:border-[#7A3B9E] transition-all duration-500 ease-out transform hover:-translate-y-3 hover:scale-[1.02] text-center overflow-hidden cursor-pointer"
               >
-                <div className="relative w-28 h-28 mx-auto mb-6 rounded-2xl overflow-hidden border-2 border-slate-200 group-hover:border-[#7A3B9E] transition duration-300 shadow-sm">
-                  <img 
-                    src={member.img} 
-                    alt={member.name}
-                    className="w-full h-full object-cover group-hover:scale-105 transition duration-500" 
-                  />
+                {/* Decorative Ambient Card Gradient on Hover */}
+                <div className="absolute inset-0 bg-gradient-to-b from-purple-50/50 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
+
+                {/* Top Role Badge */}
+                <div className="relative z-10 flex justify-center mb-5">
+                  <span className="inline-flex items-center px-3 py-1 rounded-full text-[11px] font-extrabold uppercase tracking-wider bg-purple-50 text-[#4B0082] border border-purple-200/70 group-hover:bg-[#4B0082] group-hover:text-white group-hover:border-[#4B0082] transition-all duration-300 shadow-sm">
+                    {member.badge || 'Board Member'}
+                  </span>
                 </div>
-                <div className="text-xs font-bold text-[#4B0082] uppercase tracking-wider mb-1">{member.position}</div>
-                <h3 className="text-base font-bold text-slate-900 mb-2">{member.name}</h3>
-                <p className="text-xs text-slate-600 mb-4 leading-relaxed">{member.bio}</p>
+
+                {/* Avatar with Ring Pulse & 3D Zoom Effect */}
+                <div className="relative z-10 w-36 h-36 mx-auto mb-5 rounded-2xl p-1 bg-gradient-to-tr from-purple-200 via-white to-pink-200 group-hover:from-[#7A3B9E] group-hover:via-purple-400 group-hover:to-[#4B0082] transition-all duration-500 shadow-md">
+                  <div className="w-full h-full rounded-xl overflow-hidden bg-slate-100">
+                    <img 
+                      src={member.img} 
+                      alt={member.name}
+                      className="w-full h-full object-cover object-top group-hover:scale-110 transition-transform duration-700 ease-out" 
+                    />
+                  </div>
+                </div>
+
+                {/* Member Position & Name */}
+                <div className="relative z-10">
+                  <div className="text-xs font-black text-[#7A3B9E] uppercase tracking-wider mb-1 group-hover:text-[#4B0082] transition-colors duration-300">
+                    {member.position}
+                  </div>
+                  <h3 className="text-lg font-black text-slate-900 mb-2 group-hover:text-[#4B0082] transition-colors duration-300 tracking-tight">
+                    {member.name}
+                  </h3>
+                  <p className="text-xs text-slate-600 mb-4 leading-relaxed line-clamp-3">
+                    {member.bio}
+                  </p>
+
+                  {/* Connect / Details Micro-Button */}
+                  <div className="pt-2 border-t border-slate-100 flex items-center justify-center space-x-2 text-xs font-bold text-slate-500 group-hover:text-[#7A3B9E] transition-colors">
+                    <Mail size={13} className="group-hover:scale-110 transition-transform" />
+                    <span>{member.email || 'rotaract@nibm.lk'}</span>
+                  </div>
+                </div>
+
+                {/* Subtle Corner Glow Accent */}
+                <div className="absolute -bottom-6 -right-6 w-20 h-20 bg-purple-500/10 rounded-full blur-xl group-hover:bg-purple-500/25 transition-all duration-500 pointer-events-none" />
               </div>
             ))}
           </div>
-
         </div>
       </section>
 
