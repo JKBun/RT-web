@@ -313,124 +313,93 @@ const RotaractWebsite = () => {
     { number: '16+', label: 'Years of Leadership', sub: 'Chartered at NIBM', icon: Award }
   ];
 
-  const upcomingEvents = [
+    const upcomingEvents = [
     {
       id: 1,
-      date: 'Aug 15, 2026',
-      time: '09:00 AM - 02:00 PM',
-      title: 'Green Footprints Environmental Drive',
-      location: 'Viharamahadevi Park & NIBM Vicinity',
-      category: 'Environment',
-      description: 'Community-wide tree planting, urban park restoration, and plastic-free campaign led by Rotaract NIBM.',
-      image: 'https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?auto=format&fit=crop&q=80&w=800'
+      date: 'Oct 18, 2026',
+      time: '06:30 AM - 10:30 AM',
+      title: 'Rotaract Hope: Cancer Awareness Run 2026',
+      location: 'Kandy Lake Round & NIBM Campus Grounds',
+      category: 'Health',
+      description: 'A 5km charity run and community health awareness walk to support cancer treatment facilities, promote early detection, and inspire healthy living.',
+      image: 'https://images.unsplash.com/photo-1552674605-db6ffd4facb5?auto=format&fit=crop&q=80&w=800'
     },
     {
       id: 2,
-      date: 'Aug 22, 2026',
-      time: '10:00 AM - 01:00 PM',
-      title: 'NIBM Youth Scholarship & Book Distribution',
-      location: 'NIBM Auditorium, Colombo',
-      category: 'Education',
-      description: 'Awarding educational grants, stationery packs, and tech learning devices to underprivileged school children.',
-      image: 'https://images.unsplash.com/photo-1497633762265-9d179a990aa6?auto=format&fit=crop&q=80&w=800'
-    },
-    {
-      id: 3,
-      date: 'Sep 05, 2026',
-      time: '02:00 PM - 06:00 PM',
-      title: 'Rotaract Leadership & Professional Bootcamp',
-      location: 'Main Hall & Virtual Stream',
-      category: 'Professional Dev',
-      description: 'Masterclasses on project management, public speaking, artificial intelligence, and personal branding by industry executives.',
-      image: 'https://images.unsplash.com/photo-1515187029135-18ee286d815b?auto=format&fit=crop&q=80&w=800'
-    },
-    {
-      id: 4,
-      date: 'Sep 12, 2026',
-      time: '08:30 AM - 04:30 PM',
-      title: 'Suwa Arana Health Checkup & Blood Donation Camp',
-      location: 'Community Health Hub',
-      category: 'Health',
-      description: 'Free medical consultations, vision screenings, diabetic checkups, and annual blood donation drive in partnership with National Blood Transfusion Service.',
-      image: 'https://images.unsplash.com/photo-1584515979956-d9f6e5d09982?auto=format&fit=crop&q=80&w=800'
+      date: 'Nov 08, 2026',
+      time: '08:00 AM - 05:00 PM',
+      title: 'Rotaract Rugby Clash 2026',
+      location: 'Bogambara Stadium, Kandy',
+      category: 'Club Service',
+      description: 'The ultimate 7-a-side inter-avenue rugby championship celebrating youth athletic spirit, teamwork, and high-energy fellowship.',
+      image: 'https://images.unsplash.com/photo-1574629810360-7efbbe195018?auto=format&fit=crop&q=80&w=800'
     }
   ];
 
   const projects = [
     {
       id: 'proj1',
+      title: 'Miles of Memories: Hanthana Mountain Hike',
+      category: 'Club Service',
+      desc: 'An adventurous hiking expedition up the scenic Hanthana mountain range fostering outdoor fellowship and team spirit.',
+      impact: '45+ Members Summited',
+      image: '/photos/miles-of-memories.jpeg',
+      details: 'Miles of Memories brought club members together for an unforgettable trek across the peaks of Hanthana. The expedition emphasized environmental conservation with a zero-litter trail policy and strengthened inter-member bonds.'
+    },
+    {
+      id: 'proj2',
+      title: 'Feed the Paw: Stray Animal Welfare Drive',
+      category: 'Community',
+      desc: 'A compassionate community welfare drive providing nutritious food, hydration, and care to stray dogs and cats in Kandy.',
+      impact: '150+ Animals Fed & Protected',
+      image: '/photos/feed-the-paw.png',
+      details: 'Feed the Paw addressed the pressing needs of street animals across major urban hubs in Kandy. Volunteers prepared nutritious meals and distributed water stations, creating widespread public awareness about humane animal treatment.'
+    },
+    {
+      id: 'proj3',
+      title: 'Coffee and Chill: Member Networking Evening',
+      category: 'Professional Dev',
+      desc: 'An informal networking evening for brainstorming, skill sharing, and building lifelong professional friendships over coffee.',
+      impact: '60+ Attendees Engaged',
+      image: '/photos/coffee-and-chill.jpeg',
+      details: 'Coffee and Chill provided a relaxed, welcoming environment for new and senior Rotaractors to connect. Discussions covered career planning, upcoming Rotary district initiatives, and creative project development.'
+    },
+    {
+      id: 'proj4',
       title: 'Project Hope: Literacy for All',
       category: 'Education',
       desc: 'Setting up mini digital libraries and donating books to rural primary schools.',
       impact: '12 Schools Supported',
       image: 'https://images.unsplash.com/photo-1503676260728-1c00da094a0b?auto=format&fit=crop&q=80&w=800',
-      details: 'Project Hope focuses on creating accessible educational resources by equipping rural schools with modern digital tablets, curated book collections, and hosting interactive English & IT workshops for students.'
-    },
-    {
-      id: 'proj2',
-      title: 'SustainEarth Marine Conservation',
-      category: 'Environment',
-      desc: 'Coastal cleanup, coral reef restoration awareness, and mangrove planting initiatives.',
-      impact: '2.5 Tons Plastic Collected',
-      image: 'https://images.unsplash.com/photo-1618477247222-acbdb0e159b3?auto=format&fit=crop&q=80&w=800',
-      details: 'SustainEarth engages youth volunteers in protecting Sri Lanka coastal biodiversity through regular beach restoration drives, plastic recycling tie-ups, and community education.'
-    },
-    {
-      id: 'proj3',
-      title: 'Heal&Care Free Health Clinics',
-      category: 'Health',
-      desc: 'Providing free health screenings, eye care, and essential medicines to underserved communities.',
-      impact: '1,800+ Patients Treated',
-      image: 'https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?auto=format&fit=crop&q=80&w=800',
-      details: 'Organized in collaboration with medical professionals, Heal&Care conducts free diagnostic clinics, distributes prescription eye glasses, and hosts mental wellness workshops.'
-    },
-    {
-      id: 'proj4',
-      title: 'InnovateX Student Accelerator',
-      category: 'Professional Dev',
-      desc: 'Hackathons, entrepreneurship mentorship, and startup seed funding for campus innovators.',
-      impact: '40+ Startups Mentored',
-      image: 'https://images.unsplash.com/photo-1531482615713-2afd69097998?auto=format&fit=crop&q=80&w=800',
-      details: 'Empowering undergraduate innovators at NIBM to build real-world solutions through mentorship from tech leaders, seed pitch events, and industry networking.'
+      details: 'Project Hope focuses on creating accessible educational resources by equipping rural schools with modern digital tablets and curated book collections.'
     },
     {
       id: 'proj5',
-      title: 'Shakti: Women Empowerment Drive',
-      category: 'Community',
-      desc: 'Vocational skill building, health hygiene workshops, and micro-entrepreneurship support.',
-      impact: '350+ Women Trained',
-      image: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&q=80&w=800',
-      details: 'Shakti delivers practical entrepreneurship, digital literacy, and health awareness workshops to uplift women entrepreneurs and foster financial independence.'
+      title: 'SustainEarth Marine & Nature Conservation',
+      category: 'Environment',
+      desc: 'Tree planting campaigns, nature trail cleanups, and sustainability education for school youth.',
+      impact: '500+ Saplings Planted',
+      image: 'https://images.unsplash.com/photo-1618477247222-acbdb0e159b3?auto=format&fit=crop&q=80&w=800',
+      details: 'SustainEarth engages youth volunteers in environmental preservation through active planting drives, green habit awareness, and recycling partnerships.'
     },
     {
       id: 'proj6',
-      title: 'Global Bridges Exchange',
-      category: 'International',
-      desc: 'Cultural exchange forums, joint international service projects with Rotaract clubs worldwide.',
-      impact: '18 Partner Clubs Globally',
-      image: 'https://images.unsplash.com/photo-1529156069898-49953e39b3ac?auto=format&fit=crop&q=80&w=800',
-      details: 'Fostering international peace and cross-cultural understanding through virtual youth summits, collaborative humanitarian campaigns, and Rotary international conventions.'
+      title: 'Heal&Care Community Health Screening',
+      category: 'Health',
+      desc: 'Free health screenings, eye care diagnostics, and essential medicine distribution for underprivileged families.',
+      impact: '800+ Beneficiaries Served',
+      image: 'https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?auto=format&fit=crop&q=80&w=800',
+      details: 'Organized in collaboration with medical experts, Heal&Care delivers free basic health checks, eye test clinics, and wellness seminars.'
     }
   ];
 
   const galleryImages = [
-    { id: 1, title: 'Annual Community Service Drive', category: 'Community', img: 'https://images.unsplash.com/photo-1559027615-cd4628902d4a?auto=format&fit=crop&q=80&w=800' },
-    { id: 2, title: 'Youth Leadership Workshop', category: 'Leadership', img: 'https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&q=80&w=800' },
-    { id: 3, title: 'Green Park Planting Project', category: 'Environment', img: 'https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?auto=format&fit=crop&q=80&w=800' },
-    { id: 4, title: 'Medical Screening Camp', category: 'Health', img: 'https://images.unsplash.com/photo-1584515979956-d9f6e5d09982?auto=format&fit=crop&q=80&w=800' },
-    { id: 5, title: 'Rotaract Installation Ceremony', category: 'Leadership', img: 'https://images.unsplash.com/photo-1511578314322-379afb476865?auto=format&fit=crop&q=80&w=800' },
-    { id: 6, title: 'School Book Donation', category: 'Education', img: 'https://images.unsplash.com/photo-1497633762265-9d179a990aa6?auto=format&fit=crop&q=80&w=800' },
-    { id: 7, title: 'Beach Restoration Drive', category: 'Environment', img: 'https://images.unsplash.com/photo-1618477247222-acbdb0e159b3?auto=format&fit=crop&q=80&w=800' },
-    { id: 8, title: 'International Cultural Exchange', category: 'International', img: 'https://images.unsplash.com/photo-1529156069898-49953e39b3ac?auto=format&fit=crop&q=80&w=800' }
-  ];
-
-  const achievements = [
-    { year: '2025-2026', title: 'Most Outstanding Community Service Club', org: 'Rotary District 3220 Awards' },
-    { year: '2024-2025', title: 'Excellence in Youth Leadership & Innovation', org: 'NIBM Campus Honors' },
-    { year: '2023-2024', title: 'Best Environmental Project Award', org: 'National Youth Council' },
-    { year: '2022-2023', title: 'Gold Citation for Club Administration', org: 'Rotary International' },
-    { year: '2021-2022', title: 'Highest Student Community Impact Award', org: 'Higher Education Board' },
-    { year: '2020-2021', title: 'Outstanding Crisis Response Initiative', org: 'Rotaract District Citation' }
+    { id: 1, title: 'Miles of Memories Summit Trek', category: 'Club Service', img: '/photos/miles-of-memories.jpeg' },
+    { id: 2, title: 'Feed the Paw Welfare Drive', category: 'Community', img: '/photos/feed-the-paw.png' },
+    { id: 3, title: 'Coffee and Chill Networking Meetup', category: 'Professional Dev', img: '/photos/coffee-and-chill.jpeg' },
+    { id: 4, title: 'Rotaract Installation Ceremony', category: 'Leadership', img: 'https://images.unsplash.com/photo-1511578314322-379afb476865?auto=format&fit=crop&q=80&w=800' },
+    { id: 5, title: 'Youth Leadership & Teamwork', category: 'Leadership', img: 'https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&q=80&w=800' },
+    { id: 6, title: 'Green Earth Tree Planting', category: 'Environment', img: 'https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?auto=format&fit=crop&q=80&w=800' }
   ];
 
   const teamMembers = TEAM_MEMBERS;
@@ -1069,26 +1038,28 @@ const RotaractWebsite = () => {
             <p className="text-slate-600 mt-2">Meet the passionate Rotaractors leading Rotaract Club NIBM.</p>
           </div>
 
-                    {/* 3D POPUP INTERACTIVE LEADERSHIP GRID */}
+                              {/* 3D GLOWING POPUP INTERACTIVE LEADERSHIP GRID */}
           <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-8">
             {teamMembers.map((member, idx) => (
               <div 
                 key={idx}
-                className="group relative rounded-3xl bg-white p-6 border border-slate-200/90 shadow-sm hover:shadow-[0_20px_50px_-15px_rgba(122,59,158,0.3)] hover:border-[#7A3B9E] transition-all duration-500 ease-out transform hover:-translate-y-3 hover:scale-[1.02] text-center overflow-hidden cursor-pointer"
+                className="group relative rounded-3xl bg-white p-6 border border-slate-200/90 transition-all duration-500 ease-out transform hover:-translate-y-3 hover:scale-[1.03] text-center overflow-hidden cursor-pointer
+                           hover:border-[#7A3B9E] hover:shadow-[0_0_35px_rgba(122,59,158,0.45),0_15px_40px_-10px_rgba(75,0,130,0.3)]"
               >
-                {/* Decorative Ambient Card Gradient on Hover */}
-                <div className="absolute inset-0 bg-gradient-to-b from-purple-50/50 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
+                {/* Neon Ambient Card Glow Aura on Hover */}
+                <div className="absolute inset-0 bg-gradient-to-b from-purple-500/10 via-pink-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
+                <div className="absolute -inset-[1px] rounded-3xl bg-gradient-to-r from-purple-500 via-pink-500 to-indigo-500 opacity-0 group-hover:opacity-30 blur-sm transition-all duration-500 pointer-events-none" />
 
-                {/* Top Role Badge */}
+                {/* Top Role Badge with Glowing Border */}
                 <div className="relative z-10 flex justify-center mb-5">
-                  <span className="inline-flex items-center px-3 py-1 rounded-full text-[11px] font-extrabold uppercase tracking-wider bg-purple-50 text-[#4B0082] border border-purple-200/70 group-hover:bg-[#4B0082] group-hover:text-white group-hover:border-[#4B0082] transition-all duration-300 shadow-sm">
+                  <span className="inline-flex items-center px-3 py-1 rounded-full text-[11px] font-extrabold uppercase tracking-wider bg-purple-50 text-[#4B0082] border border-purple-200/70 group-hover:bg-[#4B0082] group-hover:text-white group-hover:border-[#7A3B9E] group-hover:shadow-[0_0_15px_rgba(122,59,158,0.5)] transition-all duration-300 shadow-sm">
                     {member.badge || 'Board Member'}
                   </span>
                 </div>
 
-                {/* Avatar with Ring Pulse & 3D Zoom Effect */}
-                <div className="relative z-10 w-36 h-36 mx-auto mb-5 rounded-2xl p-1 bg-gradient-to-tr from-purple-200 via-white to-pink-200 group-hover:from-[#7A3B9E] group-hover:via-purple-400 group-hover:to-[#4B0082] transition-all duration-500 shadow-md">
-                  <div className="w-full h-full rounded-xl overflow-hidden bg-slate-100">
+                {/* Avatar with Neon Pulsing Glow & 3D Zoom Effect */}
+                <div className="relative z-10 w-36 h-36 mx-auto mb-5 rounded-2xl p-1 bg-gradient-to-tr from-purple-200 via-white to-pink-200 group-hover:from-[#7A3B9E] group-hover:via-pink-400 group-hover:to-[#4B0082] group-hover:shadow-[0_0_25px_rgba(122,59,158,0.65)] transition-all duration-500">
+                  <div className="w-full h-full rounded-xl overflow-hidden bg-slate-100 ring-2 ring-transparent group-hover:ring-white transition-all duration-500">
                     <img 
                       src={member.img} 
                       alt={member.name}
@@ -1097,9 +1068,9 @@ const RotaractWebsite = () => {
                   </div>
                 </div>
 
-                {/* Member Position & Name */}
+                {/* Member Position & Name with Neon Glow Highlight */}
                 <div className="relative z-10">
-                  <div className="text-xs font-black text-[#7A3B9E] uppercase tracking-wider mb-1 group-hover:text-[#4B0082] transition-colors duration-300">
+                  <div className="text-xs font-black text-[#7A3B9E] uppercase tracking-wider mb-1 group-hover:text-[#4B0082] group-hover:drop-shadow-[0_0_8px_rgba(122,59,158,0.4)] transition-all duration-300">
                     {member.position}
                   </div>
                   <h3 className="text-lg font-black text-slate-900 mb-2 group-hover:text-[#4B0082] transition-colors duration-300 tracking-tight">
@@ -1111,13 +1082,13 @@ const RotaractWebsite = () => {
 
                   {/* Connect / Details Micro-Button */}
                   <div className="pt-2 border-t border-slate-100 flex items-center justify-center space-x-2 text-xs font-bold text-slate-500 group-hover:text-[#7A3B9E] transition-colors">
-                    <Mail size={13} className="group-hover:scale-110 transition-transform" />
+                    <Mail size={13} className="group-hover:scale-110 transition-transform text-[#7A3B9E]" />
                     <span>{member.email || 'rotaract@nibm.lk'}</span>
                   </div>
                 </div>
 
-                {/* Subtle Corner Glow Accent */}
-                <div className="absolute -bottom-6 -right-6 w-20 h-20 bg-purple-500/10 rounded-full blur-xl group-hover:bg-purple-500/25 transition-all duration-500 pointer-events-none" />
+                {/* Pulsing Corner Glow Accent */}
+                <div className="absolute -bottom-6 -right-6 w-24 h-24 bg-purple-500/10 rounded-full blur-xl group-hover:bg-purple-500/40 group-hover:scale-125 transition-all duration-500 pointer-events-none" />
               </div>
             ))}
           </div>

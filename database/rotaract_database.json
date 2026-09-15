@@ -69,37 +69,28 @@
   ],
   "events": [
     {
-      "event_id": 1,
-      "avenue_id": 1,
-      "title": "Blood Donation & Health Screening Camp 2025",
-      "description": "Annual flagship humanitarian initiative in collaboration with Kandy National Blood Transfusion Service.",
-      "event_date": "2025-10-15T09:00:00Z",
-      "venue": "NIBM Main Auditorium, Kandy Centre",
+      "id": 1,
+      "title": "Rotaract Hope: Cancer Awareness Run 2026",
+      "description": "A 5km charity run and community health awareness walk to support cancer treatment facilities, promote early detection, and inspire healthy living.",
+      "event_date": "2026-10-18 06:30:00",
+      "location": "Kandy Lake Round & NIBM Campus Grounds",
+      "avenue_id": 2,
       "max_capacity": 150,
-      "registered_count": 33,
-      "status": "Upcoming"
+      "registered_count": 42,
+      "status": "Upcoming",
+      "image_url": "https://images.unsplash.com/photo-1552674605-db6ffd4facb5?auto=format&fit=crop&q=80&w=800"
     },
     {
-      "event_id": 2,
-      "avenue_id": 3,
-      "title": "CodeCraft Full-Stack Hackathon 2025",
-      "description": "24-hour national hackathon for undergraduates solving real-world community development problems.",
-      "event_date": "2025-11-05T08:00:00Z",
-      "venue": "NIBM Computing Lab 01 & Virtual Sandbox",
-      "max_capacity": 100,
-      "registered_count": 65,
-      "status": "Upcoming"
-    },
-    {
-      "event_id": 3,
+      "id": 2,
+      "title": "Rotaract Rugby Clash 2026",
+      "description": "The ultimate 7-a-side inter-avenue rugby championship celebrating youth athletic spirit, teamwork, and high-energy fellowship.",
+      "event_date": "2026-11-08 08:00:00",
+      "location": "Bogambara Stadium, Kandy",
       "avenue_id": 1,
-      "title": "Green Roots Reforestation Drive",
-      "description": "Planting over 500 indigenous trees in the Central Highlands to preserve watersheds.",
-      "event_date": "2025-08-28T07:30:00Z",
-      "venue": "Hantana Mountain Range Nature Reserve, Kandy",
-      "max_capacity": 80,
-      "registered_count": 80,
-      "status": "Upcoming"
+      "max_capacity": 200,
+      "registered_count": 68,
+      "status": "Upcoming",
+      "image_url": "https://images.unsplash.com/photo-1574629810360-7efbbe195018?auto=format&fit=crop&q=80&w=800"
     }
   ],
   "event_registrations": [
@@ -165,22 +156,28 @@
   ],
   "projects": [
     {
-      "project_id": 1,
+      "id": 1,
+      "title": "Miles of Memories: Hanthana Mountain Hike",
       "avenue_id": 1,
-      "title": "Project Hope: Clean Water for Rural Schools",
-      "impact_summary": "Installed water purification filtration units in 3 underprivileged schools in Kandy district.",
-      "funds_raised": 150000,
-      "featured_image": "/rotaract.png",
-      "status": "Completed"
+      "summary": "An adventurous hiking expedition up the scenic Hanthana mountain range fostering outdoor fellowship and team spirit.",
+      "funds_raised": 25000.0,
+      "image_url": "/photos/miles-of-memories.jpeg"
     },
     {
-      "project_id": 2,
+      "id": 2,
+      "title": "Feed the Paw: Stray Animal Welfare Drive",
+      "avenue_id": 2,
+      "summary": "A compassionate community welfare drive providing nutritious food, hydration, and care to stray dogs and cats in Kandy.",
+      "funds_raised": 45000.0,
+      "image_url": "/photos/feed-the-paw.png"
+    },
+    {
+      "id": 3,
+      "title": "Coffee and Chill: Member Networking Evening",
       "avenue_id": 3,
-      "title": "Career Launchpad: AI & Software Engineering Series",
-      "impact_summary": "Conducted 4 industry seminars with keynote speakers from top tech firms impacting 250+ students.",
-      "funds_raised": 45000,
-      "featured_image": "/rotaract.png",
-      "status": "Completed"
+      "summary": "An informal networking evening for brainstorming, skill sharing, and building lifelong professional friendships over coffee.",
+      "funds_raised": 15000.0,
+      "image_url": "/photos/coffee-and-chill.jpeg"
     }
   ]
 }
