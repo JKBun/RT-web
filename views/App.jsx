@@ -399,7 +399,15 @@ const RotaractWebsite = () => {
     { id: 3, title: 'Coffee and Chill Networking Meetup', category: 'Professional Dev', img: '/photos/coffee-and-chill.jpeg' },
     { id: 4, title: 'Rotaract Installation Ceremony', category: 'Leadership', img: 'https://images.unsplash.com/photo-1511578314322-379afb476865?auto=format&fit=crop&q=80&w=800' },
     { id: 5, title: 'Youth Leadership & Teamwork', category: 'Leadership', img: 'https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&q=80&w=800' },
-    { id: 6, title: 'Green Earth Tree Planting', category: 'Environment', img: 'https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?auto=format&fit=crop&q=80&w=800' }
+  ];
+
+  const achievements = [
+    { year: '2025-2026', title: 'Most Outstanding Community Service Club', org: 'Rotary District 3220 Awards' },
+    { year: '2024-2025', title: 'Excellence in Youth Leadership & Innovation', org: 'NIBM Campus Honors' },
+    { year: '2023-2024', title: 'Best Environmental Project Award', org: 'National Youth Council' },
+    { year: '2022-2023', title: 'Gold Citation for Club Administration', org: 'Rotary International' },
+    { year: '2021-2022', title: 'Highest Student Community Impact Award', org: 'Higher Education Board' },
+    { year: '2020-2021', title: 'Outstanding Crisis Response Initiative', org: 'Rotaract District Citation' }
   ];
 
   const teamMembers = TEAM_MEMBERS;

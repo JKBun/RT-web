@@ -402,6 +402,15 @@ const RotaractWebsite = () => {
     { id: 6, title: 'Green Earth Tree Planting', category: 'Environment', img: 'https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?auto=format&fit=crop&q=80&w=800' }
   ];
 
+  const achievements = [
+    { year: '2025-2026', title: 'Most Outstanding Community Service Club', org: 'Rotary District 3220 Awards' },
+    { year: '2024-2025', title: 'Excellence in Youth Leadership & Innovation', org: 'NIBM Campus Honors' },
+    { year: '2023-2024', title: 'Best Environmental Project Award', org: 'National Youth Council' },
+    { year: '2022-2023', title: 'Gold Citation for Club Administration', org: 'Rotary International' },
+    { year: '2021-2022', title: 'Highest Student Community Impact Award', org: 'Higher Education Board' },
+    { year: '2020-2021', title: 'Outstanding Crisis Response Initiative', org: 'Rotaract District Citation' }
+  ];
+
   const teamMembers = TEAM_MEMBERS;
 
   const filteredProjects = projectCategory === 'all' 
