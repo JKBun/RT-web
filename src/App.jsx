@@ -709,10 +709,10 @@ const RotaractWebsite = () => {
   };
 
   const stats = [
-    { number: '500+', label: 'Active Rotaractors', sub: 'Dedicated Youth Members', icon: Users },
-    { number: '65+', label: 'Community Projects', sub: 'Completed Initiatives', icon: HeartHandshake },
-    { number: '5,000+', label: 'Lives Impacted', sub: 'Across Sri Lanka', icon: Globe },
-    { number: '16+', label: 'Years of Leadership', sub: 'Chartered at NIBM', icon: Award }
+    { number: '150+', label: 'Active Rotaractors', sub: 'Dedicated Youth Members', icon: Users },
+    { number: '20+', label: 'Community Projects', sub: 'Completed Initiatives', icon: HeartHandshake },
+    { number: '2,500+', label: 'Lives Impacted', sub: 'Across Sri Lanka', icon: Globe },
+    { number: '3+', label: 'Years of Leadership', sub: 'Chartered at NIBM', icon: Award }
   ];
 
       // upcomingEvents linked to eventsList state
