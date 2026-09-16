@@ -26,7 +26,11 @@ const RotaractWebsite = () => {
   const [myVolunteerActivities, setMyVolunteerActivities] = useState(() => {
     try {
       const saved = localStorage.getItem('rt_nibm_activities');
-      return saved ? JSON.parse(saved) : [];
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        return parsed.filter(act => act.status !== 'Cancelled by User');
+      }
+      return [];
     } catch (e) {
       return [];
     }
@@ -218,7 +222,7 @@ const RotaractWebsite = () => {
     }
 
     setMyVolunteerActivities(prev => {
-      const updated = prev.map(act => act.id === activityId ? { ...act, status: 'Cancelled by User' } : act);
+      const updated = prev.filter(act => act.id !== activityId);
       try {
         localStorage.setItem('rt_nibm_activities', JSON.stringify(updated));
       } catch (e) {}
@@ -226,10 +230,10 @@ const RotaractWebsite = () => {
     });
 
     if (volunteerConfirmation?.id === activityId) {
-      setVolunteerConfirmation(prev => prev ? { ...prev, status: 'Cancelled by User' } : null);
+      setVolunteerConfirmation(null);
     }
 
-    alert(`Your registration for "${title}" has been successfully cancelled.`);
+    alert(`Your registration for "${title}" has been cancelled and removed from your passes.`);
   };
 
   const handleFormSubmit = async (formType, e, itemContext = null) => {
