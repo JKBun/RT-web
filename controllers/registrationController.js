@@ -66,3 +66,17 @@ exports.verifyPass = async (req, res) => {
     return res.status(500).json({ success: false, error: err.message });
   }
 };
+
+exports.cancelRegistration = async (req, res) => {
+  try {
+    const { passCode } = req.body;
+    if (!passCode) return res.status(400).json({ success: false, error: 'Pass code is required.' });
+
+    const result = await EventRegistration.cancelRegistration(passCode);
+    if (!result.success) return res.status(400).json(result);
+
+    return res.json({ success: true, message: result.message });
+  } catch (err) {
+    return res.status(500).json({ success: false, error: err.message });
+  }
+};

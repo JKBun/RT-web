@@ -202,6 +202,36 @@ const RotaractWebsite = () => {
     }));
   };
 
+    // Handle Activity / Pass Cancellation
+  const handleCancelActivity = async (activityId, title) => {
+    const confirmed = window.confirm(`Are you sure you want to cancel your registration for "${title}"?\n\nThis will release your reserved slot for other attendees.`);
+    if (!confirmed) return;
+
+    try {
+      await fetch('http://localhost:5000/api/registrations/cancel', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ passCode: activityId })
+      });
+    } catch (err) {
+      console.warn('Offline mode: Cancelled locally.');
+    }
+
+    setMyVolunteerActivities(prev => {
+      const updated = prev.map(act => act.id === activityId ? { ...act, status: 'Cancelled by User' } : act);
+      try {
+        localStorage.setItem('rt_nibm_activities', JSON.stringify(updated));
+      } catch (e) {}
+      return updated;
+    });
+
+    if (volunteerConfirmation?.id === activityId) {
+      setVolunteerConfirmation(prev => prev ? { ...prev, status: 'Cancelled by User' } : null);
+    }
+
+    alert(`Your registration for "${title}" has been successfully cancelled.`);
+  };
+
   const handleFormSubmit = async (formType, e, itemContext = null) => {
     e.preventDefault();
     
@@ -1912,12 +1942,22 @@ const RotaractWebsite = () => {
                       <span className="px-2.5 py-1 rounded-md bg-emerald-950 text-emerald-400 text-[10px] font-bold border border-emerald-800">
                         {act.status}
                       </span>
-                      <button 
-                        onClick={() => setVolunteerConfirmation(act)}
-                        className="text-xs font-bold text-[#4B0082] bg-white px-3 py-1.5 rounded-xl hover:bg-slate-100 transition"
-                      >
-                        View Official Pass
-                      </button>
+                      <div className="flex items-center space-x-2">
+                        <button 
+                          onClick={() => setVolunteerConfirmation(act)}
+                          className="text-xs font-bold text-[#4B0082] bg-white px-3 py-1.5 rounded-xl hover:bg-slate-100 transition"
+                        >
+                          View Pass
+                        </button>
+                        {act.status !== 'Cancelled by User' && (
+                          <button 
+                            onClick={() => handleCancelActivity(act.id, act.title)}
+                            className="text-[11px] font-bold text-rose-400 hover:text-rose-300 bg-rose-950/40 border border-rose-800/60 px-2.5 py-1.5 rounded-xl transition"
+                          >
+                            Cancel Slot
+                          </button>
+                        )}
+                      </div>
                     </div>
                   </div>
                 ))}

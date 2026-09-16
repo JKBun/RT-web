@@ -85,6 +85,15 @@ class EventRegistration {
       reg: { ...reg, checkin_status: 'Checked-In', checkin_time: checkinTime }
     };
   }
+  static async cancelRegistration(passCode) {
+    const [reg] = await db.query('SELECT * FROM event_registrations WHERE pass_code = ? LIMIT 1', [passCode]);
+    if (!reg) return { success: false, error: 'Pass code not found in records.' };
+    if (reg.checkin_status === 'Cancelled') return { success: false, error: 'Registration is already cancelled.' };
+
+    await db.query("UPDATE event_registrations SET checkin_status = 'Cancelled' WHERE pass_code = ?", [passCode]);
+    await db.query("UPDATE events SET registered_count = GREATEST(0, registered_count - 1) WHERE event_id = ?", [reg.event_id]);
+    return { success: true, message: 'Registration cancelled. Seat quota restored!' };
+  }
 }
 
 module.exports = EventRegistration;
