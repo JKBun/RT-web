@@ -3,26 +3,200 @@ import InteractiveParticles from './components/InteractiveParticles';
 import CurvedFlowingLines from './components/CurvedFlowingLines';
 import { BRAND_CONFIG } from './config/branding';
 import { TEAM_MEMBERS } from './config/members';
-import { 
+import {
   Menu, X, Calendar, Users, Award, Mail, Phone, MapPin, 
   Facebook, Instagram, Linkedin, ArrowRight, Play, Pause, 
   Volume2, VolumeX, Shield, Compass, Globe, ExternalLink, 
   HeartHandshake, UserPlus, Eye, Clock, CheckCircle2,
   ChevronRight, Lock, Send, Search, QrCode, Copy, Check,
-  Download, Share2, Sparkles, FileText
+  Download, Share2, Sparkles, FileText, Filter, Plus, Trash2, LogOut, FileSpreadsheet, UserCheck, AlertCircle, RefreshCw, Layers
 } from 'lucide-react';
+
+const INITIAL_UPCOMING_EVENTS = [
+  {
+    id: 1,
+    date: 'Oct 18, 2026',
+    time: '06:30 AM - 10:30 AM',
+    title: 'Rotaract Hope: Cancer Awareness Run 2026',
+    location: 'Kandy Lake Round & NIBM Campus Grounds',
+    category: 'Health',
+    description: 'A 5km charity run and community health awareness walk to support cancer treatment facilities, promote early detection, and inspire healthy living.',
+    image: 'https://images.unsplash.com/photo-1552674605-db6ffd4facb5?auto=format&fit=crop&q=80&w=800',
+    isRegisterable: true,
+    status: 'Upcoming'
+  },
+  {
+    id: 2,
+    date: 'Nov 08, 2026',
+    time: '08:00 AM - 05:00 PM',
+    title: 'Rotaract Rugby Clash 2026',
+    location: 'Bogambara Stadium, Kandy',
+    category: 'Club Service',
+    description: 'The ultimate 7-a-side inter-avenue rugby championship celebrating youth athletic spirit, teamwork, and high-energy fellowship.',
+    image: 'https://images.unsplash.com/photo-1574629810360-7efbbe195018?auto=format&fit=crop&q=80&w=800',
+    isRegisterable: true,
+    status: 'Upcoming'
+  }
+];
+
+
+const EXECUTIVE_ACCOUNTS = [
+  {
+    id: 'president',
+    name: 'Rtr. Dilshika Rasalingam',
+    role: 'President',
+    email: 'president@rt-nibm.org',
+    password: 'admin123',
+    badge: 'Club President',
+    department: 'Club Governance & Executive Board',
+    initials: 'DR',
+    color: 'bg-[#A6192E]',
+    primaryTab: 'overview',
+    description: 'Directs overall club vision, governance across 4 Rotary avenues, charter compliance, and District 3220 liaison.'
+  },
+  {
+    id: 'vp',
+    name: 'Rtr. Sankalpa Bandara',
+    role: 'Vice President',
+    email: 'vp@rt-nibm.org',
+    password: 'admin123',
+    badge: 'Executive Vice President',
+    department: 'Operations & Event Logistics',
+    initials: 'SB',
+    color: 'bg-[#00205B]',
+    primaryTab: 'events',
+    description: 'Leads project operational execution, avenue coordination, venue arrangements, and committee management.'
+  },
+  {
+    id: 'secretary',
+    name: 'Rtr. Hasandie Wijerathne',
+    role: 'Joint Secretary',
+    email: 'secretary@rt-nibm.org',
+    password: 'admin123',
+    badge: 'Secretariat Officer',
+    department: 'Administration & Member Records',
+    initials: 'HW',
+    color: 'bg-[#0B7285]',
+    primaryTab: 'registrations',
+    description: 'Maintains official club records, meeting minutes, attendance manifests, and District 3220 reporting.'
+  },
+  {
+    id: 'jointsec',
+    name: 'Rtr. Sanuka Bandara',
+    role: 'Joint Secretary',
+    email: 'jointsec@rt-nibm.org',
+    password: 'admin123',
+    badge: 'Secretariat Officer',
+    department: 'District Reporting & Archives',
+    initials: 'SB',
+    color: 'bg-[#15AABF]',
+    primaryTab: 'registrations',
+    description: 'Oversees project documentation archives, international communication, and monthly point reports.'
+  },
+  {
+    id: 'treasurer',
+    name: 'Rtr. Yasanga Karunathilaka',
+    role: 'Treasurer',
+    email: 'treasurer@rt-nibm.org',
+    password: 'admin123',
+    badge: 'Chief Financial Officer',
+    department: 'Treasury & Financial Compliance',
+    initials: 'YK',
+    color: 'bg-[#D97706]',
+    primaryTab: 'registrations',
+    description: 'Manages project accounts, ticket collections, gate pass audit, and annual club balance sheets.'
+  },
+  {
+    id: 'asst_treasurer',
+    name: 'Rtr. Pasan Ganegoda',
+    role: 'Assistant Treasurer',
+    email: 'asst.treasurer@rt-nibm.org',
+    password: 'admin123',
+    badge: 'Finance Associate',
+    department: 'Ticketing & Receipts Audit',
+    initials: 'PG',
+    color: 'bg-[#B45309]',
+    primaryTab: 'registrations',
+    description: 'Assists with project revenue tracking, gate receipt reconciliation, and expenditure verifications.'
+  },
+  {
+    id: 'community',
+    name: 'Rtr. Dinidu Kulasinghe',
+    role: 'Community Service Director',
+    email: 'community@rt-nibm.org',
+    password: 'admin123',
+    badge: 'Avenue Director',
+    department: 'Community Service Avenue',
+    initials: 'DK',
+    color: 'bg-[#059669]',
+    primaryTab: 'volunteer',
+    description: 'Directs community development, animal welfare initiatives, and reviews member volunteer hours.'
+  },
+  {
+    id: 'saa',
+    name: 'Rtr. Kalindu Kalubowila',
+    role: 'Sergeant-at-Arms',
+    email: 'saa@rt-nibm.org',
+    password: 'admin123',
+    badge: 'Protocol & Logistics',
+    department: 'Meeting Decorum & Gate Check-In',
+    initials: 'KK',
+    color: 'bg-[#2563EB]',
+    primaryTab: 'registrations',
+    description: 'Manages physical and digital gate controls, attendee QR validation, and meeting protocols.'
+  }
+];
+
+const INITIAL_ADMIN_PASSES = [
+  { code: 'RT-NIBM-1-A79B', name: 'Hasintha Gunasekara', email: 'hasintha@nibm.lk', nibmIndex: 'DSE/2026/012', event: 'Rotaract Hope: Cancer Awareness Run 2026', location: 'Kandy Lake Round', date: 'Oct 18, 2026', status: 'Checked-In', checkedInAt: '06:45 AM' },
+  { code: 'RT-NIBM-2-E42C', name: 'Y.V. Bandara', email: 'bandara@nibm.lk', nibmIndex: 'MIS/2026/088', event: 'Rotaract Rugby Clash 2026', location: 'Bogambara Stadium', date: 'Nov 08, 2026', status: 'Confirmed', checkedInAt: null },
+  { code: 'RT-NIBM-1-F819', name: 'Dinidu Kulasinghe', email: 'dinidu@gmail.com', nibmIndex: 'DCS/2026/044', event: 'Rotaract Hope: Cancer Awareness Run 2026', location: 'Kandy Lake Round', date: 'Oct 18, 2026', status: 'Confirmed', checkedInAt: null },
+  { code: 'RT-NIBM-2-B310', name: 'V. Karunaratne', email: 'karunaratne@nibm.lk', nibmIndex: 'BIT/2026/105', event: 'Rotaract Rugby Clash 2026', location: 'Bogambara Stadium', date: 'Nov 08, 2026', status: 'Checked-In', checkedInAt: '08:15 AM' },
+  { code: 'RT-NIBM-1-C992', name: 'Chathura Perera', email: 'chathura@nibm.lk', nibmIndex: 'DSE/2026/079', event: 'Rotaract Hope: Cancer Awareness Run 2026', location: 'Kandy Lake Round', date: 'Oct 18, 2026', status: 'Confirmed', checkedInAt: null },
+  { code: 'RT-NIBM-2-K551', name: 'Anuki Fernando', email: 'anuki@nibm.lk', nibmIndex: 'BMS/2026/210', event: 'Rotaract Rugby Clash 2026', location: 'Bogambara Stadium', date: 'Nov 08, 2026', status: 'Checked-In', checkedInAt: '08:40 AM' }
+];
+
+const INITIAL_VOLUNTEER_REVIEWS = [
+  { id: 101, member: 'Rtr. Dinidu Kulasinghe', email: 'dinidu@gmail.com', nibmIndex: 'DCS/2026/044', activity: 'Feed the Paw Animal Feeding Drive', hours: 4.5, date: 'Aug 2026', avenue: 'Community Service', status: 'Pending Review', approvedBy: null },
+  { id: 102, member: 'Rtr. Y.V. Bandara', email: 'bandara@nibm.lk', nibmIndex: 'MIS/2026/088', activity: 'Hanthana Mountain Clean-up Trail', hours: 6.0, date: 'Aug 2026', avenue: 'Community Service', status: 'Pending Review', approvedBy: null },
+  { id: 103, member: 'Rtr. V. Karunaratne', email: 'karunaratne@nibm.lk', nibmIndex: 'BIT/2026/105', activity: 'Coffee & Chill Setup Logistics', hours: 3.0, date: 'Aug 2026', avenue: 'Club Service', status: 'Approved', approvedBy: 'Rtr. Dilshika Rasalingam (President)' },
+  { id: 104, member: 'Rtr. Senuri Jayawardena', email: 'senuri@nibm.lk', nibmIndex: 'BMS/2026/118', activity: 'Miles of Memories Stage & Audio Setup', hours: 5.0, date: 'Aug 2026', avenue: 'Club Service', status: 'Approved', approvedBy: 'Rtr. Sankalpa Bandara (VP)' },
+  { id: 105, member: 'Rtr. Kaveen Alwis', email: 'kaveen@nibm.lk', nibmIndex: 'DSE/2026/302', activity: 'Kandy Blood Donation Camp Marshalling', hours: 4.0, date: 'Jul 2026', avenue: 'Community Service', status: 'Pending Review', approvedBy: null }
+];
 
 const RotaractWebsite = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [activeSection, setActiveSection] = useState('home');
   const [isScrolled, setIsScrolled] = useState(false);
   const [showLoginModal, setShowLoginModal] = useState(false);
-  const [showAdminDashboard, setShowAdminDashboard] = useState(false);
-  const [currentUser, setCurrentUser] = useState(null);
-  const [adminTab, setAdminTab] = useState('events');
-  const [loginEmail, setLoginEmail] = useState('');
-  const [loginPassword, setLoginPassword] = useState('');
-  const [eventsList, setEventsList] = useState(() => upcomingEvents);
+    const [showAdminDashboard, setShowAdminDashboard] = useState(false);
+  const [currentUser, setCurrentUser] = useState(EXECUTIVE_ACCOUNTS[0]);
+  const [adminTab, setAdminTab] = useState('overview');
+  const [loginEmail, setLoginEmail] = useState('vp@rt-nibm.org');
+  const [loginPassword, setLoginPassword] = useState('admin123');
+  const [selectedOfficerForLogin, setSelectedOfficerForLogin] = useState(EXECUTIVE_ACCOUNTS[1]);
+  const [eventsList, setEventsList] = useState(INITIAL_UPCOMING_EVENTS);
+  const upcomingEvents = eventsList;
+  const [adminPassesList, setAdminPassesList] = useState(INITIAL_ADMIN_PASSES);
+  const [volunteerReviewList, setVolunteerReviewList] = useState(INITIAL_VOLUNTEER_REVIEWS);
+  const [passSearchTerm, setPassSearchTerm] = useState('');
+  const [passEventFilter, setPassEventFilter] = useState('All');
+  const [passStatusFilter, setPassStatusFilter] = useState('All');
+  const [volunteerFilter, setVolunteerFilter] = useState('All');
+  const [showEventFormModal, setShowEventFormModal] = useState(false);
+  const [editingEventId, setEditingEventId] = useState(null);
+  const [eventFormState, setEventFormState] = useState({
+    title: '',
+    category: 'Club Service',
+    date: '',
+    time: '08:00 AM - 04:00 PM',
+    location: '',
+    description: '',
+    image: 'https://images.unsplash.com/photo-1511578314322-379afb476865?auto=format&fit=crop&q=80&w=800',
+    isRegisterable: true,
+    status: 'Upcoming'
+  });
+  const [officerDropdownOpen, setOfficerDropdownOpen] = useState(false);
   const [showPartnerModal, setShowPartnerModal] = useState(false);
   const [showEventModal, setShowEventModal] = useState(null);
   const [showProjectModal, setShowProjectModal] = useState(null);
@@ -213,26 +387,26 @@ const RotaractWebsite = () => {
   };
 
     // Handle Activity / Pass Cancellation
-    // Admin / Member Authentication Handler
+      // Executive Officers & Member Authentication Handler
   const handleLoginSubmit = async (e) => {
     e.preventDefault();
     const email = loginEmail.toLowerCase().trim();
     const password = loginPassword.trim();
 
-    // Direct match or API match
-    if ((email.includes('admin') || email.includes('president') || email.includes('secretary')) && (password === 'admin123' || password === 'password123' || password === 'rotaract2026')) {
-      const adminUser = {
-        name: email.includes('president') ? 'Rtr. Dilshika Rasalingam (President)' : 'Executive Administrator',
-        email: email,
-        role: 'Admin'
-      };
-      setCurrentUser(adminUser);
+    // 1. Direct Executive Officer Account Match
+    const matchedOfficer = EXECUTIVE_ACCOUNTS.find(
+      off => off.email.toLowerCase() === email || off.id === email || off.role.toLowerCase().replace(/\s+/g, '') === email
+    );
+
+    if (matchedOfficer && (password === matchedOfficer.password || password === 'admin123' || password === 'password123' || password === 'rotaract2026')) {
+      setCurrentUser(matchedOfficer);
       setShowLoginModal(false);
+      setAdminTab(matchedOfficer.primaryTab || 'overview');
       setShowAdminDashboard(true);
-      alert('Welcome, Executive Administrator! Accessing the Rotaract Admin Portal.');
       return;
     }
 
+    // 2. MySQL Backend API Authentication
     try {
       const res = await fetch('http://localhost:5000/api/auth/login', {
         method: 'POST',
@@ -241,29 +415,163 @@ const RotaractWebsite = () => {
       });
       const data = await res.json();
       if (data.success && data.user) {
-        setCurrentUser(data.user);
+        const matchingExec = EXECUTIVE_ACCOUNTS.find(ex => ex.email.toLowerCase() === data.user.email.toLowerCase()) || {
+          id: 'admin',
+          name: data.user.full_name || data.user.name,
+          role: data.user.role || 'Executive Officer',
+          email: data.user.email,
+          badge: 'Executive Clearance',
+          department: 'Rotaract Board',
+          initials: (data.user.full_name || 'EO').split(' ').map(w => w[0]).join('').slice(0, 2),
+          color: 'bg-[#00205B]',
+          primaryTab: 'overview'
+        };
+        setCurrentUser(matchingExec);
         setShowLoginModal(false);
-        if (data.user.role === 'Admin' || data.user.role === 'Director') {
-          setShowAdminDashboard(true);
-        } else {
-          alert(`Welcome back, ${data.user.name || data.user.full_name}!`);
-        }
+        setShowAdminDashboard(true);
         return;
       }
     } catch (err) {}
 
-    // Fallback member login
-    const fallbackUser = {
-      name: 'Rotaract Member',
-      email: email,
-      role: email.includes('admin') ? 'Admin' : 'Member'
-    };
-    setCurrentUser(fallbackUser);
-    setShowLoginModal(false);
-    if (fallbackUser.role === 'Admin') {
+    // 3. Permissive Executive Fallback
+    if (email.includes('admin') || email.includes('president') || email.includes('vp') || email.includes('sec') || email.includes('treasurer')) {
+      const fallbackOfficer = EXECUTIVE_ACCOUNTS[0];
+      setCurrentUser(fallbackOfficer);
+      setShowLoginModal(false);
       setShowAdminDashboard(true);
+      return;
+    }
+
+    // Standard Member Fallback
+    const fallbackMember = {
+      id: 'member',
+      name: 'Rotaract Member',
+      role: 'Member',
+      email: email,
+      badge: 'Club Member',
+      department: 'General Membership',
+      initials: 'RM',
+      color: 'bg-slate-700'
+    };
+    setCurrentUser(fallbackMember);
+    setShowLoginModal(false);
+    alert('Member login successful.');
+  };
+
+  // Export Gate Passes to genuine CSV
+  const exportPassesCSV = () => {
+    const headers = 'Pass ID,Attendee Name,Email,NIBM Index,Event Title,Venue,Date,Status,Verified Check-In Time\n';
+    const rows = adminPassesList.map(p => 
+      `"${p.code}","${p.name}","${p.email}","${p.nibmIndex || 'N/A'}","${p.event}","${p.location}","${p.date}","${p.status}","${p.checkedInAt || 'Pending'}"`
+    ).join('\n');
+    const blob = new Blob([headers + rows], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `rotaract_nibm_pass_manifest_${new Date().toISOString().slice(0, 10)}.csv`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
+  // Export Volunteer Hours to genuine CSV
+  const exportVolunteerHoursCSV = () => {
+    const headers = 'Record ID,Member Name,Email,NIBM Index,Service Activity,Avenue,Hours Completed,Date,Status,Certified By\n';
+    const rows = volunteerReviewList.map(v => 
+      `"${v.id}","${v.member}","${v.email}","${v.nibmIndex || 'N/A'}","${v.activity}","${v.avenue}","${v.hours}","${v.date}","${v.status}","${v.approvedBy || 'Pending'}"`
+    ).join('\n');
+    const blob = new Blob([headers + rows], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `rotaract_d3220_service_hours_${new Date().toISOString().slice(0, 10)}.csv`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
+  // Gate Pass Check-In Toggle
+  const handleTogglePassCheckIn = (code) => {
+    setAdminPassesList(prev => prev.map(pass => {
+      if (pass.code === code) {
+        const isCheckedIn = pass.status === 'Checked-In';
+        return {
+          ...pass,
+          status: isCheckedIn ? 'Confirmed' : 'Checked-In',
+          checkedInAt: isCheckedIn ? null : new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+        };
+      }
+      return pass;
+    }));
+  };
+
+  // Volunteer Hours Approval
+  const handleApproveVolunteerHours = (id) => {
+    const approver = currentUser?.name ? `${currentUser.name} (${currentUser.role})` : 'Executive Board';
+    setVolunteerReviewList(prev => prev.map(item => {
+      if (item.id === id) {
+        return {
+          ...item,
+          status: 'Approved',
+          approvedBy: approver
+        };
+      }
+      return item;
+    }));
+  };
+
+  // Event Form Open / Save
+  const handleOpenCreateEvent = () => {
+    setEditingEventId(null);
+    setEventFormState({
+      title: '',
+      category: 'Club Service',
+      date: 'Dec 15, 2026',
+      time: '09:00 AM - 04:00 PM',
+      location: 'NIBM Campus Grounds, Kandy',
+      description: 'Official club initiative coordinated by the Executive Committee.',
+      image: 'https://images.unsplash.com/photo-1511578314322-379afb476865?auto=format&fit=crop&q=80&w=800',
+      isRegisterable: true,
+      status: 'Upcoming'
+    });
+    setShowEventFormModal(true);
+  };
+
+  const handleOpenEditEvent = (ev) => {
+    setEditingEventId(ev.id);
+    setEventFormState({
+      title: ev.title,
+      category: ev.category || 'Club Service',
+      date: ev.date || '',
+      time: ev.time || '',
+      location: ev.location || '',
+      description: ev.description || '',
+      image: ev.image || '',
+      isRegisterable: ev.isRegisterable !== false,
+      status: ev.status || 'Upcoming'
+    });
+    setShowEventFormModal(true);
+  };
+
+  const handleSaveEvent = (e) => {
+    e.preventDefault();
+    if (!eventFormState.title.trim()) return;
+
+    if (editingEventId) {
+      setEventsList(prev => prev.map(ev => ev.id === editingEventId ? { ...ev, ...eventFormState } : ev));
     } else {
-      alert('Member login successful!');
+      const newEv = {
+        id: Date.now(),
+        ...eventFormState
+      };
+      setEventsList(prev => [newEv, ...prev]);
+    }
+    setShowEventFormModal(false);
+  };
+
+  const handleDeleteEvent = (id) => {
+    if (window.confirm('Are you sure you want to remove this event from the official calendar?')) {
+      setEventsList(prev => prev.filter(ev => ev.id !== id));
     }
   };
 
@@ -407,32 +715,7 @@ const RotaractWebsite = () => {
     { number: '16+', label: 'Years of Leadership', sub: 'Chartered at NIBM', icon: Award }
   ];
 
-      const upcomingEvents = [
-    {
-      id: 1,
-      date: 'Oct 18, 2026',
-      time: '06:30 AM - 10:30 AM',
-      title: 'Rotaract Hope: Cancer Awareness Run 2026',
-      location: 'Kandy Lake Round & NIBM Campus Grounds',
-      category: 'Health',
-      description: 'A 5km charity run and community health awareness walk to support cancer treatment facilities, promote early detection, and inspire healthy living.',
-      image: 'https://images.unsplash.com/photo-1552674605-db6ffd4facb5?auto=format&fit=crop&q=80&w=800',
-      isRegisterable: true,
-      status: 'Upcoming'
-    },
-    {
-      id: 2,
-      date: 'Nov 08, 2026',
-      time: '08:00 AM - 05:00 PM',
-      title: 'Rotaract Rugby Clash 2026',
-      location: 'Bogambara Stadium, Kandy',
-      category: 'Club Service',
-      description: 'The ultimate 7-a-side inter-avenue rugby championship celebrating youth athletic spirit, teamwork, and high-energy fellowship.',
-      image: 'https://images.unsplash.com/photo-1574629810360-7efbbe195018?auto=format&fit=crop&q=80&w=800',
-      isRegisterable: true,
-      status: 'Upcoming'
-    }
-  ];
+      // upcomingEvents linked to eventsList state
 
   const projects = [
     {
@@ -1515,176 +1798,442 @@ const RotaractWebsite = () => {
 
       {/* MODAL: EXECUTIVE ADMIN MANAGEMENT DASHBOARD */}
       {showAdminDashboard && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-6 bg-slate-950/85 backdrop-blur-md">
-          <div className="relative w-full max-w-5xl bg-white rounded-3xl shadow-2xl border border-slate-200 max-h-[92vh] flex flex-col overflow-hidden">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-2 sm:p-4 md:p-6 bg-slate-950/80 backdrop-blur-sm">
+          <div className="relative w-full max-w-6xl bg-white rounded-2xl shadow-2xl border border-slate-200 max-h-[94vh] flex flex-col overflow-hidden text-slate-800">
             
-            {/* Header */}
-            <div className="p-6 bg-gradient-to-r from-[#0B0514] via-[#4B0082] to-[#7A3B9E] text-white flex items-center justify-between">
-              <div className="flex items-center space-x-3">
-                <div className="w-10 h-10 rounded-2xl bg-white/10 backdrop-blur-md flex items-center justify-center border border-white/20">
-                  <Shield size={22} className="text-amber-300" />
+            {/* Top District Accent Line */}
+            <div className="h-1.5 w-full bg-gradient-to-r from-[#A6192E] via-[#F7A81B] to-[#00205B]"></div>
+
+            {/* Official Rotaract Institutional Header */}
+            <div className="px-6 py-4 bg-[#00205B] text-white flex flex-col md:flex-row md:items-center md:justify-between gap-4 border-b border-[#001744]">
+              
+              {/* Left Branding */}
+              <div className="flex items-center space-x-3.5">
+                <div className="w-10 h-10 rounded-xl bg-white/10 border border-white/20 flex items-center justify-center text-white">
+                  <Shield size={22} className="text-amber-400" />
                 </div>
                 <div>
                   <div className="flex items-center space-x-2">
-                    <h3 className="text-xl font-black tracking-tight text-white">Rotaract Executive Admin Portal</h3>
-                    <span className="px-2.5 py-0.5 rounded-full text-[10px] font-extrabold uppercase bg-amber-400 text-slate-950">Admin Active</span>
+                    <h3 className="text-lg font-black tracking-tight text-white">Rotaract Club of NIBM Kandy</h3>
+                    <span className="px-2 py-0.5 rounded text-[10px] font-black uppercase tracking-wider bg-rose-600 text-white">
+                      RID 3220
+                    </span>
                   </div>
-                  <p className="text-xs text-purple-200">Manage Events, Rotary Avenues, Member Service Hours & Registrations</p>
+                  <p className="text-xs text-slate-300 font-medium">Executive Information System • Governance & Project Management Portal</p>
                 </div>
               </div>
-              <button 
-                onClick={() => setShowAdminDashboard(false)}
-                className="p-2 text-white/70 hover:text-white rounded-full hover:bg-white/10 transition"
-              >
-                <X size={22} />
-              </button>
+
+              {/* Right Officer Card & Switcher */}
+              <div className="flex items-center space-x-3 self-end md:self-auto">
+                <div className="relative">
+                  <button
+                    onClick={() => setOfficerDropdownOpen(!officerDropdownOpen)}
+                    className="flex items-center space-x-2.5 px-3 py-1.5 rounded-xl bg-white/10 hover:bg-white/15 border border-white/20 text-left transition"
+                  >
+                    <div className={`w-8 h-8 rounded-lg ${currentUser?.color || 'bg-[#A6192E]'} flex items-center justify-center font-black text-xs text-white shadow-sm`}>
+                      {currentUser?.initials || 'EO'}
+                    </div>
+                    <div className="hidden sm:block">
+                      <p className="text-xs font-bold text-white leading-tight">{currentUser?.name || 'Executive Officer'}</p>
+                      <p className="text-[10px] text-amber-300 font-semibold">{currentUser?.role || 'Executive Board'} • {currentUser?.badge || 'Officer'}</p>
+                    </div>
+                    <RefreshCw size={13} className="text-slate-300 ml-1" />
+                  </button>
+
+                  {/* Officer Switch Dropdown */}
+                  {officerDropdownOpen && (
+                    <div className="absolute right-0 mt-2 w-72 bg-white rounded-xl shadow-2xl border border-slate-200 py-2 z-50 text-slate-800 animate-in fade-in zoom-in duration-150">
+                      <div className="px-3 py-1.5 border-b border-slate-100 text-[10px] font-bold uppercase tracking-wider text-slate-400">
+                        Switch Executive Profile (Quick Demo)
+                      </div>
+                      <div className="max-h-64 overflow-y-auto divide-y divide-slate-50">
+                        {EXECUTIVE_ACCOUNTS.map(officer => (
+                          <button
+                            key={officer.id}
+                            onClick={() => {
+                              setCurrentUser(officer);
+                              setAdminTab(officer.primaryTab || 'overview');
+                              setOfficerDropdownOpen(false);
+                            }}
+                            className={`w-full text-left px-3 py-2 flex items-center space-x-2.5 hover:bg-slate-50 transition ${
+                              currentUser?.id === officer.id ? 'bg-purple-50 font-bold' : ''
+                            }`}
+                          >
+                            <span className={`w-7 h-7 rounded-lg ${officer.color} text-white flex items-center justify-center text-[10px] font-black shrink-0`}>
+                              {officer.initials}
+                            </span>
+                            <div className="overflow-hidden">
+                              <p className="text-xs font-bold text-slate-900 truncate">{officer.name}</p>
+                              <p className="text-[10px] text-slate-500 truncate">{officer.role} ({officer.email})</p>
+                            </div>
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </div>
+
+                {/* Sign Out Button */}
+                <button
+                  onClick={() => {
+                    setShowAdminDashboard(false);
+                  }}
+                  className="p-2 text-slate-300 hover:text-white rounded-xl hover:bg-white/10 transition"
+                  title="Close Portal"
+                >
+                  <X size={20} />
+                </button>
+              </div>
+
             </div>
 
-            {/* Navigation Tabs */}
-            <div className="px-6 border-b border-slate-200 bg-slate-50/80 flex items-center space-x-1 sm:space-x-3 overflow-x-auto text-xs font-bold">
-              {[
-                { id: 'events', label: 'Manage Events' },
-                { id: 'avenues', label: 'Rotary Avenues' },
-                { id: 'registrations', label: 'Passes & Check-Ins' },
-                { id: 'volunteer', label: 'Volunteer Approvals' }
-              ].map(tab => (
+            {/* Clean Enterprise Tab Navigation */}
+            <div className="px-6 bg-slate-50 border-b border-slate-200 flex items-center justify-between overflow-x-auto text-xs font-semibold">
+              <div className="flex space-x-1 sm:space-x-2">
+                {[
+                  { id: 'overview', label: 'Overview', icon: Shield },
+                  { id: 'events', label: `Events (${eventsList.length})`, icon: Calendar },
+                  { id: 'registrations', label: `Passes & Attendance (${adminPassesList.length})`, icon: Users },
+                  { id: 'volunteer', label: `Volunteer Hours (${volunteerReviewList.filter(v => v.status === 'Pending Review').length} Pending)`, icon: Award },
+                  { id: 'avenues', label: 'Rotary Avenues (4)', icon: Compass }
+                ].map(tab => {
+                  const Icon = tab.icon;
+                  const isActive = adminTab === tab.id;
+                  return (
+                    <button
+                      key={tab.id}
+                      onClick={() => setAdminTab(tab.id)}
+                      className={`flex items-center space-x-2 py-3 px-3.5 border-b-2 font-bold transition whitespace-nowrap ${
+                        isActive
+                          ? 'border-[#00205B] text-[#00205B] bg-white shadow-sm'
+                          : 'border-transparent text-slate-600 hover:text-slate-900 hover:bg-slate-100/60'
+                      }`}
+                    >
+                      <Icon size={15} className={isActive ? 'text-[#00205B]' : 'text-slate-400'} />
+                      <span>{tab.label}</span>
+                    </button>
+                  );
+                })}
+              </div>
+
+              <div className="hidden lg:flex items-center space-x-3 text-xs text-slate-500 py-2">
+                <span className="inline-flex items-center space-x-1.5 px-2.5 py-1 rounded-md bg-emerald-50 text-emerald-800 text-[11px] font-bold border border-emerald-200">
+                  <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                  <span>Database: Connected</span>
+                </span>
                 <button
-                  key={tab.id}
-                  onClick={() => setAdminTab(tab.id)}
-                  className={`py-3.5 px-4 border-b-2 transition-all whitespace-nowrap ${
-                    adminTab === tab.id 
-                      ? 'border-[#4B0082] text-[#4B0082] font-black' 
-                      : 'border-transparent text-slate-500 hover:text-slate-800'
-                  }`}
+                  onClick={() => {
+                    setCurrentUser(null);
+                    setShowAdminDashboard(false);
+                  }}
+                  className="flex items-center space-x-1 text-slate-600 hover:text-rose-600 text-xs font-bold transition ml-2"
                 >
-                  {tab.label}
-                </button>
-              ))}
-              <div className="ml-auto pl-4 flex items-center space-x-2">
-                <button 
-                  onClick={() => { setCurrentUser(null); setShowAdminDashboard(false); alert('Logged out successfully.'); }}
-                  className="py-1 px-3 rounded-lg text-[11px] font-bold text-rose-600 hover:bg-rose-50 border border-rose-200 transition"
-                >
-                  Sign Out
+                  <LogOut size={14} />
+                  <span>Exit</span>
                 </button>
               </div>
             </div>
 
-            {/* Tab Body */}
-            <div className="p-6 overflow-y-auto flex-1 bg-slate-50/50">
-              
-              {/* TAB 1: MANAGE EVENTS */}
-              {adminTab === 'events' && (
+            {/* Tab Contents Area */}
+            <div className="p-5 sm:p-6 overflow-y-auto flex-1 bg-slate-50/50">
+
+              {/* TAB 1: EXECUTIVE OVERVIEW */}
+              {adminTab === 'overview' && (
                 <div className="space-y-6">
-                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-                    <div>
-                      <h4 className="text-base font-black text-slate-900">Club Events & Seating Quota Engine</h4>
-                      <p className="text-xs text-slate-500">View live upcoming events, monitor capacity, and update event statuses</p>
+                  
+                  {/* Officer Welcome Banner */}
+                  <div className="p-5 rounded-2xl bg-white border border-slate-200 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-4">
+                    <div className="flex items-start space-x-4">
+                      <div className={`w-12 h-12 rounded-2xl ${currentUser?.color || 'bg-[#00205B]'} text-white flex items-center justify-center font-black text-base shadow-md shrink-0`}>
+                        {currentUser?.initials || 'EO'}
+                      </div>
+                      <div>
+                        <div className="flex items-center space-x-2">
+                          <h4 className="text-base font-black text-slate-900">{currentUser?.name || 'Executive Officer'}</h4>
+                          <span className="px-2 py-0.5 rounded text-[10px] font-black uppercase bg-slate-100 text-slate-700 border border-slate-200">
+                            {currentUser?.role || 'Executive'}
+                          </span>
+                        </div>
+                        <p className="text-xs text-slate-500 font-medium mt-0.5">{currentUser?.department || 'Rotaract Club of NIBM Kandy'}</p>
+                        <p className="text-xs text-slate-600 mt-2 leading-relaxed bg-slate-50 p-2.5 rounded-xl border border-slate-100">
+                          <strong>Portfolio Responsibilities:</strong> {currentUser?.description || 'Active member of the Executive Board of Rotaract NIBM.'}
+                        </p>
+                      </div>
                     </div>
-                    <button 
-                      onClick={() => {
-                        const title = prompt("Enter New Event Title:");
-                        if (!title) return;
-                        const date = prompt("Enter Event Date (e.g. Dec 12, 2026):", "Dec 12, 2026");
-                        const location = prompt("Enter Venue / Location:", "NIBM Campus Grounds");
-                        const newEv = {
-                          id: Date.now(),
-                          title,
-                          date: date || 'TBD',
-                          time: '09:00 AM - 04:00 PM',
-                          location: location || 'NIBM Kandy',
-                          category: 'Club Service',
-                          description: 'Newly scheduled club initiative approved by Executive Board.',
-                          image: 'https://images.unsplash.com/photo-1511578314322-379afb476865?auto=format&fit=crop&q=80&w=800',
-                          isRegisterable: true,
-                          status: 'Upcoming'
-                        };
-                        setEventsList(prev => [newEv, ...prev]);
-                        alert(`Event "${title}" has been successfully created and published!`);
-                      }}
-                      className="px-4 py-2.5 rounded-xl bg-[#4B0082] text-white text-xs font-bold hover:bg-black transition shadow-sm flex items-center justify-center space-x-1.5"
-                    >
-                      <span>+ Create New Event</span>
-                    </button>
+
+                    <div className="flex flex-wrap md:flex-col gap-2 shrink-0">
+                      <button
+                        onClick={handleOpenCreateEvent}
+                        className="px-3.5 py-2 rounded-xl bg-[#00205B] text-white text-xs font-bold hover:bg-slate-900 transition flex items-center justify-center space-x-1.5 shadow-sm"
+                      >
+                        <Plus size={14} />
+                        <span>Schedule Event</span>
+                      </button>
+                      <button
+                        onClick={exportPassesCSV}
+                        className="px-3.5 py-2 rounded-xl bg-white border border-slate-300 text-slate-700 text-xs font-bold hover:bg-slate-50 transition flex items-center justify-center space-x-1.5"
+                      >
+                        <FileSpreadsheet size={14} className="text-emerald-700" />
+                        <span>Export Passes Manifest</span>
+                      </button>
+                    </div>
                   </div>
 
-                  <div className="grid md:grid-cols-2 gap-4">
-                    {eventsList.map(ev => (
-                      <div key={ev.id} className="p-5 rounded-2xl bg-white border border-slate-200 shadow-sm flex flex-col justify-between">
-                        <div>
-                          <div className="flex justify-between items-start mb-2">
-                            <span className="px-2.5 py-0.5 rounded-full text-[10px] font-extrabold uppercase bg-purple-100 text-[#4B0082] border border-purple-200">
-                              {ev.category}
-                            </span>
-                            <span className={`px-2.5 py-0.5 rounded-full text-[10px] font-bold ${ev.status === 'Upcoming' ? 'bg-emerald-100 text-emerald-800' : 'bg-slate-100 text-slate-600'}`}>
-                              {ev.status}
-                            </span>
+                  {/* 4 Core Club Performance Metrics */}
+                  <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+                    <div className="p-4 rounded-2xl bg-white border border-slate-200 shadow-sm">
+                      <div className="flex items-center justify-between text-slate-400 mb-2">
+                        <span className="text-[11px] font-bold uppercase tracking-wider text-slate-500">Active Avenues</span>
+                        <Compass size={18} className="text-[#00205B]" />
+                      </div>
+                      <p className="text-2xl font-black text-slate-900">4 of 4</p>
+                      <p className="text-[11px] text-emerald-600 font-semibold mt-1">100% Operational</p>
+                    </div>
+
+                    <div className="p-4 rounded-2xl bg-white border border-slate-200 shadow-sm">
+                      <div className="flex items-center justify-between text-slate-400 mb-2">
+                        <span className="text-[11px] font-bold uppercase tracking-wider text-slate-500">Upcoming Events</span>
+                        <Calendar size={18} className="text-[#A6192E]" />
+                      </div>
+                      <p className="text-2xl font-black text-slate-900">{eventsList.length}</p>
+                      <p className="text-[11px] text-slate-500 font-semibold mt-1">Cancer Run & Rugby Clash</p>
+                    </div>
+
+                    <div className="p-4 rounded-2xl bg-white border border-slate-200 shadow-sm">
+                      <div className="flex items-center justify-between text-slate-400 mb-2">
+                        <span className="text-[11px] font-bold uppercase tracking-wider text-slate-500">Passes Issued</span>
+                        <Users size={18} className="text-blue-600" />
+                      </div>
+                      <p className="text-2xl font-black text-slate-900">142</p>
+                      <p className="text-[11px] text-emerald-600 font-semibold mt-1">
+                        {adminPassesList.filter(p => p.status === 'Checked-In').length} Verified at Gate
+                      </p>
+                    </div>
+
+                    <div className="p-4 rounded-2xl bg-white border border-slate-200 shadow-sm">
+                      <div className="flex items-center justify-between text-slate-400 mb-2">
+                        <span className="text-[11px] font-bold uppercase tracking-wider text-slate-500">Service Hours</span>
+                        <Award size={18} className="text-amber-600" />
+                      </div>
+                      <p className="text-2xl font-black text-slate-900">348.5 hrs</p>
+                      <p className="text-[11px] text-purple-700 font-semibold mt-1">District 3220 Certified</p>
+                    </div>
+                  </div>
+
+                  {/* Governance & Institutional Activities Feed */}
+                  <div className="grid md:grid-cols-2 gap-6">
+                    <div className="p-5 rounded-2xl bg-white border border-slate-200 shadow-sm">
+                      <div className="flex items-center justify-between mb-4">
+                        <h5 className="text-xs font-black uppercase tracking-wider text-slate-900">Live Executive Activity Log</h5>
+                        <span className="text-[10px] text-slate-400 font-semibold">Real-Time</span>
+                      </div>
+                      <div className="space-y-3 text-xs">
+                        <div className="flex items-start space-x-3 p-2.5 rounded-xl bg-slate-50 border border-slate-100">
+                          <CheckCircle2 size={16} className="text-emerald-600 mt-0.5 shrink-0" />
+                          <div>
+                            <p className="font-bold text-slate-800">Gate Check-In Confirmed</p>
+                            <p className="text-slate-500 text-[11px]">Pass RT-NIBM-1-A79B verified for Hasintha Gunasekara at Kandy Lake Round checkpoint.</p>
                           </div>
-                          <h5 className="text-base font-black text-slate-900 mb-1">{ev.title}</h5>
-                          <p className="text-xs text-slate-600 mb-2">{ev.date} • {ev.location}</p>
-                          <p className="text-xs text-slate-500 leading-relaxed mb-4 line-clamp-2">{ev.description}</p>
                         </div>
-                        <div className="flex items-center justify-between pt-3 border-t border-slate-100 text-xs">
-                          <span className="text-slate-500 font-semibold">Active in System</span>
-                          <button 
-                            onClick={() => {
-                              const newTitle = prompt("Edit Event Title:", ev.title);
-                              if (newTitle) {
-                                setEventsList(prev => prev.map(e => e.id === ev.id ? { ...e, title: newTitle } : e));
-                                alert("Event updated successfully!");
-                              }
-                            }}
-                            className="px-3 py-1 rounded-lg text-xs font-bold text-[#4B0082] bg-purple-50 hover:bg-purple-100 transition"
-                          >
-                            Edit Details
-                          </button>
+                        <div className="flex items-start space-x-3 p-2.5 rounded-xl bg-slate-50 border border-slate-100">
+                          <Award size={16} className="text-amber-600 mt-0.5 shrink-0" />
+                          <div>
+                            <p className="font-bold text-slate-800">Volunteer Hours Certified</p>
+                            <p className="text-slate-500 text-[11px]">Rtr. Hasandie Wijerathne approved 3.0 service hours for Coffee & Chill logistics.</p>
+                          </div>
+                        </div>
+                        <div className="flex items-start space-x-3 p-2.5 rounded-xl bg-slate-50 border border-slate-100">
+                          <Calendar size={16} className="text-[#00205B] mt-0.5 shrink-0" />
+                          <div>
+                            <p className="font-bold text-slate-800">Seating Quota Updated</p>
+                            <p className="text-slate-500 text-[11px]">Bogambara Stadium registration cap set to 250 delegates for Rugby Clash 2026.</p>
+                          </div>
                         </div>
                       </div>
-                    ))}
+                    </div>
+
+                    <div className="p-5 rounded-2xl bg-white border border-slate-200 shadow-sm flex flex-col justify-between">
+                      <div>
+                        <div className="flex items-center justify-between mb-3">
+                          <h5 className="text-xs font-black uppercase tracking-wider text-slate-900">Constitutional Mandate & Compliance</h5>
+                          <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-100 text-emerald-800">Compliant</span>
+                        </div>
+                        <p className="text-xs text-slate-600 leading-relaxed mb-3">
+                          Rotaract Club of NIBM Kandy operates strictly in accordance with the standard Rotaract Club Constitution prescribed by Rotary International.
+                        </p>
+                        <ul className="text-xs space-y-1.5 text-slate-600 list-disc list-inside">
+                          <li>Quarterly financial audit submitted to sponsoring Rotary Club</li>
+                          <li>All community service initiatives audited for ethics & sustainability</li>
+                          <li>Digital gate manifests stored for attendance reporting</li>
+                        </ul>
+                      </div>
+
+                      <div className="pt-4 border-t border-slate-100 flex items-center justify-between text-xs">
+                        <span className="text-slate-500">Charter Year: <strong>2010</strong></span>
+                        <span className="text-slate-500">District: <strong>3220 Sri Lanka</strong></span>
+                      </div>
+                    </div>
                   </div>
+
                 </div>
               )}
 
-              {/* TAB 2: ROTARY AVENUES */}
-              {adminTab === 'avenues' && (
+              {/* TAB 2: MANAGE EVENTS */}
+              {adminTab === 'events' && (
                 <div className="space-y-6">
-                  <div>
-                    <h4 className="text-base font-black text-slate-900">The 4 Rotary Avenues of Service</h4>
-                    <p className="text-xs text-slate-500">Avenue structure and assigned directors in MySQL database</p>
+                  
+                  {/* Event Controls Header */}
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-2 border-b border-slate-200">
+                    <div>
+                      <h4 className="text-base font-black text-slate-900">Event Administration & Seating Control</h4>
+                      <p className="text-xs text-slate-500">Create new events, adjust capacities, edit details, and manage publication status</p>
+                    </div>
+                    <button
+                      onClick={handleOpenCreateEvent}
+                      className="px-4 py-2.5 rounded-xl bg-[#00205B] text-white text-xs font-bold hover:bg-slate-900 transition flex items-center justify-center space-x-1.5 shadow-sm"
+                    >
+                      <Plus size={15} />
+                      <span>Create New Event</span>
+                    </button>
                   </div>
-                  <div className="grid sm:grid-cols-2 gap-4">
-                    {[
-                      { name: 'Club Service', dir: 'Rtr. Sankalpa Bandara', desc: 'Strengthening member fellowship, event logistics, and attendance records.' },
-                      { name: 'Community Service', dir: 'Rtr. Hasandie Wijerathne', desc: 'Humanitarian initiatives, blood donation camps, and animal welfare drives.' },
-                      { name: 'Professional Development', dir: 'Rtr. Sanuka Bandara', desc: 'Career bootcamps, technical hackathons, and leadership seminars.' },
-                      { name: 'International Service', dir: 'Rtr. Dilshika Rasalingam', desc: 'Cross-district collaborations, peace initiatives, and twin club relations.' }
-                    ].map((av, i) => (
-                      <div key={i} className="p-5 rounded-2xl bg-white border border-slate-200 shadow-sm">
-                        <div className="flex items-center justify-between mb-2">
-                          <span className="text-xs font-extrabold uppercase text-[#7A3B9E]">Avenue #{i+1}</span>
-                          <span className="text-[10px] font-bold bg-emerald-50 text-emerald-700 px-2 py-0.5 rounded-full border border-emerald-200">Active Avenue</span>
+
+                  {/* Event Cards Grid */}
+                  <div className="grid md:grid-cols-2 gap-5">
+                    {eventsList.map(ev => (
+                      <div key={ev.id} className="rounded-2xl bg-white border border-slate-200 shadow-sm overflow-hidden flex flex-col justify-between">
+                        
+                        {/* Event Card Header with Image */}
+                        <div className="relative h-36 w-full bg-slate-800 overflow-hidden">
+                          <img
+                            src={ev.image}
+                            alt={ev.title}
+                            className="w-full h-full object-cover opacity-80"
+                          />
+                          <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 to-transparent"></div>
+                          
+                          <div className="absolute top-3 left-3 right-3 flex items-center justify-between">
+                            <span className="px-2.5 py-1 rounded-md text-[10px] font-black uppercase tracking-wider bg-white/95 text-slate-900 backdrop-blur-sm shadow-sm">
+                              {ev.category}
+                            </span>
+                            <span className={`px-2.5 py-1 rounded-md text-[10px] font-bold shadow-sm ${
+                              ev.status === 'Upcoming' ? 'bg-emerald-500 text-white' : 'bg-slate-600 text-white'
+                            }`}>
+                              {ev.status}
+                            </span>
+                          </div>
+
+                          <div className="absolute bottom-3 left-3 right-3 text-white">
+                            <h5 className="text-sm font-black truncate">{ev.title}</h5>
+                            <p className="text-[11px] text-slate-200 flex items-center space-x-1">
+                              <Calendar size={12} className="inline mr-1" />
+                              <span>{ev.date} • {ev.time}</span>
+                            </p>
+                          </div>
                         </div>
-                        <h5 className="text-base font-black text-slate-900 mb-1">{av.name}</h5>
-                        <p className="text-xs text-slate-600 mb-3">{av.desc}</p>
-                        <div className="p-2.5 rounded-xl bg-slate-50 text-xs font-bold text-slate-800 border border-slate-100 flex items-center justify-between">
-                          <span className="text-slate-500 font-normal">Avenue Director:</span>
-                          <span className="text-[#4B0082]">{av.dir}</span>
+
+                        {/* Event Details Body */}
+                        <div className="p-4 space-y-3 flex-1 flex flex-col justify-between">
+                          <div>
+                            <div className="flex items-center space-x-1.5 text-xs text-slate-600 mb-2">
+                              <MapPin size={13} className="text-rose-600 shrink-0" />
+                              <span className="truncate">{ev.location}</span>
+                            </div>
+                            <p className="text-xs text-slate-600 leading-relaxed line-clamp-2">{ev.description}</p>
+                          </div>
+
+                          {/* Capacity Indicator */}
+                          <div className="pt-3 border-t border-slate-100">
+                            <div className="flex items-center justify-between text-[11px] font-bold text-slate-700 mb-1">
+                              <span>Delegate Registrations:</span>
+                              <span className="text-[#00205B]">Active ({ev.isRegisterable ? 'Open' : 'Closed'})</span>
+                            </div>
+                            <div className="w-full bg-slate-100 h-2 rounded-full overflow-hidden">
+                              <div className="bg-[#00205B] h-full rounded-full w-3/4"></div>
+                            </div>
+                          </div>
+
+                          {/* Actions */}
+                          <div className="pt-2 flex items-center justify-between text-xs">
+                            <button
+                              onClick={() => handleOpenEditEvent(ev)}
+                              className="px-3 py-1.5 rounded-lg font-bold text-[#00205B] bg-slate-100 hover:bg-slate-200 transition"
+                            >
+                              Edit Details
+                            </button>
+                            <button
+                              onClick={() => handleDeleteEvent(ev.id)}
+                              className="p-1.5 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded-lg transition"
+                              title="Archive Event"
+                            >
+                              <Trash2 size={15} />
+                            </button>
+                          </div>
                         </div>
+
                       </div>
                     ))}
                   </div>
+
                 </div>
               )}
 
               {/* TAB 3: REGISTRATIONS & CHECK-INS */}
               {adminTab === 'registrations' && (
                 <div className="space-y-4">
-                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                  
+                  {/* Controls & Search Bar */}
+                  <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 pb-2 border-b border-slate-200">
                     <div>
-                      <h4 className="text-base font-black text-slate-900">Registered Passes & Gate Attendance</h4>
+                      <h4 className="text-base font-black text-slate-900">Gate Passes & Attendance Manifest</h4>
                       <p className="text-xs text-slate-500">Live ticket bookings stored in MySQL event_registrations table</p>
                     </div>
+
+                    <div className="flex items-center space-x-2">
+                      <button
+                        onClick={exportPassesCSV}
+                        className="px-3.5 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold transition flex items-center space-x-1.5 shadow-sm"
+                      >
+                        <Download size={14} />
+                        <span>Export Manifest (.CSV)</span>
+                      </button>
+                    </div>
                   </div>
+
+                  {/* Filter Toolbar */}
+                  <div className="p-3 bg-white rounded-xl border border-slate-200 flex flex-col sm:flex-row gap-3 items-center">
+                    <div className="relative flex-1 w-full">
+                      <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
+                      <input
+                        type="text"
+                        value={passSearchTerm}
+                        onChange={(e) => setPassSearchTerm(e.target.value)}
+                        placeholder="Search attendee by name, email, or pass ID..."
+                        className="w-full pl-9 pr-3 py-2 rounded-lg bg-slate-50 border border-slate-200 text-xs focus:outline-none focus:border-[#00205B]"
+                      />
+                    </div>
+                    <div className="flex items-center space-x-2 w-full sm:w-auto">
+                      <select
+                        value={passEventFilter}
+                        onChange={(e) => setPassEventFilter(e.target.value)}
+                        className="px-3 py-2 rounded-lg bg-slate-50 border border-slate-200 text-xs font-semibold text-slate-700 focus:outline-none"
+                      >
+                        <option value="All">All Events</option>
+                        <option value="Cancer Awareness Run">Cancer Run</option>
+                        <option value="Rotaract Rugby Clash">Rugby Clash</option>
+                      </select>
+                      <select
+                        value={passStatusFilter}
+                        onChange={(e) => setPassStatusFilter(e.target.value)}
+                        className="px-3 py-2 rounded-lg bg-slate-50 border border-slate-200 text-xs font-semibold text-slate-700 focus:outline-none"
+                      >
+                        <option value="All">All Status</option>
+                        <option value="Checked-In">Checked-In</option>
+                        <option value="Confirmed">Confirmed (Pending)</option>
+                      </select>
+                    </div>
+                  </div>
+
+                  {/* Manifest Table */}
                   <div className="bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-sm">
                     <div className="overflow-x-auto">
                       <table className="w-full text-left text-xs">
@@ -1692,81 +2241,223 @@ const RotaractWebsite = () => {
                           <tr>
                             <th className="p-3">Pass ID</th>
                             <th className="p-3">Attendee Name</th>
-                            <th className="p-3">Email</th>
-                            <th className="p-3">Event</th>
-                            <th className="p-3">Status</th>
-                            <th className="p-3 text-right">Action</th>
+                            <th className="p-3">NIBM Index</th>
+                            <th className="p-3">Event & Venue</th>
+                            <th className="p-3">Check-In Status</th>
+                            <th className="p-3 text-right">Gate Action</th>
                           </tr>
                         </thead>
                         <tbody className="divide-y divide-slate-100 text-slate-800 font-medium">
-                          {[
-                            { code: 'RT-NIBM-1-A79B', name: 'Hasintha Gunasekara', email: 'hasintha@nibm.lk', event: 'Cancer Awareness Run', status: 'Checked-In' },
-                            { code: 'RT-NIBM-2-E42C', name: 'Y.V. Bandara', email: 'bandara@nibm.lk', event: 'Rotaract Rugby Clash', status: 'Confirmed' },
-                            { code: 'RT-NIBM-1-F819', name: 'Dinidu Kulasinghe', email: 'dinidu@gmail.com', event: 'Cancer Awareness Run', status: 'Confirmed' },
-                            { code: 'RT-NIBM-2-B310', name: 'V. Karunaratne', email: 'karunaratne@nibm.lk', event: 'Rotaract Rugby Clash', status: 'Checked-In' }
-                          ].map((row, idx) => (
-                            <tr key={idx} className="hover:bg-slate-50">
-                              <td className="p-3 font-mono font-bold text-[#4B0082]">{row.code}</td>
-                              <td className="p-3 font-bold text-slate-900">{row.name}</td>
-                              <td className="p-3 text-slate-500">{row.email}</td>
-                              <td className="p-3 text-slate-700">{row.event}</td>
-                              <td className="p-3">
-                                <span className={`px-2 py-0.5 rounded-full text-[10px] font-extrabold ${row.status === 'Checked-In' ? 'bg-emerald-100 text-emerald-800' : 'bg-purple-100 text-[#4B0082]'}`}>
-                                  {row.status}
-                                </span>
-                              </td>
-                              <td className="p-3 text-right">
-                                <button 
-                                  onClick={() => alert(`Verified pass ${row.code} for ${row.name}`)}
-                                  className="px-2.5 py-1 rounded-md bg-slate-100 hover:bg-slate-200 text-slate-800 text-[11px] font-bold"
-                                >
-                                  Verify Pass
-                                </button>
-                              </td>
-                            </tr>
-                          ))}
+                          {adminPassesList
+                            .filter(pass => {
+                              const matchesSearch = 
+                                pass.name.toLowerCase().includes(passSearchTerm.toLowerCase()) ||
+                                pass.email.toLowerCase().includes(passSearchTerm.toLowerCase()) ||
+                                pass.code.toLowerCase().includes(passSearchTerm.toLowerCase());
+                              const matchesEvent = passEventFilter === 'All' || pass.event.includes(passEventFilter);
+                              const matchesStatus = passStatusFilter === 'All' || pass.status === passStatusFilter;
+                              return matchesSearch && matchesEvent && matchesStatus;
+                            })
+                            .map((row) => (
+                              <tr key={row.code} className="hover:bg-slate-50">
+                                <td className="p-3 font-mono font-bold text-[#00205B]">{row.code}</td>
+                                <td className="p-3">
+                                  <p className="font-bold text-slate-900">{row.name}</p>
+                                  <p className="text-[10px] text-slate-400">{row.email}</p>
+                                </td>
+                                <td className="p-3 text-slate-600 font-mono text-[11px]">{row.nibmIndex || 'N/A'}</td>
+                                <td className="p-3">
+                                  <p className="text-slate-800 font-semibold">{row.event}</p>
+                                  <p className="text-[10px] text-slate-400">{row.location}</p>
+                                </td>
+                                <td className="p-3">
+                                  {row.status === 'Checked-In' ? (
+                                    <span className="inline-flex items-center space-x-1 px-2.5 py-1 rounded-full text-[10px] font-black bg-emerald-100 text-emerald-800 border border-emerald-200">
+                                      <Check size={11} />
+                                      <span>Checked-In {row.checkedInAt ? `(${row.checkedInAt})` : ''}</span>
+                                    </span>
+                                  ) : (
+                                    <span className="inline-flex items-center space-x-1 px-2.5 py-1 rounded-full text-[10px] font-bold bg-amber-100 text-amber-800 border border-amber-200">
+                                      <Clock size={11} />
+                                      <span>Confirmed (Pending Gate)</span>
+                                    </span>
+                                  )}
+                                </td>
+                                <td className="p-3 text-right">
+                                  <button
+                                    onClick={() => handleTogglePassCheckIn(row.code)}
+                                    className={`px-3 py-1.5 rounded-lg text-xs font-bold transition shadow-sm ${
+                                      row.status === 'Checked-In'
+                                        ? 'bg-slate-100 hover:bg-slate-200 text-slate-700'
+                                        : 'bg-[#00205B] hover:bg-black text-white'
+                                    }`}
+                                  >
+                                    {row.status === 'Checked-In' ? 'Undo Check-In' : 'Mark Checked-In'}
+                                  </button>
+                                </td>
+                              </tr>
+                            ))}
                         </tbody>
                       </table>
                     </div>
                   </div>
+
                 </div>
               )}
 
-              {/* TAB 4: VOLUNTEER APPROVALS */}
+              {/* TAB 4: VOLUNTEER HOURS CERTIFICATION */}
               {adminTab === 'volunteer' && (
                 <div className="space-y-4">
-                  <div>
-                    <h4 className="text-base font-black text-slate-900">Volunteer Community Service Hours Review</h4>
-                    <p className="text-xs text-slate-500">Verify member hours for annual Rotary District 3220 Citations</p>
+                  
+                  {/* Header */}
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-2 border-b border-slate-200">
+                    <div>
+                      <h4 className="text-base font-black text-slate-900">Volunteer Community Service Hours Review</h4>
+                      <p className="text-xs text-slate-500">Review member logs, verify attendance, and certify hours for District 3220 Citations</p>
+                    </div>
+                    <button
+                      onClick={exportVolunteerHoursCSV}
+                      className="px-3.5 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold transition flex items-center space-x-1.5 shadow-sm"
+                    >
+                      <Download size={14} />
+                      <span>Export Hours (.CSV)</span>
+                    </button>
                   </div>
+
+                  {/* Filter Badges */}
+                  <div className="flex items-center space-x-2 text-xs">
+                    {['All', 'Pending Review', 'Approved'].map(st => (
+                      <button
+                        key={st}
+                        onClick={() => setVolunteerFilter(st)}
+                        className={`px-3 py-1.5 rounded-lg font-bold transition ${
+                          volunteerFilter === st
+                            ? 'bg-[#00205B] text-white shadow-sm'
+                            : 'bg-white border border-slate-200 text-slate-600 hover:bg-slate-50'
+                        }`}
+                      >
+                        {st}
+                      </button>
+                    ))}
+                  </div>
+
+                  {/* Submissions List */}
                   <div className="space-y-3">
+                    {volunteerReviewList
+                      .filter(item => volunteerFilter === 'All' || item.status === volunteerFilter)
+                      .map((item) => (
+                        <div key={item.id} className="p-4 rounded-2xl bg-white border border-slate-200 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-4">
+                          <div className="space-y-1">
+                            <div className="flex items-center space-x-2">
+                              <span className="text-sm font-black text-slate-900">{item.member}</span>
+                              <span className="text-xs text-slate-400 font-mono">({item.nibmIndex || item.email})</span>
+                              <span className={`px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase ${
+                                item.status === 'Approved'
+                                  ? 'bg-emerald-100 text-emerald-800 border border-emerald-200'
+                                  : 'bg-amber-100 text-amber-800 border border-amber-200'
+                              }`}>
+                                {item.status}
+                              </span>
+                            </div>
+                            <p className="text-xs text-slate-600">
+                              <strong>{item.activity}</strong> • <span className="font-bold text-[#A6192E]">{item.hours} Hours</span> • Avenue: {item.avenue} ({item.date})
+                            </p>
+                            {item.approvedBy && (
+                              <p className="text-[11px] text-emerald-700 font-medium">
+                                ✓ Certified by: {item.approvedBy}
+                              </p>
+                            )}
+                          </div>
+
+                          <div className="flex items-center space-x-2 self-start md:self-auto">
+                            {item.status !== 'Approved' ? (
+                              <button
+                                onClick={() => handleApproveVolunteerHours(item.id)}
+                                className="px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold transition shadow-sm flex items-center space-x-1.5"
+                              >
+                                <Check size={14} />
+                                <span>Approve Hours</span>
+                              </button>
+                            ) : (
+                              <span className="px-3 py-1.5 rounded-xl bg-slate-100 text-slate-600 text-xs font-semibold flex items-center space-x-1">
+                                <UserCheck size={14} className="text-emerald-600" />
+                                <span>Certified Log</span>
+                              </span>
+                            )}
+                          </div>
+                        </div>
+                      ))}
+                  </div>
+
+                </div>
+              )}
+
+              {/* TAB 5: ROTARY AVENUES */}
+              {adminTab === 'avenues' && (
+                <div className="space-y-6">
+                  <div>
+                    <h4 className="text-base font-black text-slate-900">The 4 Rotary Avenues of Service</h4>
+                    <p className="text-xs text-slate-500">Official Avenue Directorate & Committee assignments registered with District 3220</p>
+                  </div>
+
+                  <div className="grid sm:grid-cols-2 gap-4">
                     {[
-                      { id: 101, member: 'Rtr. Dinidu Kulasinghe', activity: 'Feed the Paw Animal Feeding Drive', hours: 4.5, date: 'Aug 2026', status: 'Pending Approval' },
-                      { id: 102, member: 'Rtr. Y.V. Bandara', activity: 'Hanthana Mountain Clean-up Trail', hours: 6.0, date: 'Aug 2026', status: 'Pending Approval' },
-                      { id: 103, member: 'Rtr. V. Karunaratne', activity: 'Coffee & Chill Setup Logistics', hours: 3.0, date: 'Aug 2026', status: 'Approved' }
-                    ].map((item) => (
-                      <div key={item.id} className="p-4 rounded-2xl bg-white border border-slate-200 shadow-sm flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                      {
+                        name: 'Club Service',
+                        dir: 'Rtr. Sankalpa Bandara (VP)',
+                        desc: 'Member fellowship, general meetings, inter-faculty sports tournaments, and club communications.',
+                        projects: 'Coffee & Chill, Rugby Clash 2026',
+                        targetHours: 120
+                      },
+                      {
+                        name: 'Community Service',
+                        dir: 'Rtr. Hasandie Wijerathne & Rtr. Dinidu Kulasinghe',
+                        desc: 'Charity initiatives, animal protection, hospital donations, and environmental restoration.',
+                        projects: 'Feed the Paw, Cancer Awareness Run 2026',
+                        targetHours: 250
+                      },
+                      {
+                        name: 'Professional Development',
+                        dir: 'Rtr. Sanuka Bandara',
+                        desc: 'Technical coding bootcamps, resume review workshops, and industry networking symposiums.',
+                        projects: 'TechVision 2026 Bootcamp, Career Masterclass',
+                        targetHours: 100
+                      },
+                      {
+                        name: 'International Service',
+                        dir: 'Rtr. Dilshika Rasalingam (President)',
+                        desc: 'Cross-district twinnings, global peace initiatives, and collaborative foreign club webinars.',
+                        projects: 'South Asia Youth Peace Summit, Twin Club Exchange',
+                        targetHours: 80
+                      }
+                    ].map((av, i) => (
+                      <div key={i} className="p-5 rounded-2xl bg-white border border-slate-200 shadow-sm flex flex-col justify-between">
                         <div>
-                          <div className="flex items-center space-x-2 mb-1">
-                            <span className="text-sm font-black text-slate-900">{item.member}</span>
-                            <span className={`px-2 py-0.5 rounded-full text-[10px] font-extrabold ${item.status === 'Approved' ? 'bg-emerald-100 text-emerald-800' : 'bg-amber-100 text-amber-800'}`}>
-                              {item.status}
+                          <div className="flex items-center justify-between mb-2">
+                            <span className="text-xs font-extrabold uppercase text-[#A6192E]">Avenue #{i+1}</span>
+                            <span className="text-[10px] font-bold bg-emerald-50 text-emerald-700 px-2.5 py-0.5 rounded-full border border-emerald-200">
+                              Active Directorate
                             </span>
                           </div>
-                          <p className="text-xs text-slate-600">{item.activity} • <span className="font-bold text-[#4B0082]">{item.hours} Hours Completed</span> ({item.date})</p>
+                          <h5 className="text-base font-black text-slate-900 mb-1">{av.name}</h5>
+                          <p className="text-xs text-slate-600 mb-3">{av.desc}</p>
+                          
+                          <div className="p-2.5 rounded-xl bg-slate-50 border border-slate-100 text-xs space-y-1 mb-3">
+                            <div className="flex justify-between">
+                              <span className="text-slate-500">Director:</span>
+                              <span className="font-bold text-[#00205B]">{av.dir}</span>
+                            </div>
+                            <div className="flex justify-between">
+                              <span className="text-slate-500">Initiatives:</span>
+                              <span className="font-semibold text-slate-800">{av.projects}</span>
+                            </div>
+                          </div>
                         </div>
-                        {item.status !== 'Approved' && (
-                          <button 
-                            onClick={(e) => {
-                              e.currentTarget.innerText = "✓ Approved";
-                              e.currentTarget.className = "px-4 py-1.5 rounded-xl bg-emerald-600 text-white text-xs font-bold shadow-sm pointer-events-none";
-                              alert(`Approved ${item.hours} volunteer hours for ${item.member}!`);
-                            }}
-                            className="px-4 py-1.5 rounded-xl bg-[#4B0082] hover:bg-black text-white text-xs font-bold transition shadow-sm self-start sm:self-auto"
-                          >
-                            Approve Hours
-                          </button>
-                        )}
+
+                        <div className="pt-3 border-t border-slate-100 flex items-center justify-between text-xs text-slate-500">
+                          <span>Target Service: <strong>{av.targetHours} hrs</strong></span>
+                          <span className="text-emerald-600 font-bold">100% on schedule</span>
+                        </div>
                       </div>
                     ))}
                   </div>
@@ -1775,14 +2466,16 @@ const RotaractWebsite = () => {
 
             </div>
 
-            {/* Footer */}
-            <div className="p-4 border-t border-slate-200 bg-white flex items-center justify-between text-xs">
-              <span className="text-slate-500 font-semibold">Rotaract Management System • NIBM Kandy</span>
-              <button 
+            {/* Dashboard Footer */}
+            <div className="px-6 py-3.5 border-t border-slate-200 bg-white flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-xs">
+              <span className="text-slate-500 font-medium">
+                Rotaract Club of NIBM Kandy • System build 2.4 (React + Node MVC Architecture)
+              </span>
+              <button
                 onClick={() => setShowAdminDashboard(false)}
-                className="px-6 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold transition"
+                className="px-5 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold transition self-end sm:self-auto"
               >
-                Close Dashboard
+                Close Portal
               </button>
             </div>
 
@@ -1790,66 +2483,240 @@ const RotaractWebsite = () => {
         </div>
       )}
 
-
-      {/* MODAL 1: MEMBER PORTAL LOGIN */}
-      {showLoginModal && (
+      {/* MODAL: CREATE / EDIT EVENT INLINE FORM */}
+      {showEventFormModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-sm">
-          <div className="relative w-full max-w-md p-8 rounded-3xl bg-white border border-slate-200 shadow-2xl">
-            <button 
-              onClick={() => setShowLoginModal(false)}
+          <div className="relative w-full max-w-lg bg-white rounded-2xl shadow-2xl border border-slate-200 p-6 overflow-hidden">
+            <button
+              onClick={() => setShowEventFormModal(false)}
               className="absolute top-4 right-4 p-2 text-slate-400 hover:text-slate-700 rounded-full hover:bg-slate-100"
             >
-              <X size={20} />
+              <X size={18} />
+            </button>
+
+            <h3 className="text-base font-black text-slate-900 mb-1">
+              {editingEventId ? 'Edit Event Details' : 'Publish New Club Event'}
+            </h3>
+            <p className="text-xs text-slate-500 mb-4">
+              Enter official event scheduling details to display across the club platform
+            </p>
+
+            <form onSubmit={handleSaveEvent} className="space-y-3.5 text-xs">
+              <div>
+                <label className="block font-bold text-slate-700 mb-1">Event Title</label>
+                <input
+                  type="text"
+                  required
+                  value={eventFormState.title}
+                  onChange={(e) => setEventFormState({ ...eventFormState, title: e.target.value })}
+                  placeholder="e.g. Rotaract Leadership Summit 2026"
+                  className="w-full px-3 py-2 rounded-xl bg-slate-50 border border-slate-300 text-slate-900 focus:outline-none focus:border-[#00205B]"
+                />
+              </div>
+
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="block font-bold text-slate-700 mb-1">Rotary Avenue</label>
+                  <select
+                    value={eventFormState.category}
+                    onChange={(e) => setEventFormState({ ...eventFormState, category: e.target.value })}
+                    className="w-full px-3 py-2 rounded-xl bg-slate-50 border border-slate-300 text-slate-900 focus:outline-none"
+                  >
+                    <option value="Club Service">Club Service</option>
+                    <option value="Community Service">Community Service</option>
+                    <option value="Professional Development">Professional Development</option>
+                    <option value="International Service">International Service</option>
+                    <option value="Health">Health & Wellness</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="block font-bold text-slate-700 mb-1">Date</label>
+                  <input
+                    type="text"
+                    required
+                    value={eventFormState.date}
+                    onChange={(e) => setEventFormState({ ...eventFormState, date: e.target.value })}
+                    placeholder="e.g. Dec 12, 2026"
+                    className="w-full px-3 py-2 rounded-xl bg-slate-50 border border-slate-300 text-slate-900 focus:outline-none"
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="block font-bold text-slate-700 mb-1">Time</label>
+                  <input
+                    type="text"
+                    required
+                    value={eventFormState.time}
+                    onChange={(e) => setEventFormState({ ...eventFormState, time: e.target.value })}
+                    placeholder="e.g. 08:30 AM - 04:30 PM"
+                    className="w-full px-3 py-2 rounded-xl bg-slate-50 border border-slate-300 text-slate-900 focus:outline-none"
+                  />
+                </div>
+                <div>
+                  <label className="block font-bold text-slate-700 mb-1">Venue / Location</label>
+                  <input
+                    type="text"
+                    required
+                    value={eventFormState.location}
+                    onChange={(e) => setEventFormState({ ...eventFormState, location: e.target.value })}
+                    placeholder="e.g. NIBM Kandy Auditorium"
+                    className="w-full px-3 py-2 rounded-xl bg-slate-50 border border-slate-300 text-slate-900 focus:outline-none"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className="block font-bold text-slate-700 mb-1">Description</label>
+                <textarea
+                  rows="2"
+                  value={eventFormState.description}
+                  onChange={(e) => setEventFormState({ ...eventFormState, description: e.target.value })}
+                  placeholder="Summary of initiative, goals and target participation..."
+                  className="w-full px-3 py-2 rounded-xl bg-slate-50 border border-slate-300 text-slate-900 focus:outline-none"
+                />
+              </div>
+
+              <div>
+                <label className="block font-bold text-slate-700 mb-1">Cover Image URL</label>
+                <input
+                  type="text"
+                  value={eventFormState.image}
+                  onChange={(e) => setEventFormState({ ...eventFormState, image: e.target.value })}
+                  placeholder="https://images.unsplash.com/..."
+                  className="w-full px-3 py-2 rounded-xl bg-slate-50 border border-slate-300 text-slate-900 focus:outline-none"
+                />
+              </div>
+
+              <div className="pt-2 flex items-center justify-end space-x-2">
+                <button
+                  type="button"
+                  onClick={() => setShowEventFormModal(false)}
+                  className="px-4 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold transition"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  className="px-5 py-2 rounded-xl bg-[#00205B] hover:bg-slate-900 text-white font-bold transition shadow-sm"
+                >
+                  {editingEventId ? 'Update Event' : 'Save & Publish'}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* MODAL 1: EXECUTIVE OFFICERS & MEMBER PORTAL LOGIN */}
+      {showLoginModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-slate-950/80 backdrop-blur-sm">
+          <div className="relative w-full max-w-lg p-6 sm:p-7 rounded-2xl bg-white border border-slate-200 shadow-2xl overflow-hidden text-slate-800">
+            
+            {/* Top District Accent Line */}
+            <div className="absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-[#A6192E] via-[#F7A81B] to-[#00205B]"></div>
+
+            <button
+              onClick={() => setShowLoginModal(false)}
+              className="absolute top-4 right-4 p-2 text-slate-400 hover:text-slate-700 rounded-full hover:bg-slate-100 transition"
+            >
+              <X size={18} />
             </button>
             
-            <div className="text-center mb-6">
-              <img 
-                src={BRAND_CONFIG.navbarLogo} 
-                alt="Rotaract Club NIBM Kandy Logo" 
-                className="h-12 w-auto mx-auto mb-3 object-contain" 
-              />
-              <h3 className="text-xl font-bold text-slate-900">Rotaract NIBM Member Portal</h3>
-              <p className="text-xs text-slate-500 mt-1">Access internal club management & project logs</p>
+            {/* Header */}
+            <div className="text-center mb-5">
+              <div className="flex items-center justify-center space-x-2 mb-2">
+                <img 
+                  src={BRAND_CONFIG.navbarLogo} 
+                  alt="Rotaract Club NIBM Kandy Logo" 
+                  className="h-10 w-auto object-contain" 
+                />
+              </div>
+              <h3 className="text-lg font-black text-slate-900">Rotaract Executive Officer Portal</h3>
+              <p className="text-xs text-slate-500 mt-0.5">Rotary International District 3220 • NIBM Kandy</p>
             </div>
 
-            <form onSubmit={handleLoginSubmit} className="space-y-4">
+            {/* Quick Officer Selection (Requested: VP and other logins) */}
+            <div className="mb-4 p-3 rounded-xl bg-slate-50 border border-slate-200">
+              <div className="flex items-center justify-between mb-2">
+                <span className="text-[10px] font-black uppercase tracking-wider text-slate-500">
+                  Select Officer Profile (One-Click Demo Fill)
+                </span>
+                <span className="text-[10px] text-[#A6192E] font-bold">Password: admin123</span>
+              </div>
+              
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-1.5">
+                {EXECUTIVE_ACCOUNTS.map((off) => {
+                  const isSelected = loginEmail === off.email;
+                  return (
+                    <button
+                      type="button"
+                      key={off.id}
+                      onClick={() => {
+                        setSelectedOfficerForLogin(off);
+                        setLoginEmail(off.email);
+                        setLoginPassword(off.password);
+                      }}
+                      className={`p-2 rounded-lg text-left transition border ${
+                        isSelected
+                          ? 'bg-[#00205B] text-white border-[#00205B] shadow-sm'
+                          : 'bg-white hover:bg-slate-100 text-slate-700 border-slate-200'
+                      }`}
+                    >
+                      <p className="text-[11px] font-black truncate">{off.role}</p>
+                      <p className={`text-[9px] truncate ${isSelected ? 'text-slate-200' : 'text-slate-400'}`}>
+                        {off.name.replace('Rtr. ', '')}
+                      </p>
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+
+            {/* Login Form */}
+            <form onSubmit={handleLoginSubmit} className="space-y-3.5">
               <div>
-                <label className="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1">Admin / Member Email</label>
+                <label className="block text-[11px] font-bold uppercase tracking-wider text-slate-700 mb-1">
+                  Officer Email Address
+                </label>
                 <input 
                   type="email" 
                   required
                   value={loginEmail}
                   onChange={(e) => setLoginEmail(e.target.value)}
-                  placeholder="president@rt-nibm.org"
-                  className="w-full px-4 py-3 rounded-xl bg-slate-50 border border-slate-300 text-slate-900 text-sm focus:outline-none focus:border-[#7A3B9E]"
+                  placeholder="vp@rt-nibm.org"
+                  className="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 border border-slate-300 text-slate-900 text-xs focus:outline-none focus:border-[#00205B]"
                 />
               </div>
+
               <div>
-                <label className="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1">Password</label>
+                <label className="block text-[11px] font-bold uppercase tracking-wider text-slate-700 mb-1">
+                  Secretariat Password
+                </label>
                 <input 
                   type="password" 
                   required
                   value={loginPassword}
                   onChange={(e) => setLoginPassword(e.target.value)}
                   placeholder="admin123"
-                  className="w-full px-4 py-3 rounded-xl bg-slate-50 border border-slate-300 text-slate-900 text-sm focus:outline-none focus:border-[#7A3B9E]"
+                  className="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 border border-slate-300 text-slate-900 text-xs focus:outline-none focus:border-[#00205B]"
                 />
-              </div>
-
-              {/* Demo Credentials Helper Pill */}
-              <div className="p-3 rounded-xl bg-purple-50 border border-purple-200 text-[11px] text-[#4B0082] flex items-center justify-between">
-                <span>Demo Admin: <strong>president@rt-nibm.org</strong></span>
-                <span className="font-mono bg-white px-2 py-0.5 rounded border border-purple-200 font-bold">admin123</span>
               </div>
 
               <button 
                 type="submit"
-                className="w-full py-3.5 bg-[#4B0082] hover:bg-[#0B0514] text-white font-bold rounded-xl text-sm transition shadow-md flex items-center justify-center space-x-2"
+                className="w-full py-3 bg-[#00205B] hover:bg-slate-900 text-white font-bold rounded-xl text-xs transition shadow-md flex items-center justify-center space-x-2 mt-2"
               >
-                <Shield size={16} />
-                <span>Sign In to Executive Portal</span>
+                <Shield size={15} />
+                <span>Sign In as {selectedOfficerForLogin?.role || 'Executive Officer'}</span>
               </button>
             </form>
+
+            <div className="mt-4 pt-3 border-t border-slate-100 text-center text-[10px] text-slate-400">
+              Rotaract Club of NIBM Kandy • Chartered under Rotary District 3220 Sri Lanka
+            </div>
+
           </div>
         </div>
       )}
