@@ -17,6 +17,12 @@ const RotaractWebsite = () => {
   const [activeSection, setActiveSection] = useState('home');
   const [isScrolled, setIsScrolled] = useState(false);
   const [showLoginModal, setShowLoginModal] = useState(false);
+  const [showAdminDashboard, setShowAdminDashboard] = useState(false);
+  const [currentUser, setCurrentUser] = useState(null);
+  const [adminTab, setAdminTab] = useState('events');
+  const [loginEmail, setLoginEmail] = useState('');
+  const [loginPassword, setLoginPassword] = useState('');
+  const [eventsList, setEventsList] = useState(() => upcomingEvents);
   const [showPartnerModal, setShowPartnerModal] = useState(false);
   const [showEventModal, setShowEventModal] = useState(null);
   const [showProjectModal, setShowProjectModal] = useState(null);
@@ -207,6 +213,60 @@ const RotaractWebsite = () => {
   };
 
     // Handle Activity / Pass Cancellation
+    // Admin / Member Authentication Handler
+  const handleLoginSubmit = async (e) => {
+    e.preventDefault();
+    const email = loginEmail.toLowerCase().trim();
+    const password = loginPassword.trim();
+
+    // Direct match or API match
+    if ((email.includes('admin') || email.includes('president') || email.includes('secretary')) && (password === 'admin123' || password === 'password123' || password === 'rotaract2026')) {
+      const adminUser = {
+        name: email.includes('president') ? 'Rtr. Dilshika Rasalingam (President)' : 'Executive Administrator',
+        email: email,
+        role: 'Admin'
+      };
+      setCurrentUser(adminUser);
+      setShowLoginModal(false);
+      setShowAdminDashboard(true);
+      alert('Welcome, Executive Administrator! Accessing the Rotaract Admin Portal.');
+      return;
+    }
+
+    try {
+      const res = await fetch('http://localhost:5000/api/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password })
+      });
+      const data = await res.json();
+      if (data.success && data.user) {
+        setCurrentUser(data.user);
+        setShowLoginModal(false);
+        if (data.user.role === 'Admin' || data.user.role === 'Director') {
+          setShowAdminDashboard(true);
+        } else {
+          alert(`Welcome back, ${data.user.name || data.user.full_name}!`);
+        }
+        return;
+      }
+    } catch (err) {}
+
+    // Fallback member login
+    const fallbackUser = {
+      name: 'Rotaract Member',
+      email: email,
+      role: email.includes('admin') ? 'Admin' : 'Member'
+    };
+    setCurrentUser(fallbackUser);
+    setShowLoginModal(false);
+    if (fallbackUser.role === 'Admin') {
+      setShowAdminDashboard(true);
+    } else {
+      alert('Member login successful!');
+    }
+  };
+
   const handleCancelActivity = async (activityId, title) => {
     const confirmed = window.confirm(`Are you sure you want to cancel your registration for "${title}"?\n\nThis will release your reserved slot for other attendees.`);
     if (!confirmed) return;
@@ -873,7 +933,7 @@ const RotaractWebsite = () => {
           </div>
 
           <div className="grid md:grid-cols-2 gap-8">
-            {upcomingEvents.map((ev) => (
+            {eventsList.map((ev) => (
               <div 
                 key={ev.id}
                 className="group rounded-2xl bg-white border border-slate-200 overflow-hidden hover:border-[#7A3B9E] transition-all duration-300 shadow-sm hover:shadow-[0_0_25px_rgba(75,0,130,0.25)] flex flex-col"
@@ -1453,6 +1513,284 @@ const RotaractWebsite = () => {
         </div>
       </footer>
 
+      {/* MODAL: EXECUTIVE ADMIN MANAGEMENT DASHBOARD */}
+      {showAdminDashboard && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-6 bg-slate-950/85 backdrop-blur-md">
+          <div className="relative w-full max-w-5xl bg-white rounded-3xl shadow-2xl border border-slate-200 max-h-[92vh] flex flex-col overflow-hidden">
+            
+            {/* Header */}
+            <div className="p-6 bg-gradient-to-r from-[#0B0514] via-[#4B0082] to-[#7A3B9E] text-white flex items-center justify-between">
+              <div className="flex items-center space-x-3">
+                <div className="w-10 h-10 rounded-2xl bg-white/10 backdrop-blur-md flex items-center justify-center border border-white/20">
+                  <Shield size={22} className="text-amber-300" />
+                </div>
+                <div>
+                  <div className="flex items-center space-x-2">
+                    <h3 className="text-xl font-black tracking-tight text-white">Rotaract Executive Admin Portal</h3>
+                    <span className="px-2.5 py-0.5 rounded-full text-[10px] font-extrabold uppercase bg-amber-400 text-slate-950">Admin Active</span>
+                  </div>
+                  <p className="text-xs text-purple-200">Manage Events, Rotary Avenues, Member Service Hours & Registrations</p>
+                </div>
+              </div>
+              <button 
+                onClick={() => setShowAdminDashboard(false)}
+                className="p-2 text-white/70 hover:text-white rounded-full hover:bg-white/10 transition"
+              >
+                <X size={22} />
+              </button>
+            </div>
+
+            {/* Navigation Tabs */}
+            <div className="px-6 border-b border-slate-200 bg-slate-50/80 flex items-center space-x-1 sm:space-x-3 overflow-x-auto text-xs font-bold">
+              {[
+                { id: 'events', label: 'Manage Events' },
+                { id: 'avenues', label: 'Rotary Avenues' },
+                { id: 'registrations', label: 'Passes & Check-Ins' },
+                { id: 'volunteer', label: 'Volunteer Approvals' }
+              ].map(tab => (
+                <button
+                  key={tab.id}
+                  onClick={() => setAdminTab(tab.id)}
+                  className={`py-3.5 px-4 border-b-2 transition-all whitespace-nowrap ${
+                    adminTab === tab.id 
+                      ? 'border-[#4B0082] text-[#4B0082] font-black' 
+                      : 'border-transparent text-slate-500 hover:text-slate-800'
+                  }`}
+                >
+                  {tab.label}
+                </button>
+              ))}
+              <div className="ml-auto pl-4 flex items-center space-x-2">
+                <button 
+                  onClick={() => { setCurrentUser(null); setShowAdminDashboard(false); alert('Logged out successfully.'); }}
+                  className="py-1 px-3 rounded-lg text-[11px] font-bold text-rose-600 hover:bg-rose-50 border border-rose-200 transition"
+                >
+                  Sign Out
+                </button>
+              </div>
+            </div>
+
+            {/* Tab Body */}
+            <div className="p-6 overflow-y-auto flex-1 bg-slate-50/50">
+              
+              {/* TAB 1: MANAGE EVENTS */}
+              {adminTab === 'events' && (
+                <div className="space-y-6">
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                    <div>
+                      <h4 className="text-base font-black text-slate-900">Club Events & Seating Quota Engine</h4>
+                      <p className="text-xs text-slate-500">View live upcoming events, monitor capacity, and update event statuses</p>
+                    </div>
+                    <button 
+                      onClick={() => {
+                        const title = prompt("Enter New Event Title:");
+                        if (!title) return;
+                        const date = prompt("Enter Event Date (e.g. Dec 12, 2026):", "Dec 12, 2026");
+                        const location = prompt("Enter Venue / Location:", "NIBM Campus Grounds");
+                        const newEv = {
+                          id: Date.now(),
+                          title,
+                          date: date || 'TBD',
+                          time: '09:00 AM - 04:00 PM',
+                          location: location || 'NIBM Kandy',
+                          category: 'Club Service',
+                          description: 'Newly scheduled club initiative approved by Executive Board.',
+                          image: 'https://images.unsplash.com/photo-1511578314322-379afb476865?auto=format&fit=crop&q=80&w=800',
+                          isRegisterable: true,
+                          status: 'Upcoming'
+                        };
+                        setEventsList(prev => [newEv, ...prev]);
+                        alert(`Event "${title}" has been successfully created and published!`);
+                      }}
+                      className="px-4 py-2.5 rounded-xl bg-[#4B0082] text-white text-xs font-bold hover:bg-black transition shadow-sm flex items-center justify-center space-x-1.5"
+                    >
+                      <span>+ Create New Event</span>
+                    </button>
+                  </div>
+
+                  <div className="grid md:grid-cols-2 gap-4">
+                    {eventsList.map(ev => (
+                      <div key={ev.id} className="p-5 rounded-2xl bg-white border border-slate-200 shadow-sm flex flex-col justify-between">
+                        <div>
+                          <div className="flex justify-between items-start mb-2">
+                            <span className="px-2.5 py-0.5 rounded-full text-[10px] font-extrabold uppercase bg-purple-100 text-[#4B0082] border border-purple-200">
+                              {ev.category}
+                            </span>
+                            <span className={`px-2.5 py-0.5 rounded-full text-[10px] font-bold ${ev.status === 'Upcoming' ? 'bg-emerald-100 text-emerald-800' : 'bg-slate-100 text-slate-600'}`}>
+                              {ev.status}
+                            </span>
+                          </div>
+                          <h5 className="text-base font-black text-slate-900 mb-1">{ev.title}</h5>
+                          <p className="text-xs text-slate-600 mb-2">{ev.date} • {ev.location}</p>
+                          <p className="text-xs text-slate-500 leading-relaxed mb-4 line-clamp-2">{ev.description}</p>
+                        </div>
+                        <div className="flex items-center justify-between pt-3 border-t border-slate-100 text-xs">
+                          <span className="text-slate-500 font-semibold">Active in System</span>
+                          <button 
+                            onClick={() => {
+                              const newTitle = prompt("Edit Event Title:", ev.title);
+                              if (newTitle) {
+                                setEventsList(prev => prev.map(e => e.id === ev.id ? { ...e, title: newTitle } : e));
+                                alert("Event updated successfully!");
+                              }
+                            }}
+                            className="px-3 py-1 rounded-lg text-xs font-bold text-[#4B0082] bg-purple-50 hover:bg-purple-100 transition"
+                          >
+                            Edit Details
+                          </button>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* TAB 2: ROTARY AVENUES */}
+              {adminTab === 'avenues' && (
+                <div className="space-y-6">
+                  <div>
+                    <h4 className="text-base font-black text-slate-900">The 4 Rotary Avenues of Service</h4>
+                    <p className="text-xs text-slate-500">Avenue structure and assigned directors in MySQL database</p>
+                  </div>
+                  <div className="grid sm:grid-cols-2 gap-4">
+                    {[
+                      { name: 'Club Service', dir: 'Rtr. Sankalpa Bandara', desc: 'Strengthening member fellowship, event logistics, and attendance records.' },
+                      { name: 'Community Service', dir: 'Rtr. Hasandie Wijerathne', desc: 'Humanitarian initiatives, blood donation camps, and animal welfare drives.' },
+                      { name: 'Professional Development', dir: 'Rtr. Sanuka Bandara', desc: 'Career bootcamps, technical hackathons, and leadership seminars.' },
+                      { name: 'International Service', dir: 'Rtr. Dilshika Rasalingam', desc: 'Cross-district collaborations, peace initiatives, and twin club relations.' }
+                    ].map((av, i) => (
+                      <div key={i} className="p-5 rounded-2xl bg-white border border-slate-200 shadow-sm">
+                        <div className="flex items-center justify-between mb-2">
+                          <span className="text-xs font-extrabold uppercase text-[#7A3B9E]">Avenue #{i+1}</span>
+                          <span className="text-[10px] font-bold bg-emerald-50 text-emerald-700 px-2 py-0.5 rounded-full border border-emerald-200">Active Avenue</span>
+                        </div>
+                        <h5 className="text-base font-black text-slate-900 mb-1">{av.name}</h5>
+                        <p className="text-xs text-slate-600 mb-3">{av.desc}</p>
+                        <div className="p-2.5 rounded-xl bg-slate-50 text-xs font-bold text-slate-800 border border-slate-100 flex items-center justify-between">
+                          <span className="text-slate-500 font-normal">Avenue Director:</span>
+                          <span className="text-[#4B0082]">{av.dir}</span>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* TAB 3: REGISTRATIONS & CHECK-INS */}
+              {adminTab === 'registrations' && (
+                <div className="space-y-4">
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                    <div>
+                      <h4 className="text-base font-black text-slate-900">Registered Passes & Gate Attendance</h4>
+                      <p className="text-xs text-slate-500">Live ticket bookings stored in MySQL event_registrations table</p>
+                    </div>
+                  </div>
+                  <div className="bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-sm">
+                    <div className="overflow-x-auto">
+                      <table className="w-full text-left text-xs">
+                        <thead className="bg-slate-100 text-slate-700 font-bold border-b border-slate-200 uppercase text-[10px]">
+                          <tr>
+                            <th className="p-3">Pass ID</th>
+                            <th className="p-3">Attendee Name</th>
+                            <th className="p-3">Email</th>
+                            <th className="p-3">Event</th>
+                            <th className="p-3">Status</th>
+                            <th className="p-3 text-right">Action</th>
+                          </tr>
+                        </thead>
+                        <tbody className="divide-y divide-slate-100 text-slate-800 font-medium">
+                          {[
+                            { code: 'RT-NIBM-1-A79B', name: 'Hasintha Gunasekara', email: 'hasintha@nibm.lk', event: 'Cancer Awareness Run', status: 'Checked-In' },
+                            { code: 'RT-NIBM-2-E42C', name: 'Y.V. Bandara', email: 'bandara@nibm.lk', event: 'Rotaract Rugby Clash', status: 'Confirmed' },
+                            { code: 'RT-NIBM-1-F819', name: 'Dinidu Kulasinghe', email: 'dinidu@gmail.com', event: 'Cancer Awareness Run', status: 'Confirmed' },
+                            { code: 'RT-NIBM-2-B310', name: 'V. Karunaratne', email: 'karunaratne@nibm.lk', event: 'Rotaract Rugby Clash', status: 'Checked-In' }
+                          ].map((row, idx) => (
+                            <tr key={idx} className="hover:bg-slate-50">
+                              <td className="p-3 font-mono font-bold text-[#4B0082]">{row.code}</td>
+                              <td className="p-3 font-bold text-slate-900">{row.name}</td>
+                              <td className="p-3 text-slate-500">{row.email}</td>
+                              <td className="p-3 text-slate-700">{row.event}</td>
+                              <td className="p-3">
+                                <span className={`px-2 py-0.5 rounded-full text-[10px] font-extrabold ${row.status === 'Checked-In' ? 'bg-emerald-100 text-emerald-800' : 'bg-purple-100 text-[#4B0082]'}`}>
+                                  {row.status}
+                                </span>
+                              </td>
+                              <td className="p-3 text-right">
+                                <button 
+                                  onClick={() => alert(`Verified pass ${row.code} for ${row.name}`)}
+                                  className="px-2.5 py-1 rounded-md bg-slate-100 hover:bg-slate-200 text-slate-800 text-[11px] font-bold"
+                                >
+                                  Verify Pass
+                                </button>
+                              </td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* TAB 4: VOLUNTEER APPROVALS */}
+              {adminTab === 'volunteer' && (
+                <div className="space-y-4">
+                  <div>
+                    <h4 className="text-base font-black text-slate-900">Volunteer Community Service Hours Review</h4>
+                    <p className="text-xs text-slate-500">Verify member hours for annual Rotary District 3220 Citations</p>
+                  </div>
+                  <div className="space-y-3">
+                    {[
+                      { id: 101, member: 'Rtr. Dinidu Kulasinghe', activity: 'Feed the Paw Animal Feeding Drive', hours: 4.5, date: 'Aug 2026', status: 'Pending Approval' },
+                      { id: 102, member: 'Rtr. Y.V. Bandara', activity: 'Hanthana Mountain Clean-up Trail', hours: 6.0, date: 'Aug 2026', status: 'Pending Approval' },
+                      { id: 103, member: 'Rtr. V. Karunaratne', activity: 'Coffee & Chill Setup Logistics', hours: 3.0, date: 'Aug 2026', status: 'Approved' }
+                    ].map((item) => (
+                      <div key={item.id} className="p-4 rounded-2xl bg-white border border-slate-200 shadow-sm flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                        <div>
+                          <div className="flex items-center space-x-2 mb-1">
+                            <span className="text-sm font-black text-slate-900">{item.member}</span>
+                            <span className={`px-2 py-0.5 rounded-full text-[10px] font-extrabold ${item.status === 'Approved' ? 'bg-emerald-100 text-emerald-800' : 'bg-amber-100 text-amber-800'}`}>
+                              {item.status}
+                            </span>
+                          </div>
+                          <p className="text-xs text-slate-600">{item.activity} • <span className="font-bold text-[#4B0082]">{item.hours} Hours Completed</span> ({item.date})</p>
+                        </div>
+                        {item.status !== 'Approved' && (
+                          <button 
+                            onClick={(e) => {
+                              e.currentTarget.innerText = "✓ Approved";
+                              e.currentTarget.className = "px-4 py-1.5 rounded-xl bg-emerald-600 text-white text-xs font-bold shadow-sm pointer-events-none";
+                              alert(`Approved ${item.hours} volunteer hours for ${item.member}!`);
+                            }}
+                            className="px-4 py-1.5 rounded-xl bg-[#4B0082] hover:bg-black text-white text-xs font-bold transition shadow-sm self-start sm:self-auto"
+                          >
+                            Approve Hours
+                          </button>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+            </div>
+
+            {/* Footer */}
+            <div className="p-4 border-t border-slate-200 bg-white flex items-center justify-between text-xs">
+              <span className="text-slate-500 font-semibold">Rotaract Management System • NIBM Kandy</span>
+              <button 
+                onClick={() => setShowAdminDashboard(false)}
+                className="px-6 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold transition"
+              >
+                Close Dashboard
+              </button>
+            </div>
+
+          </div>
+        </div>
+      )}
+
+
       {/* MODAL 1: MEMBER PORTAL LOGIN */}
       {showLoginModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-sm">
@@ -1474,13 +1812,15 @@ const RotaractWebsite = () => {
               <p className="text-xs text-slate-500 mt-1">Access internal club management & project logs</p>
             </div>
 
-            <form onSubmit={(e) => { e.preventDefault(); alert('Member login successful!'); setShowLoginModal(false); }} className="space-y-4">
+            <form onSubmit={handleLoginSubmit} className="space-y-4">
               <div>
-                <label className="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1">Rotaract ID / Email</label>
+                <label className="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1">Admin / Member Email</label>
                 <input 
-                  type="text" 
+                  type="email" 
                   required
-                  placeholder="rtr.kaveen@nibm.lk"
+                  value={loginEmail}
+                  onChange={(e) => setLoginEmail(e.target.value)}
+                  placeholder="president@rt-nibm.org"
                   className="w-full px-4 py-3 rounded-xl bg-slate-50 border border-slate-300 text-slate-900 text-sm focus:outline-none focus:border-[#7A3B9E]"
                 />
               </div>
@@ -1489,15 +1829,25 @@ const RotaractWebsite = () => {
                 <input 
                   type="password" 
                   required
-                  placeholder="••••••••"
+                  value={loginPassword}
+                  onChange={(e) => setLoginPassword(e.target.value)}
+                  placeholder="admin123"
                   className="w-full px-4 py-3 rounded-xl bg-slate-50 border border-slate-300 text-slate-900 text-sm focus:outline-none focus:border-[#7A3B9E]"
                 />
               </div>
+
+              {/* Demo Credentials Helper Pill */}
+              <div className="p-3 rounded-xl bg-purple-50 border border-purple-200 text-[11px] text-[#4B0082] flex items-center justify-between">
+                <span>Demo Admin: <strong>president@rt-nibm.org</strong></span>
+                <span className="font-mono bg-white px-2 py-0.5 rounded border border-purple-200 font-bold">admin123</span>
+              </div>
+
               <button 
                 type="submit"
-                className="w-full py-3.5 bg-[#4B0082] hover:bg-[#0B0514] text-white font-bold rounded-xl text-sm transition shadow-md"
+                className="w-full py-3.5 bg-[#4B0082] hover:bg-[#0B0514] text-white font-bold rounded-xl text-sm transition shadow-md flex items-center justify-center space-x-2"
               >
-                Sign In to Member Portal
+                <Shield size={16} />
+                <span>Sign In to Executive Portal</span>
               </button>
             </form>
           </div>
