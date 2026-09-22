@@ -25,11 +25,11 @@ app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// 2. Serve Static Photos & Assets (from photos/ & public/)
-app.use('/photos', express.static(path.join(__dirname, 'photos')));
-app.use(express.static(path.join(__dirname, 'public')));
+// 2. Serve Static Photos & Assets with browser cache optimization
+app.use('/photos', express.static(path.join(__dirname, 'photos'), { maxAge: '1d', etag: true }));
+app.use(express.static(path.join(__dirname, 'public'), { maxAge: '1d', etag: true }));
 if (fs.existsSync(path.join(__dirname, 'build'))) {
-  app.use(express.static(path.join(__dirname, 'build')));
+  app.use(express.static(path.join(__dirname, 'build'), { maxAge: '1d', etag: true }));
 }
 
 // 3. Mount MVC API Routes (from controllers/routes/)
@@ -50,6 +50,14 @@ app.get('/api/health', (req, res) => {
     database: 'Connected'
   });
 });
+
+// 4.1 SPA Production Client-Side Route Fallback
+if (fs.existsSync(path.join(__dirname, 'build'))) {
+  app.get('*', (req, res, next) => {
+    if (req.path.startsWith('/api/') || req.path.startsWith('/photos/')) return next();
+    res.sendFile(path.join(__dirname, 'build', 'index.html'));
+  });
+}
 
 // 5. Centralized Error Handling Middleware
 const { errorHandler } = require('./controllers/middleware/errorHandler');

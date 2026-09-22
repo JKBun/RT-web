@@ -4,12 +4,7 @@ import CurvedFlowingLines from './components/CurvedFlowingLines';
 import { BRAND_CONFIG } from './config/branding';
 import { TEAM_MEMBERS } from './config/members';
 import {
-  Menu, X, Calendar, Users, Award, Mail, Phone, MapPin, 
-  Facebook, Instagram, Linkedin, ArrowRight, Play, Pause, 
-  Volume2, VolumeX, Shield, Compass, Globe, ExternalLink, 
-  HeartHandshake, UserPlus, Eye, Clock, CheckCircle2,
-  ChevronRight, Lock, Send, Search, QrCode, Copy, Check,
-  Download, Share2, Sparkles, FileText, Filter, Plus, Trash2, LogOut, FileSpreadsheet, UserCheck, AlertCircle, RefreshCw, Layers
+  Menu, X, Calendar, Users, Award, Mail, Phone, MapPin, Facebook, Instagram, Linkedin, ArrowRight, Play, Pause, Volume2, VolumeX, Shield, Compass, Globe, HeartHandshake, UserPlus, Eye, Clock, CheckCircle2, ChevronRight, Send, Search, Copy, Check, Download, Sparkles, FileText, Plus, Trash2, LogOut, FileSpreadsheet, UserCheck, RefreshCw
 } from 'lucide-react';
 
 const INITIAL_UPCOMING_EVENTS = [
@@ -164,6 +159,16 @@ const INITIAL_VOLUNTEER_REVIEWS = [
   { id: 105, member: 'Rtr. Kaveen Alwis', email: 'kaveen@nibm.lk', nibmIndex: 'DSE/2026/302', activity: 'Kandy Blood Donation Camp Marshalling', hours: 4.0, date: 'Jul 2026', avenue: 'Community Service', status: 'Pending Review', approvedBy: null }
 ];
 
+const NAV_ITEMS = [
+  { id: 'home', label: 'Home' },
+  { id: 'about', label: 'About' },
+  { id: 'events', label: 'Events' },
+  { id: 'projects', label: 'Projects' },
+  { id: 'gallery', label: 'Gallery' },
+  { id: 'team', label: 'Leadership' },
+  { id: 'contact', label: 'Contact' }
+];
+
 const RotaractWebsite = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [activeSection, setActiveSection] = useState('home');
@@ -176,8 +181,7 @@ const RotaractWebsite = () => {
   const [loginPassword, setLoginPassword] = useState('admin123');
   const [selectedOfficerForLogin, setSelectedOfficerForLogin] = useState(EXECUTIVE_ACCOUNTS[1]);
   const [eventsList, setEventsList] = useState(INITIAL_UPCOMING_EVENTS);
-  const upcomingEvents = eventsList;
-  const [adminPassesList, setAdminPassesList] = useState(INITIAL_ADMIN_PASSES);
+const [adminPassesList, setAdminPassesList] = useState(INITIAL_ADMIN_PASSES);
   const [volunteerReviewList, setVolunteerReviewList] = useState(INITIAL_VOLUNTEER_REVIEWS);
   const [passSearchTerm, setPassSearchTerm] = useState('');
   const [passEventFilter, setPassEventFilter] = useState('All');
@@ -227,15 +231,7 @@ const RotaractWebsite = () => {
   const isManualNavRef = useRef(false);
   const manualNavTimeoutRef = useRef(null);
 
-  const navItems = [
-    { id: 'home', label: 'Home' },
-    { id: 'about', label: 'About' },
-    { id: 'events', label: 'Events' },
-    { id: 'projects', label: 'Projects' },
-    { id: 'gallery', label: 'Gallery' },
-    { id: 'team', label: 'Leadership' },
-    { id: 'contact', label: 'Contact' }
-  ];
+  const navItems = NAV_ITEMS;
 
   // Handle click on nav link with smooth scroll-spy suppression
   const handleNavClick = (id) => {
@@ -270,7 +266,7 @@ const RotaractWebsite = () => {
       if (!ticking) {
         window.requestAnimationFrame(() => {
           const scrollPos = window.scrollY + 140;
-          const sections = navItems.map(item => document.getElementById(item.id)).filter(Boolean);
+          const sections = NAV_ITEMS.map(item => document.getElementById(item.id)).filter(Boolean);
           for (let i = sections.length - 1; i >= 0; i--) {
             const sec = sections[i];
             if (sec.offsetTop <= scrollPos) {
@@ -293,7 +289,7 @@ const RotaractWebsite = () => {
   useEffect(() => {
     const targetSection = hoveredSection || activeSection;
     const updatePill = () => {
-      const targetIdx = navItems.findIndex(item => item.id === targetSection);
+      const targetIdx = NAV_ITEMS.findIndex(item => item.id === targetSection);
       if (targetIdx !== -1 && navRefs.current[targetIdx]) {
         const el = navRefs.current[targetIdx];
         setPillStyle(prev => {
@@ -1031,7 +1027,7 @@ const RotaractWebsite = () => {
           
           {/* Official Rotaract Logo Header */}
           <div className="mb-6 flex justify-center w-full px-4">
-            <img 
+            <img loading="lazy" decoding="async" 
               src={BRAND_CONFIG.themeChangingLogo} 
               alt="Rotaract Club NIBM Kandy Official Logo" 
               className="h-16 sm:h-24 md:h-32 lg:h-36 max-w-sm sm:max-w-md w-auto object-contain filter drop-shadow-[0_0_25px_rgba(255,255,255,0.55)] hover:scale-105 transition-transform duration-500" 
@@ -1151,7 +1147,7 @@ const RotaractWebsite = () => {
             {/* Visual Showcase */}
             <div className="relative">
               <div className="relative rounded-2xl overflow-hidden border border-slate-200 shadow-xl group">
-                <img 
+                <img loading="lazy" decoding="async" 
                   src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&q=80&w=1200" 
                   alt="Rotaract Teamwork" 
                   className="w-full h-[450px] object-cover group-hover:scale-105 transition duration-500"
@@ -1222,7 +1218,7 @@ const RotaractWebsite = () => {
                 className="group rounded-2xl bg-white border border-slate-200 overflow-hidden hover:border-[#7A3B9E] transition-all duration-300 shadow-sm hover:shadow-[0_0_25px_rgba(75,0,130,0.25)] flex flex-col"
               >
                 <div className="relative h-48 overflow-hidden">
-                  <img 
+                  <img loading="lazy" decoding="async" 
                     src={ev.image} 
                     alt={ev.title} 
                     className="w-full h-full object-cover group-hover:scale-105 transition duration-500"
@@ -1298,7 +1294,7 @@ const RotaractWebsite = () => {
                 className="group rounded-2xl bg-white border border-slate-200 overflow-hidden hover:border-[#7A3B9E] transition-all duration-300 shadow-sm hover:shadow-[0_0_20px_rgba(75,0,130,0.25)] flex flex-col"
               >
                 <div className="relative h-52 overflow-hidden">
-                  <img 
+                  <img loading="lazy" decoding="async" 
                     src={p.image} 
                     alt={p.title} 
                     className="w-full h-full object-cover group-hover:scale-105 transition duration-500"
@@ -1370,7 +1366,7 @@ const RotaractWebsite = () => {
                 onClick={() => setSelectedGalleryImg(item)}
                 className="group relative h-60 rounded-2xl overflow-hidden cursor-pointer border border-slate-200 hover:border-[#7A3B9E] transition-all duration-300 shadow-sm"
               >
-                <img 
+                <img loading="lazy" decoding="async" 
                   src={item.img} 
                   alt={item.title}
                   className="w-full h-full object-cover group-hover:scale-110 transition duration-500" 
@@ -1460,7 +1456,7 @@ const RotaractWebsite = () => {
                 {/* Avatar with Neon Pulsing Glow & 3D Zoom Effect */}
                 <div className="relative z-10 w-36 h-36 mx-auto mb-5 rounded-2xl p-1 bg-gradient-to-tr from-purple-200 via-white to-pink-200 group-hover:from-[#7A3B9E] group-hover:via-pink-400 group-hover:to-[#4B0082] group-hover:shadow-[0_0_25px_rgba(122,59,158,0.65)] transition-all duration-500">
                   <div className="w-full h-full rounded-xl overflow-hidden bg-slate-100 ring-2 ring-transparent group-hover:ring-white transition-all duration-500">
-                    <img 
+                    <img loading="lazy" decoding="async" 
                       src={member.img} 
                       alt={member.name}
                       className="w-full h-full object-cover object-top group-hover:scale-110 transition-transform duration-700 ease-out" 
@@ -1740,7 +1736,7 @@ const RotaractWebsite = () => {
           <div className="grid grid-cols-1 md:grid-cols-4 gap-10 mb-12">
             
             <div className="space-y-4 md:col-span-1">
-              <img 
+              <img loading="lazy" decoding="async" 
                 src={BRAND_CONFIG.themeChangingLogo} 
                 alt="Rotaract Club NIBM Kandy Official Logo" 
                 className="h-12 sm:h-14 w-auto object-contain" 
@@ -2808,7 +2804,7 @@ const RotaractWebsite = () => {
               <h3 className="text-2xl font-bold text-slate-900 mt-2">{showProjectModal.title}</h3>
             </div>
 
-            <img 
+            <img loading="lazy" decoding="async" 
               src={showProjectModal.image} 
               alt={showProjectModal.title}
               className="w-full h-52 object-cover rounded-2xl my-4 border border-slate-200"
@@ -2888,7 +2884,7 @@ const RotaractWebsite = () => {
             >
               <X size={20} />
             </button>
-            <img 
+            <img loading="lazy" decoding="async" 
               src={selectedGalleryImg.img} 
               alt={selectedGalleryImg.title} 
               className="w-full max-h-[70vh] object-cover rounded-2xl"
@@ -3009,7 +3005,7 @@ const RotaractWebsite = () => {
               
               <div className="flex items-center justify-between pb-4 border-b border-slate-800 relative z-10">
                 <div className="flex items-center space-x-3">
-                  <img 
+                  <img loading="lazy" decoding="async" 
                     src={BRAND_CONFIG.themeChangingLogo} 
                     alt="Rotaract Official Pass Logo" 
                     className="h-8 w-auto object-contain" 
@@ -3058,7 +3054,7 @@ const RotaractWebsite = () => {
                   <div className="text-[10px] text-slate-400">Location: {volunteerConfirmation.location}</div>
                 </div>
                 <div className="bg-white p-1.5 rounded-lg shadow-inner">
-                  <img src={volunteerConfirmation.qrCodeUrl} alt="QR Code Pass" className="w-12 h-12" />
+                  <img loading="lazy" decoding="async" src={volunteerConfirmation.qrCodeUrl} alt="QR Code Pass" className="w-12 h-12" />
                 </div>
               </div>
             </div>
