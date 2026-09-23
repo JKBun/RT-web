@@ -53,7 +53,8 @@ app.get('/api/health', (req, res) => {
 
 // 4.1 SPA Production Client-Side Route Fallback
 if (fs.existsSync(path.join(__dirname, 'build'))) {
-  app.get('*', (req, res, next) => {
+  app.use((req, res, next) => {
+    if (req.method !== 'GET') return next();
     if (req.path.startsWith('/api/') || req.path.startsWith('/photos/')) return next();
     res.sendFile(path.join(__dirname, 'build', 'index.html'));
   });
