@@ -15,12 +15,13 @@ const CurvedFlowingLines = () => {
     let width = (canvas.width = canvas.parentElement?.clientWidth || window.innerWidth);
     let height = (canvas.height = canvas.parentElement?.clientHeight || window.innerHeight);
 
+    // Mouse Tracking with smooth spring easing
     const mouse = {
       x: -1000,
       y: -1000,
-      radius: 180,
       targetX: -1000,
-      targetY: -1000
+      targetY: -1000,
+      radius: 200
     };
 
     const handleMouseMove = (e) => {
@@ -37,7 +38,6 @@ const CurvedFlowingLines = () => {
     const handleVisibility = () => {
       isVisible = !document.hidden;
       if (isVisible) {
-        lastTime = performance.now();
         animationFrameId = requestAnimationFrame(animate);
       }
     };
@@ -58,20 +58,22 @@ const CurvedFlowingLines = () => {
     let lines = [];
 
     const initLines = () => {
-      const lineCount = Math.min(18, Math.max(10, Math.floor(width / 75)));
+      // Dense, rich flowing silk lines (28-36 lines across hero)
+      const lineCount = Math.min(36, Math.max(22, Math.floor(width / 38)));
       lines = [];
 
       for (let i = 0; i < lineCount; i++) {
         const baseX = ((i + 0.5) / lineCount) * width;
-        const pointCount = 18;
+        const pointCount = 35;
         const points = [];
         const segmentHeight = height / (pointCount - 1);
 
-        const waveFrequency = 0.009 + Math.random() * 0.006;
-        const waveAmplitude = 30 + Math.random() * 25;
+        const waveFrequency = 0.007 + Math.random() * 0.006;
+        const waveAmplitude = 35 + Math.random() * 30;
         const phase = Math.random() * Math.PI * 2;
-        const baseOpacity = 0.08 + Math.random() * 0.07;
-        const lineWidth = 0.6 + Math.random() * 0.4;
+        const baseOpacity = 0.12 + Math.random() * 0.12;
+        const lineWidth = 0.8 + Math.random() * 0.6;
+        const speed = 0.008 + Math.random() * 0.008;
 
         for (let j = 0; j < pointCount; j++) {
           const baseY = j * segmentHeight;
@@ -84,7 +86,10 @@ const CurvedFlowingLines = () => {
             targetX,
             x: targetX,
             y: baseY,
-            hoverPhase: 0
+            currentWaveOffset: staticWaveOffset,
+            waveFrequency,
+            phase: phase + j * 0.08,
+            speed
           });
         }
 
@@ -92,30 +97,27 @@ const CurvedFlowingLines = () => {
           baseX,
           points,
           baseOpacity,
-          lineWidth
+          lineWidth,
+          colorHue: i % 3 === 0 ? '192, 132, 252' : i % 2 === 0 ? '255, 255, 255' : '177, 143, 207'
         });
       }
     };
 
     initLines();
 
-    let lastTime = performance.now();
-    const targetFps = 35;
-    const interval = 1000 / targetFps;
+    let time = 0;
 
-    const animate = (currentTime) => {
+    const animate = () => {
       if (!isVisible) return;
-
       animationFrameId = requestAnimationFrame(animate);
 
-      const delta = currentTime - lastTime;
-      if (delta < interval) return;
-      lastTime = currentTime - (delta % interval);
+      time += 0.02;
 
       ctx.clearRect(0, 0, width, height);
 
-      mouse.x += (mouse.targetX - mouse.x) * 0.15;
-      mouse.y += (mouse.targetY - mouse.y) * 0.15;
+      // Smooth mouse easing
+      mouse.x += (mouse.targetX - mouse.x) * 0.18;
+      mouse.y += (mouse.targetY - mouse.y) * 0.18;
 
       const hasMouseNearby = mouse.x > -500;
 
@@ -123,28 +125,33 @@ const CurvedFlowingLines = () => {
         const line = lines[l];
         const points = line.points;
 
-        if (hasMouseNearby) {
-          for (let i = 0; i < points.length; i++) {
-            const pt = points[i];
-            const dx = mouse.x - pt.targetX;
+        for (let i = 0; i < points.length; i++) {
+          const pt = points[i];
+
+          // Gentle ambient organic breathing wave
+          const dynamicOffset = Math.sin(time * 0.8 + pt.phase) * 6;
+          let currentTargetX = pt.baseX + pt.currentWaveOffset + dynamicOffset;
+
+          if (hasMouseNearby) {
+            const dx = mouse.x - currentTargetX;
             const dy = mouse.y - pt.baseY;
             const distSq = dx * dx + dy * dy;
 
             if (distSq < mouse.radius * mouse.radius) {
               const dist = Math.sqrt(distSq);
               const repelNorm = (mouse.radius - dist) / mouse.radius;
-              const repelX = (dx < 0 ? 1 : -1) * repelNorm * 25;
-              pt.hoverPhase += 0.08;
-              const hoverVibe = Math.sin(pt.hoverPhase) * (repelNorm * 5);
-              const desiredX = pt.targetX + repelX + hoverVibe;
-              pt.x += (desiredX - pt.x) * 0.15;
-            } else {
-              pt.x += (pt.targetX - pt.x) * 0.08;
+              // Fluid wave repulsion with reactive curvature
+              const repelX = (dx < 0 ? 1 : -1) * repelNorm * 42;
+              const waveRipple = Math.sin(time * 3 + pt.phase) * (repelNorm * 10);
+              currentTargetX += repelX + waveRipple;
             }
           }
+
+          // Smooth spring interpolation
+          pt.x += (currentTargetX - pt.x) * 0.14;
         }
 
-        // Draw smooth curve
+        // Render silky smooth quadratic bezier curve
         ctx.beginPath();
         ctx.moveTo(points[0].x, points[0].y);
 
@@ -155,7 +162,18 @@ const CurvedFlowingLines = () => {
         }
 
         ctx.lineTo(points[points.length - 1].x, points[points.length - 1].y);
-        ctx.strokeStyle = `rgba(255, 255, 255, ${line.baseOpacity})`;
+
+        // Highlight lines near the cursor with vibrant glow
+        let currentOpacity = line.baseOpacity;
+        if (hasMouseNearby) {
+          const distToLine = Math.abs(mouse.x - line.baseX);
+          if (distToLine < mouse.radius * 0.9) {
+            const boost = (1 - distToLine / (mouse.radius * 0.9)) * 0.25;
+            currentOpacity = Math.min(0.65, currentOpacity + boost);
+          }
+        }
+
+        ctx.strokeStyle = `rgba(${line.colorHue}, ${currentOpacity})`;
         ctx.lineWidth = line.lineWidth;
         ctx.stroke();
       }
@@ -175,7 +193,7 @@ const CurvedFlowingLines = () => {
   return (
     <canvas
       ref={canvasRef}
-      className="absolute inset-0 w-full h-full pointer-events-none z-10 opacity-70"
+      className="absolute inset-0 w-full h-full pointer-events-none z-10 opacity-75"
       aria-hidden="true"
     />
   );

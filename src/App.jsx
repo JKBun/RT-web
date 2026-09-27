@@ -1969,7 +1969,7 @@ const RotaractWebsite = () => {
             <p className="text-slate-600 mt-3 text-base sm:text-lg">Join us in making a hands-on impact in our local communities.</p>
             <div className="mt-5 flex justify-center">
               <a 
-                href="#join"
+                href="#contact"
                 className="inline-flex items-center space-x-2 px-6 py-2.5 bg-white border border-slate-300 hover:border-[#7A3B9E] text-slate-800 hover:text-[#4B0082] rounded-xl text-xs font-bold transition shadow-sm hover:shadow-md"
               >
                 <span>Get Event Updates</span>
@@ -2274,149 +2274,6 @@ const RotaractWebsite = () => {
         </div>
       </section>
 
-      {/* JOIN ROTARACT MEMBERSHIP FORM */}
-      <section id="join" className="py-24 bg-white border-t border-slate-200 relative">
-        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="p-8 sm:p-12 rounded-3xl bg-slate-50 border border-slate-200 shadow-lg">
-            
-            <div className="text-center max-w-2xl mx-auto mb-10">
-              <div className="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-purple-100 text-[#4B0082] text-xs font-extrabold uppercase tracking-wider mb-3 border border-purple-200">
-                <span>Become a Member</span>
-              </div>
-              <h2 className="text-3xl sm:text-4xl font-black text-slate-900 tracking-tight">Join Rotaract Club NIBM</h2>
-              <p className="text-slate-600 text-sm mt-2">Open to all NIBM undergraduates and young professionals passionate about leadership & social impact.</p>
-            </div>
-
-            {!currentUser ? (
-              <div className="text-center py-10 px-6 bg-white rounded-2xl border border-purple-100 shadow-sm max-w-xl mx-auto space-y-5">
-                <div className="w-16 h-16 mx-auto rounded-2xl bg-purple-50 text-[#4B0082] flex items-center justify-center border border-purple-200 shadow-inner">
-                  <UserPlus size={32} />
-                </div>
-                <div>
-                  <h3 className="text-xl font-black text-slate-900">Member Registration Required</h3>
-                  <p className="text-xs text-slate-600 mt-2 leading-relaxed">
-                    To apply for club membership and submit induction forms (3,000 LKR annual induction fee, approved by President/Vice President), please register or sign in to your candidate account.
-                  </p>
-                </div>
-                <div className="flex flex-col sm:flex-row items-center justify-center gap-3 pt-2">
-                  <button
-                    onClick={() => {
-                      setShowLoginModal(true);
-                      setAuthModalTab('register');
-                    }}
-                    className="w-full sm:w-auto px-6 py-3 bg-[#4B0082] hover:bg-[#0B0514] text-white text-xs font-extrabold uppercase tracking-wider rounded-xl transition shadow-md flex items-center justify-center space-x-2"
-                  >
-                    <UserPlus size={15} />
-                    <span>Don't have an account? Register now</span>
-                  </button>
-                  <button
-                    onClick={() => {
-                      setShowLoginModal(true);
-                      setAuthModalTab('signin');
-                    }}
-                    className="w-full sm:w-auto px-6 py-3 bg-white hover:bg-slate-50 text-slate-800 text-xs font-bold uppercase tracking-wider rounded-xl transition border border-slate-300 flex items-center justify-center space-x-2"
-                  >
-                    <span>Member Portal / Sign In</span>
-                  </button>
-                </div>
-              </div>
-            ) : (
-              <form onSubmit={(e) => handleFormSubmit('Membership Application', e)} className="space-y-6">
-                <div className="grid sm:grid-cols-2 gap-6">
-                  <div>
-                    <label className="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-2">Full Name *</label>
-                    <input 
-                      type="text" 
-                      name="membershipName"
-                      required
-                      value={formData.membershipName}
-                      onChange={handleInputChange}
-                      placeholder="John Doe"
-                      className="w-full px-4 py-3 rounded-xl bg-white border border-slate-300 text-slate-900 text-sm focus:outline-none focus:border-[#7A3B9E]"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-2">Email Address *</label>
-                    <input 
-                      type="email" 
-                      name="membershipEmail"
-                      required
-                      value={formData.membershipEmail}
-                      onChange={handleInputChange}
-                      placeholder="student@nibm.lk"
-                      className="w-full px-4 py-3 rounded-xl bg-white border border-slate-300 text-slate-900 text-sm focus:outline-none focus:border-[#7A3B9E]"
-                    />
-                  </div>
-                </div>
-
-                <div className="grid sm:grid-cols-2 gap-6">
-                  <div>
-                    <label className="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-2">Phone Number *</label>
-                    <input 
-                      type="tel" 
-                      name="membershipPhone"
-                      required
-                      value={formData.membershipPhone}
-                      onChange={handleInputChange}
-                      placeholder="+94 77 123 4567"
-                      className="w-full px-4 py-3 rounded-xl bg-white border border-slate-300 text-slate-900 text-sm focus:outline-none focus:border-[#7A3B9E]"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-2">Academic Year / Intake *</label>
-                    <input 
-                      type="text" 
-                      name="membershipYear"
-                      required
-                      value={formData.membershipYear}
-                      onChange={handleInputChange}
-                      placeholder="2nd Year - Software Engineering"
-                      className="w-full px-4 py-3 rounded-xl bg-white border border-slate-300 text-slate-900 text-sm focus:outline-none focus:border-[#7A3B9E]"
-                    />
-                  </div>
-                </div>
-
-                <div>
-                  <label className="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-2">Primary Area of Interest</label>
-                  <select 
-                    name="membershipInterest"
-                    value={formData.membershipInterest}
-                    onChange={handleInputChange}
-                    className="w-full px-4 py-3 rounded-xl bg-white border border-slate-300 text-slate-900 text-sm focus:outline-none focus:border-[#7A3B9E]"
-                  >
-                    <option value="Community Service">Community Service & Humanitarian Aid</option>
-                    <option value="Professional Development">Professional & Skill Development</option>
-                    <option value="Environmental Projects">Environmental & Green Conservation</option>
-                    <option value="International Service">International Youth Networking</option>
-                    <option value="Public Relations">Media, Design & Public Relations</option>
-                  </select>
-                </div>
-
-                <button 
-                  type="submit"
-                  className="w-full py-4 bg-[#4B0082] hover:bg-[#0B0514] text-white font-bold rounded-xl text-base transition shadow-md flex items-center justify-center space-x-2"
-                >
-                  <UserPlus size={18} />
-                  <span>Submit Membership Application</span>
-                </button>
-              </form>
-            )}
-
-            <div className="mt-8 pt-6 border-t border-slate-200 flex flex-col sm:flex-row items-center justify-between text-xs text-slate-600 gap-4">
-              <span>Are you a corporate partner looking to collaborate?</span>
-              <button 
-                onClick={() => setShowPartnerModal(true)}
-                className="font-bold text-[#4B0082] hover:underline flex items-center gap-1"
-              >
-                <span>Inquire Corporate Partnership</span>
-                <ChevronRight size={14} />
-              </button>
-            </div>
-
-          </div>
-        </div>
-      </section>
-
       {/* CONTACT SECTION */}
       <section id="contact" className="py-24 bg-slate-50 border-t border-slate-200">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -2477,6 +2334,22 @@ const RotaractWebsite = () => {
                   <a href="#linkedin" className="p-3 rounded-xl bg-white border border-slate-200 text-[#4B0082] hover:bg-[#4B0082] hover:text-white transition">
                     <Linkedin size={18} />
                   </a>
+                </div>
+
+                <div className="pt-6 border-t border-slate-200">
+                  <div className="p-4 rounded-2xl bg-purple-50/70 border border-purple-100 flex items-center justify-between">
+                    <div>
+                      <h5 className="text-xs font-bold text-slate-900">Corporate & Community Partnerships</h5>
+                      <p className="text-[11px] text-slate-500 mt-0.5">Looking to sponsor or collaborate with Rotaract NIBM?</p>
+                    </div>
+                    <button 
+                      onClick={() => setShowPartnerModal(true)}
+                      className="px-3.5 py-2 rounded-xl bg-[#4B0082] hover:bg-[#0B0514] text-white text-xs font-bold transition shadow-sm flex items-center gap-1.5 flex-shrink-0"
+                    >
+                      <span>Inquire Partnership</span>
+                      <ChevronRight size={13} />
+                    </button>
+                  </div>
                 </div>
               </div>
             </div>
