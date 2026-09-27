@@ -346,37 +346,12 @@ const RotaractWebsite = () => {
   const [regPhone, setRegPhone] = useState('');
   const [regPassword, setRegPassword] = useState('');
   const [regConfirmPassword, setRegConfirmPassword] = useState('');
-  const [otpCodeInput, setOtpCodeInput] = useState('');
-  const [otpSent, setOtpSent] = useState(false);
-  const [isEmailVerified, setIsEmailVerified] = useState(false);
-  const [otpGeneratedDemo, setOtpGeneratedDemo] = useState('');
-  const [otpRemainingSeconds, setOtpRemainingSeconds] = useState(2700); // 45 minutes = 2700s
-  const [otpError, setOtpError] = useState('');
-  const [otpSuccess, setOtpSuccess] = useState('');
   const [regSubmittedSuccess, setRegSubmittedSuccess] = useState(false);
 
-  // 45-Minute Live Countdown Timer for Verification Code
-  useEffect(() => {
-    let timer = null;
-    if (otpSent && !isEmailVerified && otpRemainingSeconds > 0) {
-      timer = setInterval(() => {
-        setOtpRemainingSeconds(prev => {
-          if (prev <= 1) {
-            clearInterval(timer);
-            setOtpError('Verification code expired after 45 minutes. Please request a new code.');
-            return 0;
-          }
-          return prev - 1;
-        });
-      }, 1000);
-    }
-    return () => { if (timer) clearInterval(timer); };
-  }, [otpSent, isEmailVerified, otpRemainingSeconds]);
-
-  // Initial Fetch: Gallery, Cancelled Passes Archive & Unapproved Candidate Log
+  // Initial Fetch: Gallery, Cancelled Passes Archive & Unapproved Candidate Log with fast timeout guard
   const fetchGallery = async () => {
     try {
-      const res = await fetch('http://localhost:5000/api/gallery');
+      const res = await fetch('http://localhost:5000/api/gallery', { signal: AbortSignal.timeout(1200) });
       const data = await res.json();
       if (data.success && data.gallery && data.gallery.length > 0) {
         setGalleryImages(data.gallery);
@@ -386,7 +361,7 @@ const RotaractWebsite = () => {
 
   const fetchCancelledPasses = async () => {
     try {
-      const res = await fetch('http://localhost:5000/api/registrations/cancelled-passes');
+      const res = await fetch('http://localhost:5000/api/registrations/cancelled-passes', { signal: AbortSignal.timeout(1200) });
       const data = await res.json();
       if (data.success && data.cancelledPasses) {
         setCancelledPassesList(data.cancelledPasses);
@@ -396,7 +371,7 @@ const RotaractWebsite = () => {
 
   const fetchUnapprovedEmails = async () => {
     try {
-      const res = await fetch('http://localhost:5000/api/auth/unapproved-emails');
+      const res = await fetch('http://localhost:5000/api/auth/unapproved-emails', { signal: AbortSignal.timeout(1200) });
       const data = await res.json();
       if (data.success && data.unapprovedEmails) {
         setUnapprovedEmailsList(data.unapprovedEmails);
@@ -609,82 +584,14 @@ const RotaractWebsite = () => {
     }));
   };
 
-    // Handle Activity / Pass Cancellation
-      // 1. Send 45-Minute OTP with Domain & Syntax Guard
-  const handleSendOtp = async (e) => {
-    if (e) e.preventDefault();
-    setOtpError('');
-    setOtpSuccess('');
-
-    const email = regEmail.toLowerCase().trim();
-    if (!email) {
-      setOtpError('Please enter your email address first.');
-      return;
-    }
-
-    // Validate email format
-    const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-    if (!emailRegex.test(email)) {
-      setOtpError('This email address does not exist or has an invalid format. Please enter a valid email.');
-      return;
-    }
-
-    // Validate email domain (reject bogus / non-existent patterns)
-    const domain = email.split('@')[1] || '';
-    const bogusPatterns = ['test', 'asdf', 'fake', 'notreal', 'gmailll', 'yaho', 'none.com'];
-    if (bogusPatterns.some(b => domain.includes(b))) {
-      setOtpError('This email domain does not exist. Please enter a valid, active email address.');
-      return;
-    }
-
-    // Generate 6-digit random code
-    const randomCode = Math.floor(100000 + Math.random() * 900000).toString();
-    setOtpGeneratedDemo(randomCode);
-    setOtpRemainingSeconds(2700); // 45 minutes
-    setOtpSent(true);
-    setOtpSuccess(`Verification code dispatched to ${email}! Active for 45 minutes.`);
-
-    try {
-      await fetch('http://localhost:5000/api/auth/send-code', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email })
-      });
-    } catch (err) {}
-  };
-
-  // 2. Verify 45-Minute OTP Code
-  const handleVerifyOtp = async (e) => {
-    if (e) e.preventDefault();
-    setOtpError('');
-    setOtpSuccess('');
-
-    if (otpRemainingSeconds <= 0) {
-      setOtpError('Verification code expired after 45 minutes. Please request a new code.');
-      return;
-    }
-
-    const entered = otpCodeInput.trim();
-    if (!entered) {
-      setOtpError('Please enter the 6-digit verification code.');
-      return;
-    }
-
-    if (entered === otpGeneratedDemo || entered === '742918' || entered === '123456') {
-      setIsEmailVerified(true);
-      setOtpSuccess('✓ Email address verified successfully! You may now submit your membership application.');
-    } else {
-      setOtpError('Incorrect verification code. Please check your email and try again.');
-    }
-  };
-
-  // 3. Submit Membership Application (Pending Approval & 3000 LKR Notice)
+  // Direct Member Registration Submission (3,000 LKR Induction Fee & Executive Approval)
   const handleRegisterSubmit = async (e) => {
     e.preventDefault();
     setAuthError('');
 
-    if (!isEmailVerified) {
-      setAuthError('Please verify your email address with the 45-minute code before submitting your application to the President/VP.');
+    const email = regEmail.toLowerCase().trim();
+    if (!email || !email.includes('@') || !email.includes('.')) {
+      setAuthError('Please enter a valid email address.');
       return;
     }
 
@@ -1823,8 +1730,14 @@ const RotaractWebsite = () => {
       {/* TOP HERO SECTION WITH BACKGROUND VIDEO & HIGH-CONTRAST "ROTARACT CLUB" DISPLAY */}
       <section id="home" className="relative min-h-[85vh] lg:min-h-[90vh] flex items-center justify-center overflow-hidden bg-slate-950">
         
-        {/* Background Video Element */}
-        <div className="absolute inset-0 w-full h-full z-0 overflow-hidden">
+        {/* Background Video Element with Fast Instant Loading */}
+        <div className="absolute inset-0 w-full h-full z-0 overflow-hidden bg-[#0B0514]">
+          <img 
+            src={videoSources[currentVideoIndex].poster}
+            alt="Rotaract Club Hero"
+            className="absolute inset-0 w-full h-full object-cover filter brightness-75 contrast-105"
+            loading="eager"
+          />
           <video
             ref={videoRef}
             key={videoSources[currentVideoIndex].url}
@@ -1832,16 +1745,17 @@ const RotaractWebsite = () => {
             loop
             muted={isVideoMuted}
             playsInline
+            preload="none"
             poster={videoSources[currentVideoIndex].poster}
-            className="w-full h-full object-cover scale-105 filter brightness-90 contrast-105"
+            className="absolute inset-0 w-full h-full object-cover scale-105 filter brightness-90 contrast-105"
           >
             <source src={videoSources[currentVideoIndex].url} type="video/mp4" />
             Your browser does not support HTML5 video.
           </video>
 
           {/* Deep Elegant Overlay Gradients using Nebula Purple #4B0082 & Void Black #0B0514 */}
-          <div className="absolute inset-0 bg-gradient-to-t from-[#0B0514]/95 via-[#0B0514]/60 to-[#4B0082]/40"></div>
-          <div className="absolute inset-0 bg-[#0B0514]/20"></div>
+          <div className="absolute inset-0 bg-gradient-to-t from-[#0B0514]/95 via-[#0B0514]/60 to-[#4B0082]/40 pointer-events-none"></div>
+          <div className="absolute inset-0 bg-[#0B0514]/20 pointer-events-none"></div>
         </div>
 
         {/* Flowing Low-Opacity White Curved Lines that gently bend and react to mouse pointer */}
@@ -2047,21 +1961,21 @@ const RotaractWebsite = () => {
       <section id="events" className="py-24 bg-slate-50 border-t border-slate-200">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           
-          <div className="flex flex-col md:flex-row md:items-end justify-between mb-16 gap-6">
-            <div>
-              <div className="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-purple-100 text-[#4B0082] text-xs font-extrabold uppercase tracking-wider mb-3 border border-purple-200">
-                <span>Mark Your Calendar</span>
-              </div>
-              <h2 className="text-4xl font-black text-slate-900 tracking-tight">Upcoming Events</h2>
-              <p className="text-slate-600 mt-2">Join us in making a hands-on impact in our local communities.</p>
+          <div className="text-center max-w-3xl mx-auto mb-16">
+            <div className="inline-flex items-center space-x-2 px-3.5 py-1.5 rounded-full bg-purple-100 text-[#4B0082] text-xs font-extrabold uppercase tracking-wider mb-3 border border-purple-200 shadow-[0_0_12px_rgba(75,0,130,0.15)]">
+              <span>Mark Your Calendar</span>
             </div>
-            <a 
-              href="#join"
-              className="inline-flex items-center space-x-2 px-6 py-3 bg-white border border-slate-300 hover:border-[#7A3B9E] text-slate-800 hover:text-[#4B0082] rounded-xl text-sm font-bold transition shadow-sm"
-            >
-              <span>Get Event Updates</span>
-              <ArrowRight size={16} />
-            </a>
+            <h2 className="text-4xl sm:text-5xl font-black text-slate-900 tracking-tight">Upcoming Events</h2>
+            <p className="text-slate-600 mt-3 text-base sm:text-lg">Join us in making a hands-on impact in our local communities.</p>
+            <div className="mt-5 flex justify-center">
+              <a 
+                href="#join"
+                className="inline-flex items-center space-x-2 px-6 py-2.5 bg-white border border-slate-300 hover:border-[#7A3B9E] text-slate-800 hover:text-[#4B0082] rounded-xl text-xs font-bold transition shadow-sm hover:shadow-md"
+              >
+                <span>Get Event Updates</span>
+                <ArrowRight size={14} />
+              </a>
+            </div>
           </div>
 
           <div className="grid md:grid-cols-2 gap-8">
@@ -2381,7 +2295,7 @@ const RotaractWebsite = () => {
                 <div>
                   <h3 className="text-xl font-black text-slate-900">Member Registration Required</h3>
                   <p className="text-xs text-slate-600 mt-2 leading-relaxed">
-                    To apply for club membership and submit induction forms (3,000 LKR fee, verified via 45-minute OTP and approved by President/VP), please register or sign in to your candidate account.
+                    To apply for club membership and submit induction forms (3,000 LKR annual induction fee, approved by President/Vice President), please register or sign in to your candidate account.
                   </p>
                 </div>
                 <div className="flex flex-col sm:flex-row items-center justify-center gap-3 pt-2">
@@ -3409,8 +3323,8 @@ const RotaractWebsite = () => {
                                   <span className="text-slate-700">{candidate.contact_no}</span>
                                 </div>
                                 <div className="flex justify-between">
-                                  <span className="text-slate-500">Email Verification:</span>
-                                  <span className="text-emerald-700 font-bold">✓ 45-Min OTP Verified</span>
+                                  <span className="text-slate-500">Registration Mode:</span>
+                                  <span className="text-purple-700 font-bold">Direct Online Application</span>
                                 </div>
                                 <div className="flex justify-between pt-1 border-t border-slate-200">
                                   <span className="text-slate-600 font-bold">Annual Induction Fee:</span>
@@ -3941,7 +3855,7 @@ const RotaractWebsite = () => {
                         <AlertTriangle size={20} className="text-amber-600" />
                         <h4 className="text-base font-black text-slate-900">Unapproved & Non-Approved Registrations Database</h4>
                       </div>
-                      <p className="text-xs text-slate-500">Dedicated table (<code className="bg-slate-100 px-1 py-0.5 rounded text-[11px] font-mono text-slate-700">unapproved_emails</code>) tracking pending 3,000 LKR applicants, unverified OTP attempts, and invalid domain logs.</p>
+                      <p className="text-xs text-slate-500">Dedicated table (<code className="bg-slate-100 px-1 py-0.5 rounded text-[11px] font-mono text-slate-700">unapproved_emails</code>) tracking pending 3,000 LKR applicants, unapproved candidate registrations, and rejected applications.</p>
                     </div>
 
                     <button
@@ -4537,8 +4451,6 @@ const RotaractWebsite = () => {
               onClick={() => {
                 setShowLoginModal(false);
                 setAuthError('');
-                setOtpError('');
-                setOtpSuccess('');
                 setRegSubmittedSuccess(false);
               }}
               className="absolute top-4 right-4 p-2 text-slate-400 hover:text-slate-700 rounded-full hover:bg-slate-100 transition"
@@ -4723,11 +4635,11 @@ const RotaractWebsite = () => {
                       </p>
                     </div>
 
-                    <div className="p-3 bg-white rounded-xl border border-emerald-200 text-xs text-slate-700 font-semibold text-left space-y-1">
+                    <div className="p-4 bg-purple-50 rounded-2xl border border-purple-200 text-xs text-slate-800 font-medium text-left space-y-2">
                       <p>• <strong>Candidate:</strong> {regFullName} ({regIndex})</p>
-                      <p>• <strong>Email Status:</strong> ✓ 45-Minute OTP Verified</p>
-                      <p>• <strong>Induction Fee:</strong> 3,000 LKR (Payable to Club Secretariat)</p>
-                      <p>• <strong>Next Step:</strong> President or VP will approve and activate your account in the Executive Portal.</p>
+                      <p>• <strong>Official Email:</strong> {regEmail}</p>
+                      <p>• <strong>Induction Fee:</strong> <strong className="text-purple-950 font-bold">3,000 LKR</strong> (Payable to Club Secretariat)</p>
+                      <p>• <strong>Next Step:</strong> The President or Vice President will review and approve your account in the Executive Portal.</p>
                     </div>
 
                     <button
@@ -4738,7 +4650,7 @@ const RotaractWebsite = () => {
                         setLoginPassword(regPassword);
                         setRegSubmittedSuccess(false);
                       }}
-                      className="w-full py-2.5 bg-[#00205B] text-white font-bold rounded-xl text-xs hover:bg-black transition shadow-sm"
+                      className="w-full py-3 bg-[#4B0082] text-white font-bold rounded-xl text-xs hover:bg-[#7A3B9E] transition shadow-md"
                     >
                       Return to Sign In
                     </button>
@@ -4746,15 +4658,15 @@ const RotaractWebsite = () => {
                 ) : (
                   <>
                     {/* 3,000 LKR Induction Fee Notice Banner */}
-                    <div className="p-3.5 bg-gradient-to-r from-amber-50 to-orange-50 border border-amber-300 rounded-2xl text-xs space-y-1">
+                    <div className="p-3.5 bg-gradient-to-r from-purple-50 to-pink-50 border border-purple-200 rounded-2xl text-xs space-y-1">
                       <div className="flex items-center justify-between">
-                        <span className="font-black text-amber-900 text-sm">Annual Induction Fee: 3,000 LKR</span>
-                        <span className="px-2 py-0.5 rounded text-[10px] font-black uppercase bg-amber-200 text-amber-900">
+                        <span className="font-black text-[#4B0082] text-sm">Annual Induction Fee: 3,000 LKR</span>
+                        <span className="px-2 py-0.5 rounded text-[10px] font-black uppercase bg-purple-200 text-purple-900">
                           Required
                         </span>
                       </div>
-                      <p className="text-[11px] text-amber-800 leading-relaxed">
-                        Covers official Rotary International District 3220 member pin, charter dues, and voting rights. Accounts are activated once verified and approved by the President or Vice President.
+                      <p className="text-[11px] text-purple-800 leading-relaxed">
+                        Covers official Rotary International District 3220 member pin, charter dues, and voting rights. Accounts are activated once reviewed and approved by the President or Vice President.
                       </p>
                     </div>
 
@@ -4767,7 +4679,7 @@ const RotaractWebsite = () => {
                           value={regFullName}
                           onChange={(e) => setRegFullName(e.target.value)}
                           placeholder="e.g. Kasun Jayasuriya"
-                          className="w-full px-3 py-2 rounded-xl bg-slate-50 border border-slate-300 text-slate-900 focus:outline-none focus:border-[#00205B]"
+                          className="w-full px-3 py-2.5 rounded-xl bg-slate-50 border border-slate-300 text-slate-900 focus:outline-none focus:border-[#7A3B9E]"
                         />
                       </div>
 
@@ -4780,7 +4692,7 @@ const RotaractWebsite = () => {
                             value={regIndex}
                             onChange={(e) => setRegIndex(e.target.value)}
                             placeholder="KADSE26.1F-042"
-                            className="w-full px-3 py-2 rounded-xl bg-slate-50 border border-slate-300 text-slate-900 focus:outline-none focus:border-[#00205B]"
+                            className="w-full px-3 py-2.5 rounded-xl bg-slate-50 border border-slate-300 text-slate-900 focus:outline-none focus:border-[#7A3B9E]"
                           />
                         </div>
                         <div>
@@ -4791,104 +4703,21 @@ const RotaractWebsite = () => {
                             value={regPhone}
                             onChange={(e) => setRegPhone(e.target.value)}
                             placeholder="+94 77 987 6543"
-                            className="w-full px-3 py-2 rounded-xl bg-slate-50 border border-slate-300 text-slate-900 focus:outline-none focus:border-[#00205B]"
+                            className="w-full px-3 py-2.5 rounded-xl bg-slate-50 border border-slate-300 text-slate-900 focus:outline-none focus:border-[#7A3B9E]"
                           />
                         </div>
                       </div>
 
-                      {/* 45-Minute Email Verification Section */}
-                      <div className="p-3 bg-slate-50 rounded-xl border border-slate-200 space-y-2">
-                        <label className="block font-bold text-slate-800">
-                          Email Address & 45-Minute Verification Guard
-                        </label>
-                        <div className="flex gap-2">
-                          <input
-                            type="email"
-                            required
-                            disabled={isEmailVerified}
-                            value={regEmail}
-                            onChange={(e) => {
-                              setRegEmail(e.target.value);
-                              setIsEmailVerified(false);
-                              setOtpSent(false);
-                              setOtpError('');
-                            }}
-                            placeholder="e.g. yourname@gmail.com"
-                            className="flex-1 px-3 py-2 rounded-xl bg-white border border-slate-300 text-slate-900 focus:outline-none focus:border-[#00205B] disabled:bg-slate-100"
-                          />
-                          <button
-                            type="button"
-                            disabled={isEmailVerified}
-                            onClick={handleSendOtp}
-                            className="px-3.5 py-2 rounded-xl bg-[#00205B] hover:bg-slate-900 text-white font-bold text-xs transition shrink-0 disabled:opacity-50"
-                          >
-                            {otpSent ? 'Resend Code' : 'Send Code'}
-                          </button>
-                        </div>
-
-                        {/* OTP Input & Live Countdown */}
-                        {otpSent && !isEmailVerified && (
-                          <div className="pt-2 border-t border-slate-200 space-y-2">
-                            <div className="flex items-center justify-between text-[11px]">
-                              <span className="font-bold text-slate-700">Enter 6-Digit Code</span>
-                              <span className="font-mono font-bold text-amber-700 flex items-center space-x-1">
-                                <Clock size={12} className="inline mr-1" />
-                                <span>
-                                  Expires in: {Math.floor(otpRemainingSeconds / 60)}:{(otpRemainingSeconds % 60).toString().padStart(2, '0')}
-                                </span>
-                              </span>
-                            </div>
-
-                            <div className="flex gap-2">
-                              <input
-                                type="text"
-                                maxLength={6}
-                                value={otpCodeInput}
-                                onChange={(e) => setOtpCodeInput(e.target.value)}
-                                placeholder="e.g. 742918"
-                                className="w-36 px-3 py-1.5 rounded-xl bg-white border border-slate-300 font-mono font-bold text-center tracking-widest text-sm focus:outline-none focus:border-[#00205B]"
-                              />
-                              <button
-                                type="button"
-                                onClick={handleVerifyOtp}
-                                className="px-4 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs transition"
-                              >
-                                Verify Code
-                              </button>
-                            </div>
-
-                            {otpGeneratedDemo && (
-                              <div className="p-3 bg-purple-50 rounded-xl border border-purple-200 text-xs text-purple-950 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-xs">
-                                <div className="space-y-0.5">
-                                  <div className="text-[11px] font-bold text-purple-900 flex items-center gap-1.5">
-                                    <span className="w-2 h-2 rounded-full bg-purple-600 animate-pulse"></span>
-                                    <span>Active Verification Code (Local Server):</span>
-                                  </div>
-                                  <div className="font-mono font-black text-lg tracking-widest text-[#4B0082]">
-                                    {otpGeneratedDemo}
-                                  </div>
-                                  <div className="text-[10px] text-purple-700">
-                                    Local test server does not dispatch external Gmail without live SMTP keys. Click Auto-Fill to verify instantly.
-                                  </div>
-                                </div>
-                                <button
-                                  type="button"
-                                  onClick={() => setOtpCodeInput(otpGeneratedDemo)}
-                                  className="px-3 py-2 rounded-lg bg-[#4B0082] hover:bg-[#0B0514] text-white font-bold text-xs transition shadow-sm shrink-0 flex items-center justify-center space-x-1"
-                                >
-                                  <span>⚡ Auto-Fill Code</span>
-                                </button>
-                              </div>
-                            )}
-                          </div>
-                        )}
-
-                        {otpError && (
-                          <p className="text-[11px] font-bold text-rose-600">⚠️ {otpError}</p>
-                        )}
-                        {otpSuccess && (
-                          <p className="text-[11px] font-bold text-emerald-700">{otpSuccess}</p>
-                        )}
+                      <div>
+                        <label className="block font-bold text-slate-700 mb-1">Email Address</label>
+                        <input
+                          type="email"
+                          required
+                          value={regEmail}
+                          onChange={(e) => setRegEmail(e.target.value)}
+                          placeholder="e.g. yourname@gmail.com"
+                          className="w-full px-3 py-2.5 rounded-xl bg-slate-50 border border-slate-300 text-slate-900 focus:outline-none focus:border-[#7A3B9E]"
+                        />
                       </div>
 
                       <div className="grid grid-cols-2 gap-3">
@@ -4900,7 +4729,7 @@ const RotaractWebsite = () => {
                             value={regPassword}
                             onChange={(e) => setRegPassword(e.target.value)}
                             placeholder="Min 6 characters"
-                            className="w-full px-3 py-2 rounded-xl bg-slate-50 border border-slate-300 text-slate-900 focus:outline-none focus:border-[#00205B]"
+                            className="w-full px-3 py-2.5 rounded-xl bg-slate-50 border border-slate-300 text-slate-900 focus:outline-none focus:border-[#7A3B9E]"
                           />
                         </div>
                         <div>
@@ -4911,33 +4740,22 @@ const RotaractWebsite = () => {
                             value={regConfirmPassword}
                             onChange={(e) => setRegConfirmPassword(e.target.value)}
                             placeholder="Re-enter password"
-                            className="w-full px-3 py-2 rounded-xl bg-slate-50 border border-slate-300 text-slate-900 focus:outline-none focus:border-[#00205B]"
+                            className="w-full px-3 py-2.5 rounded-xl bg-slate-50 border border-slate-300 text-slate-900 focus:outline-none focus:border-[#7A3B9E]"
                           />
                         </div>
                       </div>
 
                       <button
                         type="submit"
-                        disabled={!isEmailVerified}
-                        className={`w-full py-3 font-bold rounded-xl text-xs transition shadow-md flex items-center justify-center space-x-2 mt-2 ${
-                          isEmailVerified
-                            ? 'bg-[#00205B] hover:bg-black text-white cursor-pointer'
-                            : 'bg-slate-200 text-slate-400 cursor-not-allowed'
-                        }`}
+                        className="w-full py-3.5 bg-[#4B0082] hover:bg-[#7A3B9E] text-white font-extrabold uppercase tracking-wider rounded-xl transition shadow-md hover:shadow-[0_0_20px_rgba(122,59,158,0.4)] flex items-center justify-center space-x-2 mt-3 cursor-pointer"
                       >
-                        <UserPlus size={15} />
-                        <span>
-                          {isEmailVerified
-                            ? 'Submit Application for President/VP Approval (3,000 LKR Dues)'
-                            : 'Verify Email to Enable Application Submission'}
-                        </span>
+                        <UserPlus size={16} />
+                        <span>Submit Application for President/VP Approval (3,000 LKR Dues)</span>
                       </button>
 
-                      {!isEmailVerified && (
-                        <p className="text-[10px] text-center text-slate-400 font-medium">
-                          Email verification with the 45-minute code is required to prevent bot submissions before executive review.
-                        </p>
-                      )}
+                      <p className="text-[10px] text-center text-slate-500 font-medium">
+                        Your application will be sent directly to the President & VP for activation.
+                      </p>
                     </form>
                   </>
                 )}

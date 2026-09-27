@@ -170,14 +170,8 @@ exports.register = async (req, res) => {
       });
     }
 
-    // Check if email was verified via OTP (unless explicitly bypassed in demo)
-    const otpRecord = OTP_STORE.get(cleanEmail);
-    if (!bypassOtp && (!otpRecord || !otpRecord.verified)) {
-      return res.status(400).json({
-        success: false,
-        error: 'Please verify your email address with the 45-minute verification code before submitting your application.'
-      });
-    }
+    // Email verification requirement removed as requested - direct registration
+
 
     // Create user with 'Pending Approval' status and 3,000 LKR induction fee
     const newUser = await User.create({
