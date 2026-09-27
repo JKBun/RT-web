@@ -1452,11 +1452,12 @@ const RotaractWebsite = () => {
                   </button>
 
                   <a
-                    href="#join"
+                    href="#events"
+                    onClick={() => handleNavClick('events')}
                     className="px-4 py-2.5 bg-[#4B0082] text-white text-xs font-extrabold uppercase tracking-wider rounded-xl hover:bg-[#0B0514] transition shadow-md flex items-center space-x-2"
                   >
-                    <UserPlus size={15} />
-                    <span>Join Rotaract</span>
+                    <Calendar size={15} />
+                    <span>Join an Event</span>
                   </a>
 
                   <button
@@ -1546,11 +1547,15 @@ const RotaractWebsite = () => {
                       Open My Portal ({currentUser.name?.replace('Rtr. ', '').split(' ')[0] || 'User'})
                     </button>
                     <a
-                      href="#join"
-                      onClick={() => setMobileMenuOpen(false)}
-                      className="w-full py-3 bg-[#4B0082] text-white rounded-xl font-bold text-center block shadow-md text-xs uppercase tracking-wider"
+                      href="#events"
+                      onClick={() => {
+                        handleNavClick('events');
+                        setMobileMenuOpen(false);
+                      }}
+                      className="w-full py-3 bg-[#4B0082] text-white rounded-xl font-bold text-center flex items-center justify-center space-x-2 shadow-md text-xs uppercase tracking-wider"
                     >
-                      Join Rotaract Club NIBM
+                      <Calendar size={15} />
+                      <span>Join an Event</span>
                     </a>
                     <button
                       onClick={() => {
