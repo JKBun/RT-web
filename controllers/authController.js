@@ -373,3 +373,44 @@ exports.getUnapprovedEmails = async (req, res) => {
     return res.status(500).json({ success: false, error: err.message });
   }
 };
+
+/**
+ * 12. Change Password for Any Member or Board Member
+ */
+exports.changePassword = async (req, res) => {
+  try {
+    const { userId, email, currentPassword, newPassword } = req.body;
+    if (!newPassword || newPassword.length < 6) {
+      return res.status(400).json({ success: false, error: 'New password must be at least 6 characters long.' });
+    }
+
+    let user = null;
+    if (userId) {
+      user = await User.findById(userId);
+    } else if (email) {
+      user = await User.findByEmail(email);
+    }
+
+    if (!user) {
+      return res.status(404).json({ success: false, error: 'User account not found.' });
+    }
+
+    // Verify current password if user has password_hash
+    if (currentPassword && user.password_hash) {
+      const isValid = User.verifyPassword(currentPassword, user.password_hash);
+      if (!isValid) {
+        return res.status(400).json({ success: false, error: 'Current password is incorrect.' });
+      }
+    }
+
+    await User.updatePassword(user.user_id, newPassword);
+
+    return res.json({
+      success: true,
+      message: 'Password changed successfully! You can now log in with your new password.'
+    });
+  } catch (err) {
+    return res.status(500).json({ success: false, error: err.message });
+  }
+};
+

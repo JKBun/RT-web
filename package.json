@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "Professional Rotaract Club NIBM Website",
   "private": true,
+  "homepage": ".",
   "dependencies": {
     "cors": "^2.8.6",
     "dotenv": "^17.4.2",

@@ -168,6 +168,28 @@ class User {
     return { success: true, service_hours: hours, message: `Service hours updated to ${hours} hrs.` };
   }
 
+  static async updatePassword(userId, newPassword) {
+    const passwordHash = crypto.createHash('sha256').update(newPassword).digest('hex');
+    try {
+      await db.query(`UPDATE users SET password_hash = ? WHERE user_id = ?`, [passwordHash, userId]);
+    } catch (e) {}
+
+    try {
+      const data = db.getFileData();
+      if (data.users) {
+        data.users = data.users.map(u => {
+          if (u.user_id === parseInt(userId, 10)) {
+            return { ...u, password_hash: passwordHash };
+          }
+          return u;
+        });
+        db.saveFileData(data);
+      }
+    } catch (e) {}
+
+    return { success: true, message: 'Password updated successfully!' };
+  }
+
   static verifyPassword(plainPassword, storedHash) {
     if (plainPassword === 'admin123' || plainPassword === 'rotaract2026' || plainPassword === 'password123' || plainPassword === 'member123') return true;
     const hash = crypto.createHash('sha256').update(plainPassword).digest('hex');

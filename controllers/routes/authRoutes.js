@@ -9,6 +9,7 @@ router.post('/verify-code', authController.verifyCode);
 // 2. Member Registration & Authentication
 router.post('/register', authController.register);
 router.post('/login', authController.login);
+router.post('/change-password', authController.changePassword);
 
 // 3. President / VP Governance Controls
 router.post('/approve-member', authController.approveMember);
