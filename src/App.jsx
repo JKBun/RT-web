@@ -4,7 +4,7 @@ import CurvedFlowingLines from './components/CurvedFlowingLines';
 import { BRAND_CONFIG } from './config/branding';
 import { TEAM_MEMBERS } from './config/members';
 import {
-  Menu, X, Calendar, Users, Award, Mail, Phone, MapPin, Facebook, Instagram, Linkedin, ArrowRight, Play, Pause, Volume2, VolumeX, Shield, Compass, Globe, HeartHandshake, UserPlus, Eye, EyeOff, Clock, CheckCircle2, ChevronRight, Send, Search, Copy, Check, Download, Sparkles, FileText, Plus, Trash2, LogOut, FileSpreadsheet, UserCheck, RefreshCw, Camera, AlertTriangle, Ban, Key, Lock
+  Menu, X, Calendar, Users, Award, Mail, Phone, MapPin, Facebook, Instagram, Linkedin, ArrowRight, Play, Pause, Volume2, VolumeX, Shield, Compass, Globe, HeartHandshake, UserPlus, Eye, EyeOff, Clock, CheckCircle2, ChevronRight, Send, Search, Copy, Check, Download, Sparkles, FileText, Plus, Trash2, LogOut, FileSpreadsheet, UserCheck, RefreshCw, Camera, AlertTriangle, Ban, Key, Lock, BookOpen, PenTool
 } from 'lucide-react';
 
 const INITIAL_UPCOMING_EVENTS = [
@@ -222,12 +222,66 @@ const INITIAL_MEMBERS_LIST = [
   }
 ];
 
+const INITIAL_BLOG_POSTS = [
+  {
+    id: 'blog-1',
+    title: 'Empowering Youth Leadership: Strategic Vision for Rotaract NIBM 2026/27',
+    category: 'Leadership',
+    author: 'Rtr. Dilshika Rasalingam',
+    authorRole: 'Club President',
+    date: 'Sep 24, 2026',
+    readTime: '4 min read',
+    image: 'https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&q=80&w=1200',
+    excerpt: 'A comprehensive message from the President outlining our strategic roadmap for campus innovation, regional humanitarian service, and global networking across Rotary District 3220.',
+    content: `As we step into another impactful Rotary year at the National Institute of Business Management, our collective resolve to pioneer progressive youth leadership has never been stronger.
+
+Our focus for the 2026/27 tenure centers on three foundational pillars: student empowerment through technological literacy, hands-on community service projects addressing rural healthcare challenges, and fostering deep inter-club fellowship across Rotary District 3220.
+
+Through collaborations with NIBM campus faculties and industry mentors, we are launching initiatives that enable students not only to discover their leadership potential but also to apply it towards solving pressing community needs in Kandy, Colombo, and across Sri Lanka.
+
+Every general member brings a unique skill set to our fellowship. Whether you are passionate about community service, media and digital communications, or organizing youth summits, Rotaract NIBM offers a platform to turn your ambition into measurable social impact.`
+  },
+  {
+    id: 'blog-2',
+    title: 'Project "Feed the Paw": Rescuing & Vaccinating Community Animals in Kandy',
+    category: 'Community Service',
+    author: 'Rtr. Dilshika Rasalingam',
+    authorRole: 'Club President',
+    date: 'Sep 15, 2026',
+    readTime: '3 min read',
+    image: 'https://images.unsplash.com/photo-1548767797-d8c844163c4c?auto=format&fit=crop&q=80&w=1200',
+    excerpt: 'Over 200 stray dogs and cats across the Kandy municipality were fed, treated, and vaccinated during our flagship community animal welfare drive.',
+    content: `Compassion for all living beings is at the heart of humanitarian service. On Sunday, September 15th, our volunteers mobilized for Project 'Feed the Paw' across key municipal zones in Kandy.
+
+Partnering with local veterinary doctors and animal welfare volunteers, our club provided nutritious meals, rabies vaccinations, and tick/flea treatments to over 200 stray dogs and cats.
+
+Beyond feeding and medical care, our team spent time engaging with local shop owners and residents, creating awareness about humane animal treatment and community animal feeding stations. The gratitude and smiles from the local community made this project deeply fulfilling for all participating Rotaractors.`
+  },
+  {
+    id: 'blog-3',
+    title: 'Fellowship Under the Stars: Highlights from "Coffee & Chill 2026"',
+    category: 'Fellowship',
+    author: 'Rtr. Sankalpa Bandara',
+    authorRole: 'Vice President',
+    date: 'Aug 29, 2026',
+    readTime: '3 min read',
+    image: 'https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?auto=format&fit=crop&q=80&w=1200',
+    excerpt: 'An unforgettable evening of live acoustic music, artisan coffee, and meaningful fellowship bringing together alumni and fresh recruits.',
+    content: `Rotaract is built on the foundation of fellowship. 'Coffee & Chill 2026' brought together over 60 members, prospective inductees, and past board leaders for an evening dedicated to unwinding and forging lifelong friendships.
+
+Held in the courtyard of our campus partner café in Kandy, the event featured acoustic open-mic performances, interactive ice-breaker games, and an informal Q&A session where new recruits interacted with executive board directors.
+
+Strong friendships form the bedrock of successful community service projects. When members share genuine camaraderie, collaborative humanitarian work becomes a joyful collective journey.`
+  }
+];
+
 const NAV_ITEMS = [
   { id: 'home', label: 'Home' },
   { id: 'about', label: 'About' },
   { id: 'events', label: 'Events' },
   { id: 'projects', label: 'Projects' },
   { id: 'gallery', label: 'Gallery' },
+  { id: 'blog', label: 'Blog' },
   { id: 'team', label: 'Leadership' },
   { id: 'contact', label: 'Contact' }
 ];
@@ -260,6 +314,26 @@ const RotaractWebsite = () => {
   const [pwSuccess, setPwSuccess] = useState('');
   const [pwLoading, setPwLoading] = useState(false);
   const [showPwText, setShowPwText] = useState(false);
+
+  // Blog & Presidential Publication State
+  const [blogPosts, setBlogPosts] = useState(() => {
+    try {
+      const saved = localStorage.getItem('rt_nibm_blogs');
+      if (saved) return JSON.parse(saved);
+    } catch (e) {}
+    return INITIAL_BLOG_POSTS;
+  });
+  const [selectedBlogArticle, setSelectedBlogArticle] = useState(null);
+  const [blogCategoryFilter, setBlogCategoryFilter] = useState('all');
+  const [blogSearchQuery, setBlogSearchQuery] = useState('');
+  const [showNewBlogModal, setShowNewBlogModal] = useState(false);
+  const [newBlogTitle, setNewBlogTitle] = useState('');
+  const [newBlogCategory, setNewBlogCategory] = useState('Leadership');
+  const [newBlogImage, setNewBlogImage] = useState('');
+  const [newBlogExcerpt, setNewBlogExcerpt] = useState('');
+  const [newBlogContent, setNewBlogContent] = useState('');
+  const [newBlogAuthor, setNewBlogAuthor] = useState('');
+  const [blogPublishSuccess, setBlogPublishSuccess] = useState('');
 
   // Annual Board Role Management & Succession State
   const [teamMembers, setTeamMembers] = useState(() => {
@@ -824,6 +898,66 @@ const RotaractWebsite = () => {
      !currentUser?.role?.toLowerCase().includes('immediate')) ||
     currentUser?.id === 'president'
   );
+
+  // President Blog Management Handlers
+  const handlePublishBlog = (e) => {
+    e.preventDefault();
+    if (!newBlogTitle.trim() || !newBlogContent.trim()) {
+      alert('Please provide a blog title and article content.');
+      return;
+    }
+
+    const defaultImg = newBlogCategory === 'Leadership' 
+      ? 'https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&q=80&w=1200'
+      : newBlogCategory === 'Community Service'
+      ? 'https://images.unsplash.com/photo-1548767797-d8c844163c4c?auto=format&fit=crop&q=80&w=1200'
+      : newBlogCategory === 'Environment'
+      ? 'https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?auto=format&fit=crop&q=80&w=1200'
+      : 'https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?auto=format&fit=crop&q=80&w=1200';
+
+    const wordCount = newBlogContent.trim().split(/\s+/).length;
+    const estReadTime = `${Math.max(2, Math.ceil(wordCount / 160))} min read`;
+
+    const newPost = {
+      id: 'blog-' + Date.now(),
+      title: newBlogTitle.trim(),
+      category: newBlogCategory,
+      author: newBlogAuthor.trim() || currentUser?.name || 'Rtr. Dilshika Rasalingam',
+      authorRole: currentUser?.role || 'Club President',
+      date: new Date().toLocaleDateString('en-US', { month: 'short', day: '2-digit', year: 'numeric' }),
+      readTime: estReadTime,
+      image: newBlogImage.trim() || defaultImg,
+      excerpt: newBlogExcerpt.trim() || newBlogContent.slice(0, 160) + '...',
+      content: newBlogContent.trim()
+    };
+
+    const updated = [newPost, ...blogPosts];
+    setBlogPosts(updated);
+    try {
+      localStorage.setItem('rt_nibm_blogs', JSON.stringify(updated));
+    } catch (e) {}
+
+    setBlogPublishSuccess('Official Presidential blog article broadcasted successfully!');
+    setNewBlogTitle('');
+    setNewBlogExcerpt('');
+    setNewBlogContent('');
+    setNewBlogImage('');
+    setNewBlogAuthor('');
+
+    setTimeout(() => {
+      setShowNewBlogModal(false);
+      setBlogPublishSuccess('');
+    }, 1600);
+  };
+
+  const handleDeleteBlog = (blogId) => {
+    if (!window.confirm('Are you sure you want to remove this blog article?')) return;
+    const updated = blogPosts.filter(b => b.id !== blogId);
+    setBlogPosts(updated);
+    try {
+      localStorage.setItem('rt_nibm_blogs', JSON.stringify(updated));
+    } catch (e) {}
+  };
 
   // 1. Direct Self-Role Handover (Any current board member can transfer their own role)
   const handleSelfRoleTransfer = (e) => {
@@ -2303,6 +2437,206 @@ const RotaractWebsite = () => {
         </div>
       </section>
 
+      {/* BLOG & NEWSROOM SECTION */}
+      <section id="blog" className="py-24 bg-white border-t border-slate-200">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          
+          <div className="text-center max-w-3xl mx-auto mb-12">
+            <div className="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-purple-100 text-[#4B0082] text-xs font-extrabold uppercase tracking-wider mb-3 border border-purple-200">
+              <BookOpen size={14} className="text-[#4B0082]" />
+              <span>Official Newsroom & Editorial</span>
+            </div>
+            <h2 className="text-4xl font-black text-slate-900 tracking-tight">Rotaract NIBM Blog</h2>
+            <p className="text-slate-600 mt-2">
+              Inspiring stories, youth leadership reflections, community service chronicles, and milestone dispatches from our club.
+            </p>
+
+            {/* Quick Action for President */}
+            {isPresident && (
+              <div className="mt-5 inline-block">
+                <button
+                  onClick={() => {
+                    setNewBlogAuthor(currentUser?.name || 'Rtr. Dilshika Rasalingam');
+                    setShowNewBlogModal(true);
+                  }}
+                  className="px-5 py-2.5 rounded-full bg-gradient-to-r from-[#4B0082] via-[#7A3B9E] to-pink-600 text-white font-bold text-xs shadow-lg hover:shadow-purple-500/25 transition transform hover:-translate-y-0.5 flex items-center space-x-2 mx-auto"
+                >
+                  <PenTool size={14} />
+                  <span>👑 President Action: Write New Blog Post</span>
+                </button>
+              </div>
+            )}
+          </div>
+
+          {/* Search & Category Filter Bar */}
+          <div className="flex flex-col md:flex-row items-center justify-between gap-4 mb-10 pb-6 border-b border-slate-100">
+            {/* Category Pills */}
+            <div className="flex items-center space-x-2 overflow-x-auto pb-2 md:pb-0 w-full md:w-auto scrollbar-none">
+              {['all', 'Leadership', 'Community Service', 'Club Service', 'Fellowship', 'Environment'].map((cat) => (
+                <button
+                  key={cat}
+                  onClick={() => setBlogCategoryFilter(cat)}
+                  className={`px-4 py-2 rounded-xl text-xs font-bold whitespace-nowrap transition-all ${
+                    blogCategoryFilter === cat
+                      ? 'bg-[#4B0082] text-white shadow-md'
+                      : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+                  }`}
+                >
+                  {cat === 'all' ? 'All Stories' : cat}
+                </button>
+              ))}
+            </div>
+
+            {/* Search Input */}
+            <div className="relative w-full md:w-72">
+              <Search size={14} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" />
+              <input
+                type="text"
+                value={blogSearchQuery}
+                onChange={(e) => setBlogSearchQuery(e.target.value)}
+                placeholder="Search articles & authors..."
+                className="w-full pl-9 pr-4 py-2 rounded-xl bg-slate-50 border border-slate-200 text-xs text-slate-900 focus:outline-none focus:border-[#4B0082] focus:bg-white transition"
+              />
+              {blogSearchQuery && (
+                <button
+                  onClick={() => setBlogSearchQuery('')}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600"
+                >
+                  <X size={12} />
+                </button>
+              )}
+            </div>
+          </div>
+
+          {/* Blog Cards Grid */}
+          {(() => {
+            const filteredBlogs = blogPosts.filter((post) => {
+              const matchesCat = blogCategoryFilter === 'all' || post.category === blogCategoryFilter;
+              const q = blogSearchQuery.toLowerCase().trim();
+              const matchesSearch = !q ||
+                post.title.toLowerCase().includes(q) ||
+                post.excerpt.toLowerCase().includes(q) ||
+                post.author.toLowerCase().includes(q) ||
+                (post.content && post.content.toLowerCase().includes(q));
+              return matchesCat && matchesSearch;
+            });
+
+            if (filteredBlogs.length === 0) {
+              return (
+                <div className="text-center py-16 px-4 bg-slate-50 rounded-3xl border border-dashed border-slate-300">
+                  <BookOpen size={40} className="mx-auto text-slate-400 mb-3" />
+                  <h3 className="text-base font-bold text-slate-800">No blog articles found</h3>
+                  <p className="text-xs text-slate-500 mt-1 max-w-sm mx-auto">
+                    {blogSearchQuery
+                      ? `No articles match "${blogSearchQuery}". Try a different keyword or filter.`
+                      : 'There are no articles currently listed in this category.'}
+                  </p>
+                  {(blogSearchQuery || blogCategoryFilter !== 'all') && (
+                    <button
+                      onClick={() => {
+                        setBlogSearchQuery('');
+                        setBlogCategoryFilter('all');
+                      }}
+                      className="mt-4 px-4 py-1.5 rounded-xl bg-purple-100 text-[#4B0082] font-bold text-xs hover:bg-purple-200 transition"
+                    >
+                      Reset Filters
+                    </button>
+                  )}
+                </div>
+              );
+            }
+
+            return (
+              <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-8">
+                {filteredBlogs.map((post) => (
+                  <article
+                    key={post.id}
+                    className="group bg-white rounded-3xl border border-slate-200/80 shadow-sm hover:shadow-xl hover:border-purple-300 transition-all duration-300 flex flex-col overflow-hidden transform hover:-translate-y-1.5"
+                  >
+                    {/* Cover Image */}
+                    <div className="relative h-48 w-full overflow-hidden bg-slate-100">
+                      <img
+                        src={post.image}
+                        alt={post.title}
+                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                        onError={(e) => {
+                          e.target.src = 'https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&q=80&w=1200';
+                        }}
+                      />
+                      <div className="absolute top-3 left-3">
+                        <span className="px-2.5 py-1 rounded-full bg-white/90 backdrop-blur-md text-[11px] font-extrabold text-[#4B0082] shadow-sm">
+                          {post.category}
+                        </span>
+                      </div>
+                      <div className="absolute top-3 right-3">
+                        <span className="px-2.5 py-1 rounded-full bg-slate-900/75 backdrop-blur-md text-[10px] font-bold text-white shadow-sm flex items-center space-x-1">
+                          <Clock size={10} />
+                          <span>{post.readTime}</span>
+                        </span>
+                      </div>
+                    </div>
+
+                    {/* Content Body */}
+                    <div className="p-6 flex-1 flex flex-col justify-between">
+                      <div>
+                        {/* Date and Author role */}
+                        <div className="flex items-center space-x-2 text-[11px] text-slate-500 font-semibold mb-2.5">
+                          <span>{post.date}</span>
+                          <span>•</span>
+                          <span className="text-purple-700 font-bold">{post.authorRole || 'Contributor'}</span>
+                        </div>
+
+                        {/* Title */}
+                        <h3 className="text-lg font-bold text-slate-900 group-hover:text-[#4B0082] transition-colors leading-snug line-clamp-2 mb-3">
+                          {post.title}
+                        </h3>
+
+                        {/* Excerpt */}
+                        <p className="text-xs text-slate-600 line-clamp-3 leading-relaxed mb-4">
+                          {post.excerpt}
+                        </p>
+                      </div>
+
+                      {/* Card Footer */}
+                      <div className="pt-4 border-t border-slate-100 flex items-center justify-between">
+                        <div className="flex items-center space-x-2">
+                          <div className="w-7 h-7 rounded-full bg-purple-100 text-[#4B0082] flex items-center justify-center font-bold text-xs uppercase">
+                            {post.author ? post.author.charAt(post.author.indexOf(' ') + 1 || 0) : 'R'}
+                          </div>
+                          <span className="text-xs font-bold text-slate-700 truncate max-w-[130px]">
+                            {post.author}
+                          </span>
+                        </div>
+
+                        <div className="flex items-center space-x-2">
+                          {isPresident && (
+                            <button
+                              onClick={() => handleDeleteBlog(post.id)}
+                              className="p-1.5 text-rose-500 hover:text-rose-700 hover:bg-rose-50 rounded-lg transition"
+                              title="Delete Post (President Only)"
+                            >
+                              <Trash2 size={13} />
+                            </button>
+                          )}
+                          <button
+                            onClick={() => setSelectedBlogArticle(post)}
+                            className="inline-flex items-center space-x-1 text-xs font-bold text-[#4B0082] group-hover:translate-x-1 transition-all"
+                          >
+                            <span>Read</span>
+                            <ArrowRight size={13} />
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  </article>
+                ))}
+              </div>
+            );
+          })()}
+
+        </div>
+      </section>
+
       {/* EXECUTIVE LEADERSHIP TEAM */}
       <section id="team" className="py-24 bg-slate-50 border-t border-slate-200">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -2692,6 +3026,7 @@ const RotaractWebsite = () => {
                 {[
                   { id: 'overview', label: 'Overview', icon: Shield },
                   { id: 'board_roles', label: 'Annual Board Handover', icon: RefreshCw },
+                  { id: 'blogs', label: `President Blogs (${blogPosts.length})`, icon: FileText },
                   { id: 'members', label: `Member Approvals (${membersList.filter(m => m.status === 'Pending Approval').length} Pending)`, icon: UserCheck },
                   { id: 'events', label: `Events (${eventsList.length})`, icon: Calendar },
                   { id: 'registrations', label: `Passes & Cancellations (${adminPassesList.length})`, icon: Users },
@@ -3244,6 +3579,143 @@ const RotaractWebsite = () => {
                           ))}
                         </tbody>
                       </table>
+                    </div>
+                  </div>
+
+                </div>
+              )}
+
+              {/* TAB: PRESIDENTIAL BLOGS & NEWSROOM STUDIO */}
+              {adminTab === 'blogs' && (
+                <div className="space-y-6">
+                  {/* Top Ambient Banner */}
+                  <div className="p-6 rounded-3xl bg-gradient-to-r from-[#0B0514] via-[#4B0082] to-[#7A3B9E] text-white shadow-[0_0_30px_rgba(122,59,158,0.3)] relative overflow-hidden border border-purple-400/30">
+                    <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-4">
+                      <div>
+                        <div className="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-white/10 text-purple-200 text-[11px] font-extrabold uppercase tracking-wider mb-2 border border-white/20">
+                          <BookOpen size={12} />
+                          <span>Presidential Newsroom & Editorial Desk</span>
+                        </div>
+                        <h4 className="text-2xl font-black tracking-tight">Official Club Blog Management</h4>
+                        <p className="text-xs text-purple-200 mt-1 max-w-xl">
+                          Broadcast official executive insights, humanitarian project reflections, and club stories directly to the public website.
+                        </p>
+                      </div>
+
+                      <div className="flex items-center gap-3">
+                        {isPresident ? (
+                          <button
+                            onClick={() => {
+                              setNewBlogAuthor(currentUser?.name || 'Rtr. Dilshika Rasalingam');
+                              setShowNewBlogModal(true);
+                            }}
+                            className="px-5 py-3 rounded-2xl bg-amber-400 hover:bg-amber-300 text-slate-950 font-black text-xs uppercase tracking-wider transition shadow-lg flex items-center space-x-2"
+                          >
+                            <PenTool size={15} />
+                            <span>Write New Blog Post</span>
+                          </button>
+                        ) : (
+                          <div className="px-3 py-2 rounded-xl bg-purple-900/60 border border-purple-400/40 text-purple-200 text-xs font-semibold">
+                            <span>Author: President Exclusive</span>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Authority Notice */}
+                  {!isPresident && (
+                    <div className="p-4 rounded-2xl bg-amber-50 border border-amber-200 text-amber-900 text-xs flex items-center justify-between">
+                      <div className="flex items-center space-x-2">
+                        <AlertTriangle size={16} className="text-amber-700 flex-shrink-0" />
+                        <span><strong>Presidential Authority:</strong> Under club bylaws, publishing new articles is reserved for the Club President. Switch to President profile in the top-right switcher to author posts.</span>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Blog Statistics Bar */}
+                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+                    <div className="p-4 rounded-2xl bg-white border border-purple-100 shadow-sm text-center">
+                      <p className="text-2xl font-black text-[#4B0082]">{blogPosts.length}</p>
+                      <p className="text-[11px] font-bold text-slate-500 uppercase">Published Articles</p>
+                    </div>
+                    <div className="p-4 rounded-2xl bg-white border border-purple-100 shadow-sm text-center">
+                      <p className="text-2xl font-black text-[#7A3B9E]">
+                        {new Set(blogPosts.map(b => b.category)).size}
+                      </p>
+                      <p className="text-[11px] font-bold text-slate-500 uppercase">Active Categories</p>
+                    </div>
+                    <div className="p-4 rounded-2xl bg-white border border-purple-100 shadow-sm text-center">
+                      <p className="text-2xl font-black text-emerald-600">Public</p>
+                      <p className="text-[11px] font-bold text-slate-500 uppercase">Visibility Status</p>
+                    </div>
+                    <div className="p-4 rounded-2xl bg-white border border-purple-100 shadow-sm text-center">
+                      <p className="text-2xl font-black text-purple-900">{isPresident ? 'Authorized' : 'Viewer'}</p>
+                      <p className="text-[11px] font-bold text-slate-500 uppercase">Publishing Clearance</p>
+                    </div>
+                  </div>
+
+                  {/* Published Articles Table / List */}
+                  <div className="p-6 rounded-3xl bg-white border border-purple-200 shadow-sm space-y-4">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center space-x-2">
+                        <BookOpen size={18} className="text-[#7A3B9E]" />
+                        <h5 className="text-sm font-black text-slate-900">Current Published Articles</h5>
+                      </div>
+                      <a
+                        href="#blog"
+                        onClick={() => setShowAdminDashboard(false)}
+                        className="text-xs font-bold text-[#4B0082] hover:underline flex items-center space-x-1"
+                      >
+                        <span>View Public Blog Page</span>
+                        <ChevronRight size={13} />
+                      </a>
+                    </div>
+
+                    <div className="space-y-3">
+                      {blogPosts.map((post) => (
+                        <div
+                          key={post.id}
+                          className="p-4 rounded-2xl bg-purple-50/40 border border-purple-100 hover:border-purple-300 transition flex flex-col sm:flex-row sm:items-center justify-between gap-4"
+                        >
+                          <div className="flex items-center space-x-4">
+                            <img
+                              src={post.image}
+                              alt={post.title}
+                              className="w-16 h-16 rounded-xl object-cover border border-purple-200 flex-shrink-0"
+                            />
+                            <div>
+                              <div className="flex items-center space-x-2 mb-1">
+                                <span className="px-2 py-0.5 rounded-full text-[10px] font-extrabold uppercase bg-purple-100 text-[#4B0082]">
+                                  {post.category}
+                                </span>
+                                <span className="text-[11px] text-slate-400 font-medium">• {post.date}</span>
+                              </div>
+                              <h6 className="text-sm font-bold text-slate-900 leading-snug">{post.title}</h6>
+                              <p className="text-xs text-slate-500 mt-0.5">Author: <strong className="text-purple-800">{post.author}</strong> ({post.authorRole})</p>
+                            </div>
+                          </div>
+
+                          <div className="flex items-center space-x-2 self-end sm:self-center flex-shrink-0">
+                            <button
+                              onClick={() => setSelectedBlogArticle(post)}
+                              className="px-3 py-1.5 rounded-xl bg-white hover:bg-slate-100 text-slate-700 text-xs font-bold transition border border-slate-200 flex items-center space-x-1"
+                            >
+                              <Eye size={13} />
+                              <span>Preview</span>
+                            </button>
+                            {isPresident && (
+                              <button
+                                onClick={() => handleDeleteBlog(post.id)}
+                                className="p-1.5 rounded-xl bg-rose-50 hover:bg-rose-100 text-rose-600 transition border border-rose-200"
+                                title="Delete Blog Post"
+                              >
+                                <Trash2 size={14} />
+                              </button>
+                            )}
+                          </div>
+                        </div>
+                      ))}
                     </div>
                   </div>
 
@@ -5598,6 +6070,269 @@ const RotaractWebsite = () => {
                 >
                   <Plus size={14} />
                   <span>{gallerySubmitting ? 'Publishing...' : 'Publish to Gallery'}</span>
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* MODAL 10: BLOG ARTICLE READER MODAL */}
+      {selectedBlogArticle && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/85 backdrop-blur-md overflow-y-auto">
+          <div className="relative w-full max-w-3xl my-8 bg-white rounded-3xl border border-slate-200 shadow-2xl overflow-hidden">
+            {/* Close Button */}
+            <button 
+              onClick={() => setSelectedBlogArticle(null)}
+              className="absolute top-4 right-4 z-10 p-2.5 text-white bg-black/50 hover:bg-black/80 rounded-full transition backdrop-blur-md"
+            >
+              <X size={18} />
+            </button>
+
+            {/* Article Hero Banner */}
+            <div className="relative h-64 sm:h-80 w-full overflow-hidden bg-slate-900">
+              <img
+                src={selectedBlogArticle.image}
+                alt={selectedBlogArticle.title}
+                className="w-full h-full object-cover opacity-85"
+                onError={(e) => {
+                  e.target.src = 'https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&q=80&w=1200';
+                }}
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent" />
+              
+              <div className="absolute bottom-6 left-6 right-6 text-white">
+                <div className="flex flex-wrap items-center gap-2 mb-2">
+                  <span className="px-3 py-1 rounded-full bg-purple-600/90 text-white font-extrabold text-xs">
+                    {selectedBlogArticle.category}
+                  </span>
+                  <span className="text-xs text-white/80 flex items-center space-x-1">
+                    <Clock size={12} />
+                    <span>{selectedBlogArticle.readTime}</span>
+                  </span>
+                  <span className="text-xs text-white/60">•</span>
+                  <span className="text-xs text-white/80">{selectedBlogArticle.date}</span>
+                </div>
+                <h1 className="text-2xl sm:text-3xl font-black leading-tight text-white">
+                  {selectedBlogArticle.title}
+                </h1>
+              </div>
+            </div>
+
+            {/* Article Author Header & Body */}
+            <div className="p-6 sm:p-10 max-h-[60vh] overflow-y-auto">
+              {/* Author Info Card */}
+              <div className="flex items-center justify-between p-4 rounded-2xl bg-purple-50/70 border border-purple-100 mb-8">
+                <div className="flex items-center space-x-3">
+                  <div className="w-11 h-11 rounded-2xl bg-gradient-to-tr from-[#4B0082] to-[#7A3B9E] text-white flex items-center justify-center font-black text-base shadow-sm">
+                    {selectedBlogArticle.author ? selectedBlogArticle.author.charAt(selectedBlogArticle.author.indexOf(' ') + 1 || 0) : 'R'}
+                  </div>
+                  <div>
+                    <h4 className="text-sm font-bold text-slate-900">{selectedBlogArticle.author}</h4>
+                    <p className="text-xs text-purple-700 font-semibold">{selectedBlogArticle.authorRole || 'Rotaract Leader'}</p>
+                  </div>
+                </div>
+                <span className="text-xs font-bold text-slate-500 hidden sm:inline">Rotaract Club of NIBM</span>
+              </div>
+
+              {/* Lead Excerpt */}
+              {selectedBlogArticle.excerpt && (
+                <div className="p-4 rounded-2xl bg-slate-50 border-l-4 border-[#4B0082] text-sm text-slate-700 font-medium italic mb-6 leading-relaxed">
+                  "{selectedBlogArticle.excerpt}"
+                </div>
+              )}
+
+              {/* Story Content */}
+              <div className="space-y-4 text-slate-700 text-sm sm:text-base leading-relaxed whitespace-pre-line">
+                {selectedBlogArticle.content || selectedBlogArticle.excerpt}
+              </div>
+
+              {/* Footer Controls */}
+              <div className="mt-10 pt-6 border-t border-slate-100 flex flex-col sm:flex-row items-center justify-between gap-4">
+                <button
+                  type="button"
+                  onClick={() => {
+                    navigator.clipboard?.writeText(window.location.href);
+                    alert('Article link copied to clipboard!');
+                  }}
+                  className="w-full sm:w-auto px-5 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs transition flex items-center justify-center space-x-2"
+                >
+                  <Copy size={14} />
+                  <span>Share Story</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setSelectedBlogArticle(null)}
+                  className="w-full sm:w-auto px-6 py-2.5 rounded-xl bg-[#4B0082] hover:bg-[#7A3B9E] text-white font-bold text-xs transition shadow-md"
+                >
+                  Close Article
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* MODAL 11: PRESIDENT WRITE & PUBLISH BLOG MODAL */}
+      {showNewBlogModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/85 backdrop-blur-md overflow-y-auto">
+          <div className="relative w-full max-w-2xl my-8 p-6 sm:p-8 rounded-3xl bg-white border border-slate-200 shadow-2xl">
+            <button 
+              onClick={() => {
+                setShowNewBlogModal(false);
+                setBlogPublishSuccess('');
+              }}
+              className="absolute top-4 right-4 p-2 text-slate-400 hover:text-slate-700 rounded-full hover:bg-slate-100"
+            >
+              <X size={20} />
+            </button>
+
+            <div className="mb-6 flex items-center space-x-3">
+              <div className="w-12 h-12 bg-gradient-to-tr from-[#4B0082] to-[#7A3B9E] text-white rounded-2xl flex items-center justify-center shadow-md">
+                <PenTool size={22} />
+              </div>
+              <div>
+                <h3 className="text-xl font-bold text-slate-900 flex items-center space-x-2">
+                  <span>Author Presidential Blog Article</span>
+                  <span className="text-[10px] font-black uppercase px-2 py-0.5 rounded-full bg-amber-400 text-amber-950">
+                    👑 President Clearance
+                  </span>
+                </h3>
+                <p className="text-xs text-slate-500">Publish official dispatches, strategic visions, and event reflections to the public site</p>
+              </div>
+            </div>
+
+            {blogPublishSuccess && (
+              <div className="mb-4 p-4 rounded-2xl bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs font-bold flex items-center space-x-2">
+                <CheckCircle2 size={16} className="text-emerald-600 flex-shrink-0" />
+                <span>{blogPublishSuccess}</span>
+              </div>
+            )}
+
+            <form onSubmit={handlePublishBlog} className="space-y-4">
+              <div>
+                <label className="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1">
+                  Article Headline / Title *
+                </label>
+                <input
+                  type="text"
+                  required
+                  value={newBlogTitle}
+                  onChange={(e) => setNewBlogTitle(e.target.value)}
+                  placeholder="e.g. Empowering Youth Leadership: Strategic Vision for Rotaract NIBM 2026/27"
+                  className="w-full px-4 py-2.5 rounded-xl bg-slate-50 border border-slate-300 text-slate-900 text-xs focus:outline-none focus:border-[#4B0082] focus:bg-white"
+                />
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1">
+                    Avenue / Category *
+                  </label>
+                  <select
+                    value={newBlogCategory}
+                    onChange={(e) => setNewBlogCategory(e.target.value)}
+                    className="w-full px-3 py-2.5 rounded-xl bg-slate-50 border border-slate-300 text-slate-900 text-xs font-semibold focus:outline-none focus:border-[#4B0082]"
+                  >
+                    <option value="Leadership">Leadership</option>
+                    <option value="Community Service">Community Service</option>
+                    <option value="Club Service">Club Service</option>
+                    <option value="Professional Development">Professional Development</option>
+                    <option value="International Service">International Service</option>
+                    <option value="Environment">Environment</option>
+                    <option value="Fellowship">Fellowship</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label className="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1">
+                    Author Byline *
+                  </label>
+                  <input
+                    type="text"
+                    required
+                    value={newBlogAuthor}
+                    onChange={(e) => setNewBlogAuthor(e.target.value)}
+                    placeholder="e.g. Rtr. Dilshika Rasalingam"
+                    className="w-full px-4 py-2.5 rounded-xl bg-slate-50 border border-slate-300 text-slate-900 text-xs focus:outline-none focus:border-[#4B0082] focus:bg-white"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1">
+                  Cover Image URL
+                </label>
+                <input
+                  type="text"
+                  value={newBlogImage}
+                  onChange={(e) => setNewBlogImage(e.target.value)}
+                  placeholder="https://images.unsplash.com/... (Leave blank for default avenue banner)"
+                  className="w-full px-4 py-2.5 rounded-xl bg-slate-50 border border-slate-300 text-slate-900 text-xs focus:outline-none focus:border-[#4B0082] focus:bg-white"
+                />
+
+                {/* Preset Suggestions */}
+                <div className="mt-2 flex items-center space-x-1.5 flex-wrap gap-y-1">
+                  <span className="text-[10px] text-slate-400 font-bold">Quick Presets:</span>
+                  {[
+                    { label: 'Leadership', url: 'https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&q=80&w=1200' },
+                    { label: 'Community', url: 'https://images.unsplash.com/photo-1548767797-d8c844163c4c?auto=format&fit=crop&q=80&w=1200' },
+                    { label: 'Environment', url: 'https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?auto=format&fit=crop&q=80&w=1200' },
+                    { label: 'Fellowship', url: 'https://images.unsplash.com/photo-1511578314322-379afb476865?auto=format&fit=crop&q=80&w=1200' }
+                  ].map(p => (
+                    <button
+                      key={p.label}
+                      type="button"
+                      onClick={() => setNewBlogImage(p.url)}
+                      className="px-2 py-0.5 rounded bg-slate-100 hover:bg-slate-200 text-slate-600 text-[10px] font-semibold border border-slate-200"
+                    >
+                      {p.label}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1">
+                  Short Excerpt / Preview Summary
+                </label>
+                <input
+                  type="text"
+                  value={newBlogExcerpt}
+                  onChange={(e) => setNewBlogExcerpt(e.target.value)}
+                  placeholder="One or two compelling sentences summarizing the article..."
+                  className="w-full px-4 py-2.5 rounded-xl bg-slate-50 border border-slate-300 text-slate-900 text-xs focus:outline-none focus:border-[#4B0082] focus:bg-white"
+                />
+              </div>
+
+              <div>
+                <label className="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1">
+                  Full Article Story *
+                </label>
+                <textarea
+                  required
+                  rows={6}
+                  value={newBlogContent}
+                  onChange={(e) => setNewBlogContent(e.target.value)}
+                  placeholder="Write the full presidential article here. You can use separate paragraphs for readability..."
+                  className="w-full px-4 py-2.5 rounded-xl bg-slate-50 border border-slate-300 text-slate-900 text-xs focus:outline-none focus:border-[#4B0082] focus:bg-white leading-relaxed"
+                />
+              </div>
+
+              <div className="flex items-center space-x-3 pt-3">
+                <button
+                  type="button"
+                  onClick={() => setShowNewBlogModal(false)}
+                  className="flex-1 py-3 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold rounded-xl text-xs transition"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  className="flex-1 py-3 bg-gradient-to-r from-[#4B0082] via-[#7A3B9E] to-pink-600 hover:opacity-95 text-white font-bold rounded-xl text-xs transition shadow-md flex items-center justify-center space-x-2"
+                >
+                  <PenTool size={14} />
+                  <span>Publish Official Blog</span>
                 </button>
               </div>
             </form>
