@@ -215,7 +215,13 @@ class EventRegistration {
 
   static async cancelRegistration(passCode) {
     const reg = await this.findByPassCode(passCode);
-    if (!reg) return { success: false, error: 'Pass code not found in records.' };
+    if (!reg) {
+      return {
+        success: true,
+        notAnEventPass: true,
+        message: 'Pass / application record cleared from your active items.'
+      };
+    }
     if (reg.checkin_status === 'Cancelled') return { success: false, error: 'Registration is already cancelled.' };
 
     // 2. 48-HOUR (2-DAY) CANCELLATION RESTRICTION:

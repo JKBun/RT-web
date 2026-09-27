@@ -239,7 +239,7 @@ const RotaractWebsite = () => {
   const [showLoginModal, setShowLoginModal] = useState(false);
     const [showAdminDashboard, setShowAdminDashboard] = useState(false);
   const [showMemberDashboard, setShowMemberDashboard] = useState(false);
-  const [currentUser, setCurrentUser] = useState(EXECUTIVE_ACCOUNTS[0]);
+  const [currentUser, setCurrentUser] = useState(null);
   const [adminTab, setAdminTab] = useState('overview');
   const [loginEmail, setLoginEmail] = useState('vp@rt-nibm.org');
   const [loginPassword, setLoginPassword] = useState('admin123');
@@ -1073,8 +1073,10 @@ const RotaractWebsite = () => {
   };
 
   const handleCancelActivity = async (activityId, title) => {
-    const confirmed = window.confirm(`Cancellation Policy:\n• Passes can ONLY be cancelled at least 48 hours (2 days) prior to the event.\n• If less than 48 hours remain, cancellations are strictly locked.\n• Note: Cancelling archives your pass, and re-registering requires Executive Board authorization.\n\nAre you sure you want to cancel your pass for "${title}"?`);
+    const confirmed = window.confirm(`Cancellation / Removal Notice:\n• Event Passes can ONLY be cancelled at least 48 hours (2 days) prior to the event.\n• Membership applications & volunteer registrations will be removed from your active pass records.\n\nAre you sure you want to cancel / remove "${title}"?`);
     if (!confirmed) return;
+
+    let blockedBy48HourRule = false;
 
     try {
       const response = await fetch('http://localhost:5000/api/registrations/cancel', {
@@ -1085,15 +1087,24 @@ const RotaractWebsite = () => {
       const data = await response.json();
 
       if (!data.success) {
-        alert(`❌ Cancellation Blocked:\n\n${data.error || 'This pass cannot be cancelled.'}`);
-        return;
+        // If specifically blocked by the 48-hour event deadline
+        if (data.error && data.error.includes('Cancellation Policy')) {
+          alert(`❌ Cancellation Blocked:\n\n${data.error}`);
+          blockedBy48HourRule = true;
+          return;
+        }
+      } else {
+        if (!data.notAnEventPass) {
+          alert(`✅ Pass Cancelled:\n\n${data.message}`);
+        }
       }
-
-      alert(`✅ Pass Cancelled:\n\n${data.message}`);
     } catch (err) {
       console.warn('Offline mode: Cancelled locally.');
     }
 
+    if (blockedBy48HourRule) return;
+
+    // Remove from local passes state & localStorage
     setMyVolunteerActivities(prev => {
       const updated = prev.filter(act => act.id !== activityId);
       try {
@@ -1107,6 +1118,7 @@ const RotaractWebsite = () => {
     }
 
     fetchCancelledPasses();
+    alert(`"${title}" has been successfully removed from your active passes.`);
   };
 
   const handleFormSubmit = async (formType, e, itemContext = null) => {
@@ -1423,19 +1435,66 @@ const RotaractWebsite = () => {
                   <span>My Passes ({myVolunteerActivities.length})</span>
                 </button>
               )}
-              <button
-                onClick={() => setShowLoginModal(true)}
-                className="px-4 py-2.5 text-xs font-bold text-slate-700 hover:text-[#4B0082] hover:bg-slate-100 rounded-xl transition border border-slate-200 uppercase tracking-wider"
-              >
-                Member Portal
-              </button>
-              <a
-                href="#join"
-                className="px-5 py-2.5 bg-[#4B0082] text-white text-xs font-extrabold uppercase tracking-wider rounded-xl hover:bg-[#0B0514] transition shadow-md flex items-center space-x-2 hover:shadow-lg hover:-translate-y-0.5 active:translate-y-0 duration-200"
-              >
-                <UserPlus size={15} />
-                <span>Join Rotaract</span>
-              </a>
+              {currentUser ? (
+                <>
+                  <button
+                    onClick={() => {
+                      if (currentUser.role === 'Admin' || currentUser.role === 'Director') {
+                        setShowAdminDashboard(true);
+                      } else {
+                        setShowMemberDashboard(true);
+                      }
+                    }}
+                    className="px-3.5 py-2.5 text-xs font-bold text-white bg-[#00205B] hover:bg-black rounded-xl transition shadow-sm flex items-center space-x-1.5"
+                  >
+                    <Shield size={14} />
+                    <span>My Portal ({currentUser.name?.replace('Rtr. ', '').split(' ')[0] || 'User'})</span>
+                  </button>
+
+                  <a
+                    href="#join"
+                    className="px-4 py-2.5 bg-[#4B0082] text-white text-xs font-extrabold uppercase tracking-wider rounded-xl hover:bg-[#0B0514] transition shadow-md flex items-center space-x-2"
+                  >
+                    <UserPlus size={15} />
+                    <span>Join Rotaract</span>
+                  </a>
+
+                  <button
+                    onClick={() => {
+                      setCurrentUser(null);
+                      setShowAdminDashboard(false);
+                      setShowMemberDashboard(false);
+                    }}
+                    className="p-2.5 text-slate-400 hover:text-rose-600 rounded-xl hover:bg-slate-100 transition border border-slate-200"
+                    title="Sign Out"
+                  >
+                    <LogOut size={16} />
+                  </button>
+                </>
+              ) : (
+                <>
+                  <button
+                    onClick={() => {
+                      setShowLoginModal(true);
+                      setAuthModalTab('signin');
+                    }}
+                    className="px-3.5 py-2.5 text-xs font-bold text-slate-700 hover:text-[#4B0082] hover:bg-slate-100 rounded-xl transition border border-slate-200 uppercase tracking-wider"
+                  >
+                    Member Portal
+                  </button>
+
+                  <button
+                    onClick={() => {
+                      setShowLoginModal(true);
+                      setAuthModalTab('register');
+                    }}
+                    className="px-4 py-2.5 bg-[#4B0082] text-white text-xs font-extrabold uppercase tracking-wider rounded-xl hover:bg-[#0B0514] transition shadow-md flex items-center space-x-2 hover:shadow-lg duration-200"
+                  >
+                    <UserPlus size={15} />
+                    <span>Don't have an account? Register now</span>
+                  </button>
+                </>
+              )}
             </div>
 
             {/* Mobile Toggle Button */}
@@ -1471,22 +1530,62 @@ const RotaractWebsite = () => {
                 </a>
               ))}
               <div className="pt-3 flex flex-col space-y-2 px-1 border-t border-slate-100">
-                <button
-                  onClick={() => {
-                    setShowLoginModal(true);
-                    setMobileMenuOpen(false);
-                  }}
-                  className="w-full py-3 bg-slate-100 text-slate-800 rounded-xl font-bold hover:bg-slate-200 text-center text-xs uppercase tracking-wider transition"
-                >
-                  Member Portal
-                </button>
-                <a
-                  href="#join"
-                  onClick={() => setMobileMenuOpen(false)}
-                  className="w-full py-3 bg-[#4B0082] text-white rounded-xl font-bold text-center block shadow-md text-xs uppercase tracking-wider"
-                >
-                  Join Rotaract Club NIBM
-                </a>
+                {currentUser ? (
+                  <>
+                    <button
+                      onClick={() => {
+                        if (currentUser.role === 'Admin' || currentUser.role === 'Director') {
+                          setShowAdminDashboard(true);
+                        } else {
+                          setShowMemberDashboard(true);
+                        }
+                        setMobileMenuOpen(false);
+                      }}
+                      className="w-full py-3 bg-[#00205B] text-white rounded-xl font-bold text-center block shadow-md text-xs uppercase tracking-wider"
+                    >
+                      Open My Portal ({currentUser.name?.replace('Rtr. ', '').split(' ')[0] || 'User'})
+                    </button>
+                    <a
+                      href="#join"
+                      onClick={() => setMobileMenuOpen(false)}
+                      className="w-full py-3 bg-[#4B0082] text-white rounded-xl font-bold text-center block shadow-md text-xs uppercase tracking-wider"
+                    >
+                      Join Rotaract Club NIBM
+                    </a>
+                    <button
+                      onClick={() => {
+                        setCurrentUser(null);
+                        setMobileMenuOpen(false);
+                      }}
+                      className="w-full py-2 bg-rose-50 text-rose-700 rounded-xl font-bold text-center block text-xs uppercase tracking-wider"
+                    >
+                      Sign Out
+                    </button>
+                  </>
+                ) : (
+                  <>
+                    <button
+                      onClick={() => {
+                        setShowLoginModal(true);
+                        setAuthModalTab('signin');
+                        setMobileMenuOpen(false);
+                      }}
+                      className="w-full py-3 bg-slate-100 text-slate-800 rounded-xl font-bold hover:bg-slate-200 text-center text-xs uppercase tracking-wider transition"
+                    >
+                      Member Portal / Sign In
+                    </button>
+                    <button
+                      onClick={() => {
+                        setShowLoginModal(true);
+                        setAuthModalTab('register');
+                        setMobileMenuOpen(false);
+                      }}
+                      className="w-full py-3 bg-[#4B0082] text-white rounded-xl font-bold text-center block shadow-md text-xs uppercase tracking-wider"
+                    >
+                      Don't have an account? Register now
+                    </button>
+                  </>
+                )}
               </div>
             </div>
           )}
@@ -2046,85 +2145,120 @@ const RotaractWebsite = () => {
               <p className="text-slate-600 text-sm mt-2">Open to all NIBM undergraduates and young professionals passionate about leadership & social impact.</p>
             </div>
 
-            <form onSubmit={(e) => handleFormSubmit('Membership Application', e)} className="space-y-6">
-              <div className="grid sm:grid-cols-2 gap-6">
-                <div>
-                  <label className="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-2">Full Name *</label>
-                  <input 
-                    type="text" 
-                    name="membershipName"
-                    required
-                    value={formData.membershipName}
-                    onChange={handleInputChange}
-                    placeholder="John Doe"
-                    className="w-full px-4 py-3 rounded-xl bg-white border border-slate-300 text-slate-900 text-sm focus:outline-none focus:border-[#7A3B9E]"
-                  />
+            {!currentUser ? (
+              <div className="text-center py-10 px-6 bg-white rounded-2xl border border-purple-100 shadow-sm max-w-xl mx-auto space-y-5">
+                <div className="w-16 h-16 mx-auto rounded-2xl bg-purple-50 text-[#4B0082] flex items-center justify-center border border-purple-200 shadow-inner">
+                  <UserPlus size={32} />
                 </div>
                 <div>
-                  <label className="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-2">Email Address *</label>
-                  <input 
-                    type="email" 
-                    name="membershipEmail"
-                    required
-                    value={formData.membershipEmail}
-                    onChange={handleInputChange}
-                    placeholder="student@nibm.lk"
-                    className="w-full px-4 py-3 rounded-xl bg-white border border-slate-300 text-slate-900 text-sm focus:outline-none focus:border-[#7A3B9E]"
-                  />
+                  <h3 className="text-xl font-black text-slate-900">Member Registration Required</h3>
+                  <p className="text-xs text-slate-600 mt-2 leading-relaxed">
+                    To apply for club membership and submit induction forms (3,000 LKR fee, verified via 45-minute OTP and approved by President/VP), please register or sign in to your candidate account.
+                  </p>
                 </div>
-              </div>
-
-              <div className="grid sm:grid-cols-2 gap-6">
-                <div>
-                  <label className="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-2">Phone Number *</label>
-                  <input 
-                    type="tel" 
-                    name="membershipPhone"
-                    required
-                    value={formData.membershipPhone}
-                    onChange={handleInputChange}
-                    placeholder="+94 77 123 4567"
-                    className="w-full px-4 py-3 rounded-xl bg-white border border-slate-300 text-slate-900 text-sm focus:outline-none focus:border-[#7A3B9E]"
-                  />
-                </div>
-                <div>
-                  <label className="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-2">Academic Year / Intake *</label>
-                  <input 
-                    type="text" 
-                    name="membershipYear"
-                    required
-                    value={formData.membershipYear}
-                    onChange={handleInputChange}
-                    placeholder="2nd Year - Software Engineering"
-                    className="w-full px-4 py-3 rounded-xl bg-white border border-slate-300 text-slate-900 text-sm focus:outline-none focus:border-[#7A3B9E]"
-                  />
+                <div className="flex flex-col sm:flex-row items-center justify-center gap-3 pt-2">
+                  <button
+                    onClick={() => {
+                      setShowLoginModal(true);
+                      setAuthModalTab('register');
+                    }}
+                    className="w-full sm:w-auto px-6 py-3 bg-[#4B0082] hover:bg-[#0B0514] text-white text-xs font-extrabold uppercase tracking-wider rounded-xl transition shadow-md flex items-center justify-center space-x-2"
+                  >
+                    <UserPlus size={15} />
+                    <span>Don't have an account? Register now</span>
+                  </button>
+                  <button
+                    onClick={() => {
+                      setShowLoginModal(true);
+                      setAuthModalTab('signin');
+                    }}
+                    className="w-full sm:w-auto px-6 py-3 bg-white hover:bg-slate-50 text-slate-800 text-xs font-bold uppercase tracking-wider rounded-xl transition border border-slate-300 flex items-center justify-center space-x-2"
+                  >
+                    <span>Member Portal / Sign In</span>
+                  </button>
                 </div>
               </div>
+            ) : (
+              <form onSubmit={(e) => handleFormSubmit('Membership Application', e)} className="space-y-6">
+                <div className="grid sm:grid-cols-2 gap-6">
+                  <div>
+                    <label className="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-2">Full Name *</label>
+                    <input 
+                      type="text" 
+                      name="membershipName"
+                      required
+                      value={formData.membershipName}
+                      onChange={handleInputChange}
+                      placeholder="John Doe"
+                      className="w-full px-4 py-3 rounded-xl bg-white border border-slate-300 text-slate-900 text-sm focus:outline-none focus:border-[#7A3B9E]"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-2">Email Address *</label>
+                    <input 
+                      type="email" 
+                      name="membershipEmail"
+                      required
+                      value={formData.membershipEmail}
+                      onChange={handleInputChange}
+                      placeholder="student@nibm.lk"
+                      className="w-full px-4 py-3 rounded-xl bg-white border border-slate-300 text-slate-900 text-sm focus:outline-none focus:border-[#7A3B9E]"
+                    />
+                  </div>
+                </div>
 
-              <div>
-                <label className="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-2">Primary Area of Interest</label>
-                <select 
-                  name="membershipInterest"
-                  value={formData.membershipInterest}
-                  onChange={handleInputChange}
-                  className="w-full px-4 py-3 rounded-xl bg-white border border-slate-300 text-slate-900 text-sm focus:outline-none focus:border-[#7A3B9E]"
+                <div className="grid sm:grid-cols-2 gap-6">
+                  <div>
+                    <label className="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-2">Phone Number *</label>
+                    <input 
+                      type="tel" 
+                      name="membershipPhone"
+                      required
+                      value={formData.membershipPhone}
+                      onChange={handleInputChange}
+                      placeholder="+94 77 123 4567"
+                      className="w-full px-4 py-3 rounded-xl bg-white border border-slate-300 text-slate-900 text-sm focus:outline-none focus:border-[#7A3B9E]"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-2">Academic Year / Intake *</label>
+                    <input 
+                      type="text" 
+                      name="membershipYear"
+                      required
+                      value={formData.membershipYear}
+                      onChange={handleInputChange}
+                      placeholder="2nd Year - Software Engineering"
+                      className="w-full px-4 py-3 rounded-xl bg-white border border-slate-300 text-slate-900 text-sm focus:outline-none focus:border-[#7A3B9E]"
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-2">Primary Area of Interest</label>
+                  <select 
+                    name="membershipInterest"
+                    value={formData.membershipInterest}
+                    onChange={handleInputChange}
+                    className="w-full px-4 py-3 rounded-xl bg-white border border-slate-300 text-slate-900 text-sm focus:outline-none focus:border-[#7A3B9E]"
+                  >
+                    <option value="Community Service">Community Service & Humanitarian Aid</option>
+                    <option value="Professional Development">Professional & Skill Development</option>
+                    <option value="Environmental Projects">Environmental & Green Conservation</option>
+                    <option value="International Service">International Youth Networking</option>
+                    <option value="Public Relations">Media, Design & Public Relations</option>
+                  </select>
+                </div>
+
+                <button 
+                  type="submit"
+                  className="w-full py-4 bg-[#4B0082] hover:bg-[#0B0514] text-white font-bold rounded-xl text-base transition shadow-md flex items-center justify-center space-x-2"
                 >
-                  <option value="Community Service">Community Service & Humanitarian Aid</option>
-                  <option value="Professional Development">Professional & Skill Development</option>
-                  <option value="Environmental Projects">Environmental & Green Conservation</option>
-                  <option value="International Service">International Youth Networking</option>
-                  <option value="Public Relations">Media, Design & Public Relations</option>
-                </select>
-              </div>
-
-              <button 
-                type="submit"
-                className="w-full py-4 bg-[#4B0082] hover:bg-[#0B0514] text-white font-bold rounded-xl text-base transition shadow-md flex items-center justify-center space-x-2"
-              >
-                <UserPlus size={18} />
-                <span>Submit Membership Application</span>
-              </button>
-            </form>
+                  <UserPlus size={18} />
+                  <span>Submit Membership Application</span>
+                </button>
+              </form>
+            )}
 
             <div className="mt-8 pt-6 border-t border-slate-200 flex flex-col sm:flex-row items-center justify-between text-xs text-slate-600 gap-4">
               <span>Are you a corporate partner looking to collaborate?</span>
@@ -4126,9 +4260,27 @@ const RotaractWebsite = () => {
                             </div>
 
                             {otpGeneratedDemo && (
-                              <p className="text-[10px] text-slate-500 font-semibold bg-white p-1.5 rounded border border-slate-200">
-                                💡 Demo verification code: <strong className="font-mono text-purple-700">{otpGeneratedDemo}</strong>
-                              </p>
+                              <div className="p-3 bg-purple-50 rounded-xl border border-purple-200 text-xs text-purple-950 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-xs">
+                                <div className="space-y-0.5">
+                                  <div className="text-[11px] font-bold text-purple-900 flex items-center gap-1.5">
+                                    <span className="w-2 h-2 rounded-full bg-purple-600 animate-pulse"></span>
+                                    <span>Active Verification Code (Local Server):</span>
+                                  </div>
+                                  <div className="font-mono font-black text-lg tracking-widest text-[#4B0082]">
+                                    {otpGeneratedDemo}
+                                  </div>
+                                  <div className="text-[10px] text-purple-700">
+                                    Local test server does not dispatch external Gmail without live SMTP keys. Click Auto-Fill to verify instantly.
+                                  </div>
+                                </div>
+                                <button
+                                  type="button"
+                                  onClick={() => setOtpCodeInput(otpGeneratedDemo)}
+                                  className="px-3 py-2 rounded-lg bg-[#4B0082] hover:bg-[#0B0514] text-white font-bold text-xs transition shadow-sm shrink-0 flex items-center justify-center space-x-1"
+                                >
+                                  <span>⚡ Auto-Fill Code</span>
+                                </button>
+                              </div>
                             )}
                           </div>
                         )}

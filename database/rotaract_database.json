@@ -1,6 +1,23 @@
 {
   "users": [
     {
+      "user_id": 8,
+      "full_name": "Dinidu",
+      "email": "dinidukulasinghe01@gmail.com",
+      "password_hash": "91d773a56a9db480057ec27d55195081c07a9082ca5d73b27a31ef5fe0db8c7c",
+      "nibm_index_no": "Kulasinghe",
+      "role": "Member",
+      "status": "Pending Approval",
+      "membership_fee": 3000,
+      "fee_status": "Pending Verification",
+      "service_hours": 0,
+      "contact_no": "078787878",
+      "is_email_verified": 1,
+      "approved_by": null,
+      "approved_at": null,
+      "created_at": "2026-09-27T05:16:26.445Z"
+    },
+    {
       "user_id": 1,
       "full_name": "Rtr. Dilshika Rasalingam",
       "email": "president@rt-nibm.org",
@@ -303,6 +320,34 @@
     }
   ],
   "unapproved_emails": [
+    {
+      "id": 5,
+      "email": "dinidukulasinghe01@gmail.com",
+      "full_name": "Dinidu",
+      "phone": "078787878",
+      "attempt_type": "Membership Application",
+      "status": "Pending Board Approval",
+      "fee_amount": 3000,
+      "otp_code": null,
+      "code_expires_at": null,
+      "details": "Registered candidate awaiting 3,000 LKR fee induction & President/VP authorization",
+      "created_at": "2026-09-27T05:15:08.287Z",
+      "updated_at": "2026-09-27T05:16:26.452Z"
+    },
+    {
+      "id": 4,
+      "email": "dinidukulasinghe01567@gmail.com",
+      "full_name": "",
+      "phone": "",
+      "attempt_type": "OTP Unverified",
+      "status": "Pending Verification",
+      "fee_amount": 3000,
+      "otp_code": "367897",
+      "code_expires_at": "2026-09-27T05:59:46.974Z",
+      "details": "45-minute verification code dispatched. Verification pending",
+      "created_at": "2026-09-27T05:14:46.974Z",
+      "updated_at": "2026-09-27T05:14:46.974Z"
+    },
     {
       "id": 1,
       "email": "kasun.jayasuriya@gmail.com",
