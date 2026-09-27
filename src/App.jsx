@@ -251,6 +251,64 @@ const RotaractWebsite = () => {
   const [newHoursValue, setNewHoursValue] = useState('');
   const [newHoursNote, setNewHoursNote] = useState('');
 
+  // Annual Board Role Management & Succession State
+  const [teamMembers, setTeamMembers] = useState(() => {
+    try {
+      const saved = localStorage.getItem('rt_nibm_team_members');
+      if (saved) return JSON.parse(saved);
+    } catch (e) {}
+    return TEAM_MEMBERS;
+  });
+
+  const [executiveAccounts, setExecutiveAccounts] = useState(() => {
+    try {
+      const saved = localStorage.getItem('rt_nibm_exec_accounts');
+      if (saved) return JSON.parse(saved);
+    } catch (e) {}
+    return EXECUTIVE_ACCOUNTS;
+  });
+
+  const [roleTransferHistory, setRoleTransferHistory] = useState(() => {
+    try {
+      const saved = localStorage.getItem('rt_nibm_role_transfers');
+      if (saved) return JSON.parse(saved);
+    } catch (e) {}
+    return [
+      {
+        id: 'xfer-init-1',
+        date: 'Jul 01, 2026, 10:00 AM',
+        position: 'President',
+        previousHolder: 'Rtr. Ishan Walisinghe',
+        newHolder: 'Rtr. Dilshika Rasalingam',
+        transferredBy: 'District 3220 Installation Assembly',
+        reason: 'Annual Rotary Induction & Charter Board Installation'
+      },
+      {
+        id: 'xfer-init-2',
+        date: 'Jul 01, 2026, 10:30 AM',
+        position: 'Vice President',
+        previousHolder: 'Rtr. Dilshika Rasalingam',
+        newHolder: 'Rtr. Sankalpa Bandara',
+        transferredBy: 'Executive Council Appointment',
+        reason: 'Operational Directorate Portfolio Assignment'
+      }
+    ];
+  });
+
+  // Handover & Role Transfer Form States
+  const [selfSuccessorName, setSelfSuccessorName] = useState('');
+  const [selfSuccessorEmail, setSelfSuccessorEmail] = useState('');
+  const [selfSuccessorBio, setSelfSuccessorBio] = useState('');
+  const [selfHandoverNotes, setSelfHandoverNotes] = useState('');
+
+  // Presidential Role Transfer Form States
+  const [presTargetRole, setPresTargetRole] = useState('Vice President');
+  const [presSuccessorName, setPresSuccessorName] = useState('');
+  const [presSuccessorEmail, setPresSuccessorEmail] = useState('');
+  const [presSuccessorBio, setPresSuccessorBio] = useState('');
+  const [presHandoverReason, setPresHandoverReason] = useState('');
+  const [roleTransferSuccessMsg, setRoleTransferSuccessMsg] = useState('');
+
   // Photo Gallery Management State
   const [galleryImages, setGalleryImages] = useState([
     { id: 1, title: 'Miles of Memories Summit Trek', category: 'Club Service', img: '/photos/miles-of-memories.jpeg' },
@@ -684,7 +742,7 @@ const RotaractWebsite = () => {
     const password = loginPassword.trim();
 
     // 1. Direct Executive Officer Account Match
-    const matchedOfficer = EXECUTIVE_ACCOUNTS.find(
+    const matchedOfficer = executiveAccounts.find(
       off => off.email.toLowerCase() === email || off.id === email || off.role.toLowerCase().replace(/\s+/g, '') === email
     );
 
@@ -742,7 +800,7 @@ const RotaractWebsite = () => {
 
         const isExec = data.user.role === 'Admin' || data.user.role === 'Director';
         if (isExec) {
-          const matchingExec = EXECUTIVE_ACCOUNTS.find(ex => ex.email.toLowerCase() === data.user.email.toLowerCase()) || {
+          const matchingExec = executiveAccounts.find(ex => ex.email.toLowerCase() === data.user.email.toLowerCase()) || {
             id: 'admin',
             name: data.user.full_name || data.user.name,
             role: data.user.role || 'Executive Officer',
@@ -776,6 +834,173 @@ const RotaractWebsite = () => {
     }
 
     setAuthError('Invalid credentials. Please check your email and password.');
+  };
+
+  // Presidential Authority Check: True if Club President or President ID
+  const isPresident = Boolean(
+    (currentUser?.role?.toLowerCase().includes('president') &&
+     !currentUser?.role?.toLowerCase().includes('vice') &&
+     !currentUser?.role?.toLowerCase().includes('immediate')) ||
+    currentUser?.id === 'president'
+  );
+
+  // 1. Direct Self-Role Handover (Any current board member can transfer their own role)
+  const handleSelfRoleTransfer = (e) => {
+    e.preventDefault();
+    if (!selfSuccessorName.trim() || !selfSuccessorEmail.trim()) {
+      alert('Please provide the incoming successor\'s full name and email address.');
+      return;
+    }
+
+    const currentRole = currentUser?.role || 'Board Member';
+    const currentName = currentUser?.name || 'Current Officer';
+    const oldEmail = currentUser?.email;
+
+    // Update teamMembers for the public site
+    const updatedTeam = teamMembers.map(member => {
+      if (
+        member.position?.toLowerCase() === currentRole.toLowerCase() ||
+        (oldEmail && member.email?.toLowerCase() === oldEmail?.toLowerCase())
+      ) {
+        return {
+          ...member,
+          name: selfSuccessorName.trim(),
+          email: selfSuccessorEmail.trim(),
+          bio: selfSuccessorBio.trim() || member.bio
+        };
+      }
+      return member;
+    });
+
+    // Update executiveAccounts for portal authentication
+    const initials = selfSuccessorName.trim().replace('Rtr. ', '').split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase() || 'EO';
+    const updatedExecs = executiveAccounts.map(exec => {
+      if (
+        exec.role?.toLowerCase() === currentRole.toLowerCase() ||
+        (oldEmail && exec.email?.toLowerCase() === oldEmail?.toLowerCase()) ||
+        exec.id === currentUser?.id
+      ) {
+        return {
+          ...exec,
+          name: selfSuccessorName.trim(),
+          email: selfSuccessorEmail.trim(),
+          initials: initials
+        };
+      }
+      return exec;
+    });
+
+    const newRecord = {
+      id: `xfer-${Date.now()}`,
+      date: new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric', hour: '2-digit', minute: '2-digit' }),
+      position: currentRole,
+      previousHolder: currentName,
+      newHolder: selfSuccessorName.trim(),
+      transferredBy: `${currentName} (Direct Role Handover)`,
+      reason: selfHandoverNotes.trim() || 'Annual Board Officer Transition'
+    };
+
+    const updatedHistory = [newRecord, ...roleTransferHistory];
+
+    setTeamMembers(updatedTeam);
+    setExecutiveAccounts(updatedExecs);
+    setRoleTransferHistory(updatedHistory);
+    try {
+      localStorage.setItem('rt_nibm_team_members', JSON.stringify(updatedTeam));
+      localStorage.setItem('rt_nibm_exec_accounts', JSON.stringify(updatedExecs));
+      localStorage.setItem('rt_nibm_role_transfers', JSON.stringify(updatedHistory));
+    } catch (err) {}
+
+    // Update active currentUser session
+    setCurrentUser(prev => ({
+      ...prev,
+      name: selfSuccessorName.trim(),
+      email: selfSuccessorEmail.trim(),
+      initials: initials
+    }));
+
+    setRoleTransferSuccessMsg(`✨ Successfully transferred role "${currentRole}" from ${currentName} to ${selfSuccessorName.trim()}!`);
+    setSelfSuccessorName('');
+    setSelfSuccessorEmail('');
+    setSelfSuccessorBio('');
+    setSelfHandoverNotes('');
+  };
+
+  // 2. Presidential Role Reassignment (Club President can change anyone's role)
+  const handlePresidentRoleTransfer = (e) => {
+    e.preventDefault();
+    if (!presSuccessorName.trim() || !presSuccessorEmail.trim()) {
+      alert('Please specify the incoming officer\'s full name and email.');
+      return;
+    }
+
+    const targetMember = teamMembers.find(m => m.position?.toLowerCase() === presTargetRole.toLowerCase()) || {
+      name: 'Incumbent Officer',
+      position: presTargetRole
+    };
+    const prevHolder = targetMember.name;
+
+    const updatedTeam = teamMembers.map(member => {
+      if (member.position?.toLowerCase() === presTargetRole.toLowerCase()) {
+        return {
+          ...member,
+          name: presSuccessorName.trim(),
+          email: presSuccessorEmail.trim(),
+          bio: presSuccessorBio.trim() || member.bio
+        };
+      }
+      return member;
+    });
+
+    const initials = presSuccessorName.trim().replace('Rtr. ', '').split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase() || 'EO';
+    const updatedExecs = executiveAccounts.map(exec => {
+      if (exec.role?.toLowerCase() === presTargetRole.toLowerCase()) {
+        return {
+          ...exec,
+          name: presSuccessorName.trim(),
+          email: presSuccessorEmail.trim(),
+          initials: initials
+        };
+      }
+      return exec;
+    });
+
+    const newRecord = {
+      id: `xfer-${Date.now()}`,
+      date: new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric', hour: '2-digit', minute: '2-digit' }),
+      position: presTargetRole,
+      previousHolder: prevHolder,
+      newHolder: presSuccessorName.trim(),
+      transferredBy: `Presidential Authority (${currentUser?.name || 'Club President'})`,
+      reason: presHandoverReason.trim() || 'Annual Board Appointment by Club President'
+    };
+
+    const updatedHistory = [newRecord, ...roleTransferHistory];
+
+    setTeamMembers(updatedTeam);
+    setExecutiveAccounts(updatedExecs);
+    setRoleTransferHistory(updatedHistory);
+    try {
+      localStorage.setItem('rt_nibm_team_members', JSON.stringify(updatedTeam));
+      localStorage.setItem('rt_nibm_exec_accounts', JSON.stringify(updatedExecs));
+      localStorage.setItem('rt_nibm_role_transfers', JSON.stringify(updatedHistory));
+    } catch (err) {}
+
+    // If President reassigned the President role itself
+    if (presTargetRole.toLowerCase() === 'president' && (currentUser?.role?.toLowerCase() === 'president' || currentUser?.id === 'president')) {
+      setCurrentUser(prev => ({
+        ...prev,
+        name: presSuccessorName.trim(),
+        email: presSuccessorEmail.trim(),
+        initials: initials
+      }));
+    }
+
+    setRoleTransferSuccessMsg(`👑 Presidential Reassignment Complete: "${presTargetRole}" is now officially assigned to ${presSuccessorName.trim()}!`);
+    setPresSuccessorName('');
+    setPresSuccessorEmail('');
+    setPresSuccessorBio('');
+    setPresHandoverReason('');
   };
 
   // 5. President / VP Member Approval
@@ -1335,8 +1560,6 @@ const RotaractWebsite = () => {
     { year: '2021-2022', title: 'Highest Student Community Impact Award', org: 'Higher Education Board' },
     { year: '2020-2021', title: 'Outstanding Crisis Response Initiative', org: 'Rotaract District Citation' }
   ];
-
-  const teamMembers = TEAM_MEMBERS;
 
   const filteredProjects = projectCategory === 'all' 
     ? projects 
@@ -2475,18 +2698,18 @@ const RotaractWebsite = () => {
 
       {/* MODAL: EXECUTIVE ADMIN MANAGEMENT DASHBOARD */}
       {showAdminDashboard && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-2 sm:p-4 md:p-6 bg-slate-950/80 backdrop-blur-sm">
-          <div className="relative w-full max-w-6xl bg-white rounded-2xl shadow-2xl border border-slate-200 max-h-[94vh] flex flex-col overflow-hidden text-slate-800">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-2 sm:p-4 md:p-6 bg-slate-950/85 backdrop-blur-md">
+          <div className="relative w-full max-w-6xl bg-white rounded-3xl shadow-[0_0_60px_rgba(122,59,158,0.35)] border border-purple-200/80 max-h-[94vh] flex flex-col overflow-hidden text-slate-800">
             
-            {/* Top District Accent Line */}
-            <div className="h-1.5 w-full bg-gradient-to-r from-[#A6192E] via-[#F7A81B] to-[#00205B]"></div>
+            {/* Top Glowing Purple Gradient Accent Line */}
+            <div className="h-1.5 w-full bg-gradient-to-r from-[#4B0082] via-[#7A3B9E] to-pink-500 shadow-[0_0_15px_rgba(122,59,158,0.6)]"></div>
 
-            {/* Official Rotaract Institutional Header */}
-            <div className="px-6 py-4 bg-[#00205B] text-white flex flex-col md:flex-row md:items-center md:justify-between gap-4 border-b border-[#001744]">
+            {/* Official Rotaract Institutional Header in Interactive Purple Theme */}
+            <div className="px-6 py-4 bg-gradient-to-r from-[#0B0514] via-[#4B0082] to-[#2E0854] text-white flex flex-col md:flex-row md:items-center md:justify-between gap-4 border-b border-purple-900/40">
               
               {/* Left Branding */}
               <div className="flex items-center space-x-3.5">
-                <div className="w-10 h-10 rounded-xl bg-white/10 border border-white/20 flex items-center justify-center text-white">
+                <div className="w-10 h-10 rounded-xl bg-purple-900/60 border border-purple-400/40 flex items-center justify-center text-purple-200 shadow-[0_0_15px_rgba(122,59,158,0.4)]">
                   <Shield size={22} className="text-amber-400" />
                 </div>
                 <div>
@@ -2496,7 +2719,7 @@ const RotaractWebsite = () => {
                       RID 3220
                     </span>
                   </div>
-                  <p className="text-xs text-slate-300 font-medium">Executive Information System • Governance & Project Management Portal</p>
+                  <p className="text-xs text-purple-200 font-medium">Executive Information System • Governance & Annual Board Transition Portal</p>
                 </div>
               </div>
 
@@ -2505,26 +2728,26 @@ const RotaractWebsite = () => {
                 <div className="relative">
                   <button
                     onClick={() => setOfficerDropdownOpen(!officerDropdownOpen)}
-                    className="flex items-center space-x-2.5 px-3 py-1.5 rounded-xl bg-white/10 hover:bg-white/15 border border-white/20 text-left transition"
+                    className="flex items-center space-x-2.5 px-3 py-1.5 rounded-xl bg-purple-950/60 hover:bg-purple-900/80 border border-purple-400/40 text-left transition shadow-inner"
                   >
-                    <div className={`w-8 h-8 rounded-lg ${currentUser?.color || 'bg-[#A6192E]'} flex items-center justify-center font-black text-xs text-white shadow-sm`}>
+                    <div className={`w-8 h-8 rounded-lg ${currentUser?.color || 'bg-[#7A3B9E]'} flex items-center justify-center font-black text-xs text-white shadow-sm`}>
                       {currentUser?.initials || 'EO'}
                     </div>
                     <div className="hidden sm:block">
                       <p className="text-xs font-bold text-white leading-tight">{currentUser?.name || 'Executive Officer'}</p>
-                      <p className="text-[10px] text-amber-300 font-semibold">{currentUser?.role || 'Executive Board'} • {currentUser?.badge || 'Officer'}</p>
+                      <p className="text-[10px] text-purple-300 font-semibold">{currentUser?.role || 'Executive Board'} • {currentUser?.badge || 'Officer'}</p>
                     </div>
-                    <RefreshCw size={13} className="text-slate-300 ml-1" />
+                    <RefreshCw size={13} className="text-purple-300 ml-1" />
                   </button>
 
                   {/* Officer Switch Dropdown */}
                   {officerDropdownOpen && (
-                    <div className="absolute right-0 mt-2 w-72 bg-white rounded-xl shadow-2xl border border-slate-200 py-2 z-50 text-slate-800 animate-in fade-in zoom-in duration-150">
-                      <div className="px-3 py-1.5 border-b border-slate-100 text-[10px] font-bold uppercase tracking-wider text-slate-400">
+                    <div className="absolute right-0 mt-2 w-72 bg-white rounded-2xl shadow-2xl border border-purple-200 py-2 z-50 text-slate-800 animate-in fade-in zoom-in duration-150">
+                      <div className="px-3 py-1.5 border-b border-purple-100 text-[10px] font-bold uppercase tracking-wider text-purple-700">
                         Switch Executive Profile (Quick Demo)
                       </div>
-                      <div className="max-h-64 overflow-y-auto divide-y divide-slate-50">
-                        {EXECUTIVE_ACCOUNTS.map(officer => (
+                      <div className="max-h-64 overflow-y-auto divide-y divide-purple-50">
+                        {executiveAccounts.map(officer => (
                           <button
                             key={officer.id}
                             onClick={() => {
@@ -2532,7 +2755,7 @@ const RotaractWebsite = () => {
                               setAdminTab(officer.primaryTab || 'overview');
                               setOfficerDropdownOpen(false);
                             }}
-                            className={`w-full text-left px-3 py-2 flex items-center space-x-2.5 hover:bg-slate-50 transition ${
+                            className={`w-full text-left px-3 py-2 flex items-center space-x-2.5 hover:bg-purple-50 transition ${
                               currentUser?.id === officer.id ? 'bg-purple-50 font-bold' : ''
                             }`}
                           >
@@ -2541,7 +2764,7 @@ const RotaractWebsite = () => {
                             </span>
                             <div className="overflow-hidden">
                               <p className="text-xs font-bold text-slate-900 truncate">{officer.name}</p>
-                              <p className="text-[10px] text-slate-500 truncate">{officer.role} ({officer.email})</p>
+                              <p className="text-[10px] text-purple-700 truncate">{officer.role} ({officer.email})</p>
                             </div>
                           </button>
                         ))}
@@ -2555,7 +2778,7 @@ const RotaractWebsite = () => {
                   onClick={() => {
                     setShowAdminDashboard(false);
                   }}
-                  className="p-2 text-slate-300 hover:text-white rounded-xl hover:bg-white/10 transition"
+                  className="p-2 text-purple-300 hover:text-white rounded-xl hover:bg-white/10 transition"
                   title="Close Portal"
                 >
                   <X size={20} />
@@ -2564,11 +2787,12 @@ const RotaractWebsite = () => {
 
             </div>
 
-            {/* Clean Enterprise Tab Navigation */}
-            <div className="px-6 bg-slate-50 border-b border-slate-200 flex items-center justify-between overflow-x-auto text-xs font-semibold">
+            {/* Clean Enterprise Tab Navigation in Interactive Purple Theme */}
+            <div className="px-6 bg-purple-950/5 border-b border-purple-200/80 flex items-center justify-between overflow-x-auto text-xs font-semibold">
               <div className="flex space-x-1 sm:space-x-2">
                 {[
                   { id: 'overview', label: 'Overview', icon: Shield },
+                  { id: 'board_roles', label: 'Annual Board Handover', icon: RefreshCw },
                   { id: 'members', label: `Member Approvals (${membersList.filter(m => m.status === 'Pending Approval').length} Pending)`, icon: UserCheck },
                   { id: 'events', label: `Events (${eventsList.length})`, icon: Calendar },
                   { id: 'registrations', label: `Passes & Cancellations (${adminPassesList.length})`, icon: Users },
@@ -2585,11 +2809,11 @@ const RotaractWebsite = () => {
                       onClick={() => setAdminTab(tab.id)}
                       className={`flex items-center space-x-2 py-3 px-3.5 border-b-2 font-bold transition whitespace-nowrap ${
                         isActive
-                          ? 'border-[#00205B] text-[#00205B] bg-white shadow-sm'
-                          : 'border-transparent text-slate-600 hover:text-slate-900 hover:bg-slate-100/60'
+                          ? 'border-[#7A3B9E] text-[#4B0082] bg-white shadow-sm'
+                          : 'border-transparent text-slate-600 hover:text-[#4B0082] hover:bg-purple-50/50'
                       }`}
                     >
-                      <Icon size={15} className={isActive ? 'text-[#00205B]' : 'text-slate-400'} />
+                      <Icon size={15} className={isActive ? 'text-[#7A3B9E]' : 'text-slate-400'} />
                       <span>{tab.label}</span>
                     </button>
                   );
@@ -2752,6 +2976,375 @@ const RotaractWebsite = () => {
                         <span className="text-slate-500">Charter Year: <strong>2010</strong></span>
                         <span className="text-slate-500">District: <strong>3220 Sri Lanka</strong></span>
                       </div>
+                    </div>
+                  </div>
+
+                </div>
+              )}
+
+              {/* TAB: ANNUAL BOARD HANDOVER & ROLE TRANSFER */}
+              {adminTab === 'board_roles' && (
+                <div className="space-y-6">
+                  {/* Top Purple Ambient Banner */}
+                  <div className="p-6 rounded-3xl bg-gradient-to-r from-[#0B0514] via-[#4B0082] to-[#7A3B9E] text-white shadow-[0_0_30px_rgba(122,59,158,0.3)] relative overflow-hidden border border-purple-400/30">
+                    <div className="absolute -right-8 -bottom-8 w-40 h-40 bg-pink-500/20 rounded-full blur-2xl pointer-events-none" />
+                    <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-4">
+                      <div>
+                        <div className="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-white/10 text-purple-200 text-[11px] font-extrabold uppercase tracking-wider mb-2 border border-white/20">
+                          <RefreshCw size={12} className="animate-spin-slow" />
+                          <span>Rotary Institutional Continuity • District 3220</span>
+                        </div>
+                        <h4 className="text-xl sm:text-2xl font-black tracking-tight">Annual Board Transition & Role Governance</h4>
+                        <p className="text-xs text-purple-200/90 mt-1 max-w-2xl leading-relaxed">
+                          Rotaract club executive boards rotate on an annual cycle. Any incumbent officer can transfer their portfolio to an incoming successor, and the <strong>Club President</strong> has master authority to reassign, appoint, or swap any directorate role across the club.
+                        </p>
+                      </div>
+
+                      <div className="flex flex-col sm:flex-row md:flex-col gap-2 shrink-0">
+                        <span className="px-3 py-1.5 rounded-xl bg-purple-900/60 border border-purple-400/40 text-center text-xs font-bold text-white shadow-inner">
+                          Rotary Year 2026 / 2027
+                        </span>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            if (window.confirm('Reset board roster to default 2026/27 Charter Board? This will restore original officers.')) {
+                              setTeamMembers(TEAM_MEMBERS);
+                              setExecutiveAccounts(EXECUTIVE_ACCOUNTS);
+                              localStorage.removeItem('rt_nibm_team_members');
+                              localStorage.removeItem('rt_nibm_exec_accounts');
+                              setRoleTransferSuccessMsg('Board roster restored to initial 2026/27 Charter appointments.');
+                            }
+                          }}
+                          className="px-3 py-1.5 rounded-xl bg-white/10 hover:bg-white/20 text-purple-200 hover:text-white text-[11px] font-bold transition border border-white/20 flex items-center justify-center space-x-1"
+                        >
+                          <RefreshCw size={12} />
+                          <span>Reset to Default Roster</span>
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Feedback Notification Alert */}
+                  {roleTransferSuccessMsg && (
+                    <div className="p-4 rounded-2xl bg-purple-50 border border-purple-200 text-xs text-purple-900 font-bold flex items-center justify-between shadow-sm animate-in fade-in duration-200">
+                      <div className="flex items-center space-x-2">
+                        <CheckCircle2 size={18} className="text-purple-600 shrink-0" />
+                        <span>{roleTransferSuccessMsg}</span>
+                      </div>
+                      <button
+                        onClick={() => setRoleTransferSuccessMsg('')}
+                        className="text-purple-400 hover:text-purple-800 text-sm font-black ml-4"
+                      >
+                        ✕
+                      </button>
+                    </div>
+                  )}
+
+                  {/* Current Active Board Grid */}
+                  <div>
+                    <div className="flex items-center justify-between mb-3">
+                      <div>
+                        <h5 className="text-sm font-black text-slate-900 uppercase tracking-wider">Active Board of Directors ({teamMembers.length} Posts)</h5>
+                        <p className="text-xs text-slate-500">Live roster synchronized with the website's public leadership section</p>
+                      </div>
+                      <span className="text-[11px] font-bold text-purple-700 bg-purple-50 px-2.5 py-1 rounded-lg border border-purple-200">
+                        {isPresident ? '👑 Presidential Clearance Active' : 'Officer Portfolio Active'}
+                      </span>
+                    </div>
+
+                    <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                      {teamMembers.map((m, idx) => {
+                        const isCurrentUsersRole = currentUser?.role?.toLowerCase() === m.position?.toLowerCase();
+                        return (
+                          <div
+                            key={idx}
+                            className={`p-4 rounded-2xl bg-white border transition-all duration-300 shadow-sm flex flex-col justify-between ${
+                              isCurrentUsersRole
+                                ? 'border-[#7A3B9E] ring-2 ring-purple-400/30 shadow-[0_0_20px_rgba(122,59,158,0.2)]'
+                                : 'border-purple-100 hover:border-purple-300'
+                            }`}
+                          >
+                            <div>
+                              <div className="flex items-center justify-between mb-2">
+                                <span className="text-[10px] font-black uppercase tracking-wider px-2 py-0.5 rounded-full bg-purple-50 text-[#4B0082] border border-purple-200">
+                                  {m.position}
+                                </span>
+                                {isCurrentUsersRole && (
+                                  <span className="text-[9px] font-black uppercase tracking-wider px-2 py-0.5 rounded-full bg-[#4B0082] text-white">
+                                    Your Role
+                                  </span>
+                                )}
+                              </div>
+                              <h6 className="text-sm font-black text-slate-900 truncate">{m.name}</h6>
+                              <p className="text-[11px] text-purple-700 truncate font-mono mt-0.5">{m.email}</p>
+                              <p className="text-[11px] text-slate-500 mt-2 line-clamp-2 leading-relaxed">{m.bio}</p>
+                            </div>
+
+                            <div className="mt-3 pt-2.5 border-t border-purple-50 flex items-center justify-between text-[11px]">
+                              <span className="text-slate-400 font-semibold">{m.badge || 'Executive'}</span>
+                              <span className="text-emerald-700 font-bold flex items-center space-x-1">
+                                <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+                                <span>Active</span>
+                              </span>
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+
+                  {/* 2 Handover Panels: Self-Transfer vs Presidential Master Authority */}
+                  <div className="grid lg:grid-cols-2 gap-6 pt-2">
+                    
+                    {/* PANEL 1: SELF ROLE TRANSFER (FOR ANY BOARD MEMBER) */}
+                    <div className="p-6 rounded-3xl bg-white border border-purple-200 shadow-sm flex flex-col justify-between space-y-4">
+                      <div>
+                        <div className="flex items-center space-x-2 mb-1">
+                          <div className="w-8 h-8 rounded-xl bg-purple-100 text-[#4B0082] flex items-center justify-center font-bold">
+                            <UserPlus size={16} />
+                          </div>
+                          <div>
+                            <h5 className="text-sm font-black text-slate-900">Transfer My Executive Portfolio</h5>
+                            <p className="text-xs text-slate-500">Hand over your portfolio to your designated incoming successor</p>
+                          </div>
+                        </div>
+
+                        <div className="p-3 bg-purple-50/70 rounded-xl border border-purple-100 text-xs text-purple-900 mb-4 mt-3">
+                          <p>
+                            You are logged in as <strong>{currentUser?.name}</strong> holding the role <strong>{currentUser?.role || 'Executive Officer'}</strong>. Submitting this handover updates the public roster, executive login credentials, and audit record.
+                          </p>
+                        </div>
+
+                        <form onSubmit={handleSelfRoleTransfer} className="space-y-3 text-xs">
+                          <div>
+                            <label className="block font-bold text-slate-700 mb-1">Your Portfolio / Role</label>
+                            <input
+                              type="text"
+                              disabled
+                              value={currentUser?.role || 'Executive Board'}
+                              className="w-full px-3 py-2 rounded-xl bg-slate-100 border border-slate-200 text-slate-700 font-bold focus:outline-none"
+                            />
+                          </div>
+
+                          <div>
+                            <label className="block font-bold text-slate-700 mb-1">Successor Full Name *</label>
+                            <input
+                              type="text"
+                              required
+                              value={selfSuccessorName}
+                              onChange={(e) => setSelfSuccessorName(e.target.value)}
+                              placeholder="e.g. Rtr. Kasun Wickramasinghe"
+                              className="w-full px-3.5 py-2.5 rounded-xl bg-white border border-slate-300 text-slate-900 focus:outline-none focus:border-[#7A3B9E]"
+                            />
+                          </div>
+
+                          <div>
+                            <label className="block font-bold text-slate-700 mb-1">Successor Official Email *</label>
+                            <input
+                              type="email"
+                              required
+                              value={selfSuccessorEmail}
+                              onChange={(e) => setSelfSuccessorEmail(e.target.value)}
+                              placeholder="e.g. kasun.wickrama@rt-nibm.org"
+                              className="w-full px-3.5 py-2.5 rounded-xl bg-white border border-slate-300 text-slate-900 focus:outline-none focus:border-[#7A3B9E]"
+                            />
+                          </div>
+
+                          <div>
+                            <label className="block font-bold text-slate-700 mb-1">Successor Leadership Bio / Vision</label>
+                            <textarea
+                              rows="2"
+                              value={selfSuccessorBio}
+                              onChange={(e) => setSelfSuccessorBio(e.target.value)}
+                              placeholder="Brief vision statement to appear on the public website..."
+                              className="w-full px-3.5 py-2 rounded-xl bg-white border border-slate-300 text-slate-900 focus:outline-none focus:border-[#7A3B9E]"
+                            />
+                          </div>
+
+                          <div>
+                            <label className="block font-bold text-slate-700 mb-1">Handover Notes / Rotary Assembly Citation</label>
+                            <input
+                              type="text"
+                              value={selfHandoverNotes}
+                              onChange={(e) => setSelfHandoverNotes(e.target.value)}
+                              placeholder="e.g. Annual General Meeting Handover 2026/27"
+                              className="w-full px-3.5 py-2 rounded-xl bg-white border border-slate-300 text-slate-900 focus:outline-none focus:border-[#7A3B9E]"
+                            />
+                          </div>
+
+                          <button
+                            type="submit"
+                            className="w-full py-3 bg-[#4B0082] hover:bg-[#7A3B9E] text-white font-extrabold uppercase tracking-wider rounded-xl transition shadow-md hover:shadow-[0_0_20px_rgba(122,59,158,0.4)] flex items-center justify-center space-x-2 mt-4"
+                          >
+                            <RefreshCw size={15} />
+                            <span>Authorize My Role Handover</span>
+                          </button>
+                        </form>
+                      </div>
+                    </div>
+
+                    {/* PANEL 2: PRESIDENTIAL AUTHORITY (CHANGE ANYONE'S ROLE) */}
+                    <div className={`p-6 rounded-3xl border transition-all duration-300 flex flex-col justify-between space-y-4 ${
+                      isPresident
+                        ? 'bg-gradient-to-br from-purple-50/70 via-white to-pink-50/30 border-purple-300 shadow-[0_0_25px_rgba(122,59,158,0.15)]'
+                        : 'bg-slate-50 border-slate-200'
+                    }`}>
+                      <div>
+                        <div className="flex items-center space-x-2 mb-1">
+                          <div className={`w-8 h-8 rounded-xl flex items-center justify-center font-bold ${
+                            isPresident ? 'bg-amber-100 text-amber-800' : 'bg-slate-200 text-slate-500'
+                          }`}>
+                            <Shield size={16} />
+                          </div>
+                          <div>
+                            <h5 className="text-sm font-black text-slate-900 flex items-center space-x-1.5">
+                              <span>Presidential Role Manager</span>
+                              {isPresident && (
+                                <span className="text-[10px] font-black uppercase px-2 py-0.5 rounded-full bg-amber-400 text-amber-950">
+                                  👑 Authorized
+                                </span>
+                              )}
+                            </h5>
+                            <p className="text-xs text-slate-500">Executive presidential power to reassign or restructure any board position</p>
+                          </div>
+                        </div>
+
+                        {!isPresident ? (
+                          <div className="p-5 rounded-2xl bg-white border border-slate-200 text-xs text-slate-600 space-y-3 mt-4">
+                            <div className="flex items-center space-x-2 text-amber-700 font-bold">
+                              <AlertTriangle size={16} />
+                              <span>Presidential Privilege Required</span>
+                            </div>
+                            <p className="leading-relaxed">
+                              Under Rotary International governance bylaws, universal board restructuring is exclusive to the <strong>Club President</strong>.
+                            </p>
+                            <p className="text-slate-500 text-[11px]">
+                              To test this feature, switch your profile to <strong>President (Rtr. Dilshika Rasalingam)</strong> using the profile switcher in the top right corner.
+                            </p>
+                          </div>
+                        ) : (
+                          <>
+                            <div className="p-3 bg-amber-50 rounded-xl border border-amber-200 text-xs text-amber-950 mb-4 mt-3">
+                              <p>
+                                <strong>Executive Notice:</strong> As Club President, you have master authority to appoint successors to any board role or reassign existing positions.
+                              </p>
+                            </div>
+
+                            <form onSubmit={handlePresidentRoleTransfer} className="space-y-3 text-xs">
+                              <div>
+                                <label className="block font-bold text-slate-700 mb-1">Select Target Board Position to Reassign *</label>
+                                <select
+                                  value={presTargetRole}
+                                  onChange={(e) => setPresTargetRole(e.target.value)}
+                                  className="w-full px-3.5 py-2.5 rounded-xl bg-white border border-purple-300 font-bold text-slate-900 focus:outline-none focus:border-[#7A3B9E]"
+                                >
+                                  {teamMembers.map((m, i) => (
+                                    <option key={i} value={m.position}>
+                                      {m.position} (Current: {m.name})
+                                    </option>
+                                  ))}
+                                </select>
+                              </div>
+
+                              <div>
+                                <label className="block font-bold text-slate-700 mb-1">New Appointee Full Name *</label>
+                                <input
+                                  type="text"
+                                  required
+                                  value={presSuccessorName}
+                                  onChange={(e) => setPresSuccessorName(e.target.value)}
+                                  placeholder="e.g. Rtr. Chamari Senaratne"
+                                  className="w-full px-3.5 py-2.5 rounded-xl bg-white border border-slate-300 text-slate-900 focus:outline-none focus:border-[#7A3B9E]"
+                                />
+                              </div>
+
+                              <div>
+                                <label className="block font-bold text-slate-700 mb-1">New Appointee Official Email *</label>
+                                <input
+                                  type="email"
+                                  required
+                                  value={presSuccessorEmail}
+                                  onChange={(e) => setPresSuccessorEmail(e.target.value)}
+                                  placeholder="e.g. chamari@rt-nibm.org"
+                                  className="w-full px-3.5 py-2.5 rounded-xl bg-white border border-slate-300 text-slate-900 focus:outline-none focus:border-[#7A3B9E]"
+                                />
+                              </div>
+
+                              <div>
+                                <label className="block font-bold text-slate-700 mb-1">Appointee Bio / Avenue Directorate Vision</label>
+                                <textarea
+                                  rows="2"
+                                  value={presSuccessorBio}
+                                  onChange={(e) => setPresSuccessorBio(e.target.value)}
+                                  placeholder="Brief description for public display..."
+                                  className="w-full px-3.5 py-2 rounded-xl bg-white border border-slate-300 text-slate-900 focus:outline-none focus:border-[#7A3B9E]"
+                                />
+                              </div>
+
+                              <div>
+                                <label className="block font-bold text-slate-700 mb-1">Presidential Executive Order / Citation</label>
+                                <input
+                                  type="text"
+                                  value={presHandoverReason}
+                                  onChange={(e) => setPresHandoverReason(e.target.value)}
+                                  placeholder="e.g. Mid-Term Directorate Reassignment approved by President"
+                                  className="w-full px-3.5 py-2 rounded-xl bg-white border border-slate-300 text-slate-900 focus:outline-none focus:border-[#7A3B9E]"
+                                />
+                              </div>
+
+                              <button
+                                type="submit"
+                                className="w-full py-3 bg-gradient-to-r from-[#4B0082] to-[#7A3B9E] hover:from-[#0B0514] hover:to-[#4B0082] text-white font-extrabold uppercase tracking-wider rounded-xl transition shadow-lg hover:shadow-[0_0_25px_rgba(122,59,158,0.5)] flex items-center justify-center space-x-2 mt-4"
+                              >
+                                <Shield size={15} />
+                                <span>👑 Authorize Presidential Board Reassignment</span>
+                              </button>
+                            </form>
+                          </>
+                        )}
+                      </div>
+                    </div>
+
+                  </div>
+
+                  {/* Historical Role Transition Audit Log */}
+                  <div className="p-6 rounded-3xl bg-white border border-purple-200 shadow-sm space-y-4">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center space-x-2">
+                        <FileText size={18} className="text-[#7A3B9E]" />
+                        <h5 className="text-sm font-black text-slate-900">Institutional Handover Audit Log</h5>
+                      </div>
+                      <span className="text-[11px] text-slate-500 font-bold">{roleTransferHistory.length} Recorded Transitions</span>
+                    </div>
+
+                    <div className="overflow-x-auto">
+                      <table className="w-full text-left text-xs border-collapse">
+                        <thead>
+                          <tr className="border-b border-purple-100 text-slate-500 bg-purple-50/60 font-bold">
+                            <th className="p-3 rounded-l-xl">Timestamp</th>
+                            <th className="p-3">Portfolio / Position</th>
+                            <th className="p-3">Previous Holder</th>
+                            <th className="p-3">Incoming Successor</th>
+                            <th className="p-3">Authorized By</th>
+                            <th className="p-3 rounded-r-xl">Notes / Reason</th>
+                          </tr>
+                        </thead>
+                        <tbody className="divide-y divide-purple-50">
+                          {roleTransferHistory.map(item => (
+                            <tr key={item.id} className="hover:bg-purple-50/40 transition">
+                              <td className="p-3 text-slate-500 font-mono text-[11px] whitespace-nowrap">{item.date}</td>
+                              <td className="p-3 font-bold text-[#4B0082]">{item.position}</td>
+                              <td className="p-3 text-slate-600 line-through decoration-rose-400">{item.previousHolder}</td>
+                              <td className="p-3 font-bold text-emerald-700 flex items-center space-x-1">
+                                <UserCheck size={13} className="text-emerald-600" />
+                                <span>{item.newHolder}</span>
+                              </td>
+                              <td className="p-3 text-slate-600">{item.transferredBy}</td>
+                              <td className="p-3 text-slate-500 italic max-w-xs truncate">{item.reason}</td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
                     </div>
                   </div>
 
@@ -3798,49 +4391,49 @@ const RotaractWebsite = () => {
 
       {/* MODAL: DEDICATED GENERAL MEMBER PORTAL (DISPLAYS ONLY THEIR OWN HOURS) */}
       {showMemberDashboard && currentUser && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-6 bg-slate-950/80 backdrop-blur-sm">
-          <div className="relative w-full max-w-3xl bg-white rounded-2xl shadow-2xl border border-slate-200 max-h-[92vh] flex flex-col overflow-hidden text-slate-800">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-6 bg-slate-950/85 backdrop-blur-md">
+          <div className="relative w-full max-w-3xl bg-white rounded-3xl shadow-[0_0_50px_rgba(122,59,158,0.35)] border border-purple-200/80 max-h-[92vh] flex flex-col overflow-hidden text-slate-800">
             
-            {/* Top Accent */}
-            <div className="h-1.5 w-full bg-gradient-to-r from-[#A6192E] via-[#F7A81B] to-[#00205B]"></div>
+            {/* Top Glowing Purple Accent */}
+            <div className="h-1.5 w-full bg-gradient-to-r from-[#4B0082] via-[#7A3B9E] to-pink-500 shadow-[0_0_15px_rgba(122,59,158,0.6)]"></div>
 
-            {/* Header */}
-            <div className="px-6 py-4 bg-[#00205B] text-white flex items-center justify-between border-b border-[#001744]">
+            {/* Header in Interactive Purple Theme */}
+            <div className="px-6 py-4 bg-gradient-to-r from-[#0B0514] via-[#4B0082] to-[#2E0854] text-white flex items-center justify-between border-b border-purple-900/40">
               <div className="flex items-center space-x-3.5">
-                <div className="w-10 h-10 rounded-xl bg-white/10 border border-white/20 flex items-center justify-center text-white">
+                <div className="w-10 h-10 rounded-xl bg-purple-900/60 border border-purple-400/40 flex items-center justify-center text-purple-200 shadow-[0_0_15px_rgba(122,59,158,0.4)]">
                   <Award size={22} className="text-amber-400" />
                 </div>
                 <div>
                   <h3 className="text-lg font-black tracking-tight text-white">Rotaract Member Portal</h3>
-                  <p className="text-xs text-slate-300">Rotaract Club of NIBM Kandy • District 3220</p>
+                  <p className="text-xs text-purple-200">Rotaract Club of NIBM Kandy • District 3220</p>
                 </div>
               </div>
               <button
                 onClick={() => setShowMemberDashboard(false)}
-                className="p-2 text-slate-300 hover:text-white rounded-xl hover:bg-white/10 transition"
+                className="p-2 text-purple-300 hover:text-white rounded-xl hover:bg-white/10 transition"
               >
                 <X size={20} />
               </button>
             </div>
 
-            {/* Member Content Body */}
-            <div className="p-6 overflow-y-auto space-y-6 flex-1 bg-slate-50/50">
+            {/* Member Content Body in Interactive Purple Style */}
+            <div className="p-6 overflow-y-auto space-y-6 flex-1 bg-gradient-to-b from-purple-50/20 to-slate-50/60">
               
               {/* Member Profile Banner */}
-              <div className="p-5 rounded-2xl bg-white border border-slate-200 shadow-sm flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+              <div className="p-5 rounded-2xl bg-white border border-purple-200/80 shadow-[0_0_20px_rgba(122,59,158,0.06)] flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                 <div className="flex items-center space-x-4">
-                  <div className="w-12 h-12 rounded-2xl bg-[#00205B] text-white font-black text-lg flex items-center justify-center shadow-md">
+                  <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-[#4B0082] to-[#7A3B9E] text-white font-black text-lg flex items-center justify-center shadow-[0_0_15px_rgba(122,59,158,0.4)]">
                     {(currentUser.full_name || 'Member').split(' ').map(w => w[0]).join('').slice(0, 2)}
                   </div>
                   <div>
                     <h4 className="text-base font-black text-slate-900">{currentUser.full_name}</h4>
                     <p className="text-xs text-slate-500 font-medium">Index: {currentUser.nibm_index_no || 'NIBM Student'}</p>
-                    <p className="text-[11px] text-slate-400">{currentUser.email}</p>
+                    <p className="text-[11px] text-purple-700 font-mono">{currentUser.email}</p>
                   </div>
                 </div>
 
                 <div className="flex flex-col sm:items-end space-y-1">
-                  <span className="px-3 py-1 rounded-full text-[10px] font-black uppercase bg-emerald-100 text-emerald-800 border border-emerald-200 self-start sm:self-auto">
+                  <span className="px-3 py-1 rounded-full text-[10px] font-black uppercase bg-purple-100 text-[#4B0082] border border-purple-200 self-start sm:self-auto shadow-xs">
                     Active Member
                   </span>
                   <span className="text-[11px] font-bold text-slate-600">
@@ -3850,19 +4443,19 @@ const RotaractWebsite = () => {
               </div>
 
               {/* Dedicated Personal Certified Volunteer Hours Card */}
-              <div className="p-6 rounded-2xl bg-gradient-to-br from-white to-slate-50 border-2 border-[#00205B]/20 shadow-md">
+              <div className="p-6 rounded-3xl bg-gradient-to-br from-purple-50 via-white to-pink-50/30 border-2 border-purple-300 shadow-[0_0_25px_rgba(122,59,158,0.15)]">
                 <div className="flex items-center justify-between mb-3">
                   <div className="flex items-center space-x-2">
-                    <Award size={20} className="text-[#00205B]" />
+                    <Award size={20} className="text-[#7A3B9E]" />
                     <h5 className="text-sm font-black text-slate-900 uppercase tracking-wider">Your Certified Volunteer Service Hours</h5>
                   </div>
-                  <span className="px-2.5 py-0.5 rounded text-[10px] font-black uppercase bg-[#00205B] text-white">
+                  <span className="px-2.5 py-0.5 rounded text-[10px] font-black uppercase bg-[#4B0082] text-white shadow-xs">
                     Official Record
                   </span>
                 </div>
 
                 <div className="my-4 flex items-baseline space-x-3">
-                  <span className="text-5xl font-black text-[#00205B] tracking-tight">
+                  <span className="text-5xl font-black text-[#4B0082] tracking-tight drop-shadow-[0_0_10px_rgba(122,59,158,0.25)]">
                     {currentUser.service_hours || 0.0}
                   </span>
                   <span className="text-base font-bold text-slate-600">Total Hours Completed</span>
@@ -3872,36 +4465,36 @@ const RotaractWebsite = () => {
                 <div className="space-y-1.5 pt-2">
                   <div className="flex justify-between text-xs font-bold text-slate-600">
                     <span>Rotary District 3220 Citation Progress</span>
-                    <span>{Math.min(100, Math.round(((currentUser.service_hours || 0) / 50) * 100))}% (Target: 50 hrs)</span>
+                    <span className="text-[#4B0082] font-black">{Math.min(100, Math.round(((currentUser.service_hours || 0) / 50) * 100))}% (Target: 50 hrs)</span>
                   </div>
-                  <div className="w-full bg-slate-200 h-3 rounded-full overflow-hidden">
+                  <div className="w-full bg-purple-100/70 h-3 rounded-full overflow-hidden">
                     <div
-                      className="bg-gradient-to-r from-[#00205B] to-emerald-600 h-full rounded-full transition-all duration-500"
+                      className="bg-gradient-to-r from-[#4B0082] via-[#7A3B9E] to-emerald-600 h-full rounded-full transition-all duration-500 shadow-sm"
                       style={{ width: `${Math.min(100, Math.round(((currentUser.service_hours || 0) / 50) * 100))}%` }}
                     ></div>
                   </div>
                 </div>
 
-                <div className="mt-4 pt-3 border-t border-slate-200 text-xs text-slate-500 flex items-center justify-between">
+                <div className="mt-4 pt-3 border-t border-purple-100 text-xs text-slate-500 flex items-center justify-between">
                   <span>Certified by: <strong>{currentUser.approved_by || 'Rtr. Dilshika Rasalingam (President)'}</strong></span>
                   <span className="text-emerald-700 font-semibold">✓ Exclusively visible to your member account</span>
                 </div>
               </div>
 
               {/* My Event Passes & Activities */}
-              <div className="p-5 rounded-2xl bg-white border border-slate-200 shadow-sm space-y-3">
+              <div className="p-5 rounded-2xl bg-white border border-purple-200 shadow-sm space-y-3">
                 <h5 className="text-xs font-black uppercase tracking-wider text-slate-900">Your Registered Club Activities</h5>
                 {myVolunteerActivities.length === 0 ? (
-                  <p className="text-xs text-slate-500">You haven't booked any event passes yet. Browse upcoming club projects below to register.</p>
+                  <p className="text-xs text-slate-500">You haven't booked any event passes yet. Browse upcoming club projects to register.</p>
                 ) : (
                   <div className="space-y-2">
                     {myVolunteerActivities.map(act => (
-                      <div key={act.id} className="p-3 rounded-xl bg-slate-50 border border-slate-100 flex items-center justify-between text-xs">
+                      <div key={act.id} className="p-3 rounded-xl bg-purple-50/40 border border-purple-100 flex items-center justify-between text-xs hover:border-purple-300 transition">
                         <div>
-                          <p className="font-bold text-slate-900">{act.projectTitle}</p>
-                          <p className="text-[11px] text-slate-500">Pass Code: <strong className="font-mono text-[#00205B]">{act.id}</strong></p>
+                          <p className="font-bold text-slate-900">{act.projectTitle || act.title}</p>
+                          <p className="text-[11px] text-slate-500">Pass Code: <strong className="font-mono text-[#4B0082]">{act.id}</strong></p>
                         </div>
-                        <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-purple-100 text-[#00205B]">
+                        <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-purple-100 text-[#4B0082] border border-purple-200">
                           Confirmed Pass
                         </span>
                       </div>
@@ -3913,7 +4506,7 @@ const RotaractWebsite = () => {
             </div>
 
             {/* Footer */}
-            <div className="p-4 border-t border-slate-200 bg-white flex items-center justify-between text-xs">
+            <div className="p-4 border-t border-purple-100 bg-white flex items-center justify-between text-xs">
               <span className="text-slate-500 font-medium">Rotaract Club of NIBM Kandy Management System</span>
               <button
                 onClick={() => {
@@ -4018,7 +4611,7 @@ const RotaractWebsite = () => {
                   </div>
                   
                   <div className="grid grid-cols-2 sm:grid-cols-4 gap-1.5">
-                    {EXECUTIVE_ACCOUNTS.slice(0, 4).map((off) => {
+                    {executiveAccounts.slice(0, 4).map((off) => {
                       const isSelected = loginEmail === off.email;
                       return (
                         <button
@@ -4031,12 +4624,12 @@ const RotaractWebsite = () => {
                           }}
                           className={`p-2 rounded-lg text-left transition border ${
                             isSelected
-                              ? 'bg-[#00205B] text-white border-[#00205B] shadow-sm'
-                              : 'bg-white hover:bg-slate-100 text-slate-700 border-slate-200'
+                              ? 'bg-[#4B0082] text-white border-[#4B0082] shadow-[0_0_15px_rgba(122,59,158,0.35)]'
+                              : 'bg-white hover:bg-purple-50 text-slate-700 border-slate-200 hover:border-purple-200'
                           }`}
                         >
                           <p className="text-[11px] font-black truncate">{off.role}</p>
-                          <p className={`text-[9px] truncate ${isSelected ? 'text-slate-200' : 'text-slate-400'}`}>
+                          <p className={`text-[9px] truncate ${isSelected ? 'text-purple-200' : 'text-slate-400'}`}>
                             {off.name.replace('Rtr. ', '')}
                           </p>
                         </button>
