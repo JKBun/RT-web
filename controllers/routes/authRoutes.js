@@ -15,8 +15,9 @@ router.post('/approve-member', authController.approveMember);
 router.post('/reject-member', authController.rejectMember);
 router.post('/update-hours', authController.updateMemberHours);
 
-// 4. Member Directory & Personal Profile
+// 4. Member Directory, Unapproved Emails & Personal Profile
 router.get('/users', authController.getUsers);
+router.get('/unapproved-emails', authController.getUnapprovedEmails);
 router.get('/profile/:id', authController.getProfile);
 
 module.exports = router;

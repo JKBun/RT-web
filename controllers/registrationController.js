@@ -1,5 +1,6 @@
 const EventRegistration = require('../models/EventRegistration');
 const Event = require('../models/Event');
+const CancelledPass = require('../models/CancelledPass');
 
 exports.registerForEvent = async (req, res) => {
   try {
@@ -23,8 +24,6 @@ exports.registerForEvent = async (req, res) => {
       contactNo
     });
 
-    await Event.incrementRegisteredCount(eventId);
-
     return res.status(201).json({
       success: true,
       message: 'Registration successful! Digital event pass issued.',
@@ -32,12 +31,29 @@ exports.registerForEvent = async (req, res) => {
         passCode: registration.pass_code,
         eventTitle: event.title,
         attendeeName: registration.attendee_name,
+        attendeeEmail: registration.attendee_email,
         eventDate: event.event_date,
-        venue: event.venue,
+        venue: event.venue || event.location,
         registrationId: registration.registration_id
       }
     });
   } catch (err) {
+    if (err.code === 'REQUIRES_BOARD_APPROVAL') {
+      return res.status(403).json({
+        success: false,
+        code: 'REQUIRES_BOARD_APPROVAL',
+        error: err.message,
+        cancelledPassId: err.cancelledPassId
+      });
+    }
+    if (err.code === 'PENDING_BOARD_APPROVAL') {
+      return res.status(403).json({
+        success: false,
+        code: 'PENDING_BOARD_APPROVAL',
+        error: err.message,
+        cancelledPassId: err.cancelledPassId
+      });
+    }
     return res.status(500).json({ success: false, error: err.message });
   }
 };
@@ -76,6 +92,72 @@ exports.cancelRegistration = async (req, res) => {
     if (!result.success) return res.status(400).json(result);
 
     return res.json({ success: true, message: result.message });
+  } catch (err) {
+    return res.status(500).json({ success: false, error: err.message });
+  }
+};
+
+exports.requestReRegistration = async (req, res) => {
+  try {
+    const { eventId, attendeeEmail, attendeeName, contactNo, reason } = req.body;
+    if (!eventId || !attendeeEmail) {
+      return res.status(400).json({ success: false, error: 'Event ID and email are required.' });
+    }
+
+    const record = await CancelledPass.requestReRegistration({
+      eventId,
+      attendeeEmail,
+      attendeeName: attendeeName || 'Attendee',
+      contactNo: contactNo || '',
+      reason: reason || 'Attendee requested re-registration after cancellation.'
+    });
+
+    return res.json({
+      success: true,
+      message: 'Re-registration request has been submitted to the Executive Board for review. You will be notified once a decision is made.',
+      record
+    });
+  } catch (err) {
+    return res.status(500).json({ success: false, error: err.message });
+  }
+};
+
+exports.getCancelledPasses = async (req, res) => {
+  try {
+    const passes = await CancelledPass.findAll();
+    return res.json({ success: true, count: passes.length, cancelledPasses: passes });
+  } catch (err) {
+    return res.status(500).json({ success: false, error: err.message });
+  }
+};
+
+exports.reviewReRegistration = async (req, res) => {
+  try {
+    const { id, action, reviewerName, comment } = req.body;
+    if (!id || !action) {
+      return res.status(400).json({ success: false, error: 'Request ID and action (approve/decline/delete) are required.' });
+    }
+
+    const result = await CancelledPass.reviewReRegistration(id, action, reviewerName || 'Board Officer', comment || '');
+    return res.json(result);
+  } catch (err) {
+    return res.status(500).json({ success: false, error: err.message });
+  }
+};
+
+exports.getMyPassStatus = async (req, res) => {
+  try {
+    const { email } = req.query;
+    if (!email) return res.status(400).json({ success: false, error: 'Email parameter is required.' });
+
+    const cleanEmail = email.toLowerCase().trim();
+    const allCancelled = await CancelledPass.findAll();
+    const userCancelled = allCancelled.filter(cp => cp.attendee_email && cp.attendee_email.toLowerCase() === cleanEmail);
+
+    return res.json({
+      success: true,
+      records: userCancelled
+    });
   } catch (err) {
     return res.status(500).json({ success: false, error: err.message });
   }

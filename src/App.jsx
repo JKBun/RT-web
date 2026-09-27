@@ -4,7 +4,7 @@ import CurvedFlowingLines from './components/CurvedFlowingLines';
 import { BRAND_CONFIG } from './config/branding';
 import { TEAM_MEMBERS } from './config/members';
 import {
-  Menu, X, Calendar, Users, Award, Mail, Phone, MapPin, Facebook, Instagram, Linkedin, ArrowRight, Play, Pause, Volume2, VolumeX, Shield, Compass, Globe, HeartHandshake, UserPlus, Eye, Clock, CheckCircle2, ChevronRight, Send, Search, Copy, Check, Download, Sparkles, FileText, Plus, Trash2, LogOut, FileSpreadsheet, UserCheck, RefreshCw
+  Menu, X, Calendar, Users, Award, Mail, Phone, MapPin, Facebook, Instagram, Linkedin, ArrowRight, Play, Pause, Volume2, VolumeX, Shield, Compass, Globe, HeartHandshake, UserPlus, Eye, Clock, CheckCircle2, ChevronRight, Send, Search, Copy, Check, Download, Sparkles, FileText, Plus, Trash2, LogOut, FileSpreadsheet, UserCheck, RefreshCw, Camera, AlertTriangle, Ban
 } from 'lucide-react';
 
 const INITIAL_UPCOMING_EVENTS = [
@@ -31,6 +31,18 @@ const INITIAL_UPCOMING_EVENTS = [
     image: 'https://images.unsplash.com/photo-1574629810360-7efbbe195018?auto=format&fit=crop&q=80&w=800',
     isRegisterable: true,
     status: 'Upcoming'
+  },
+  {
+    id: 3,
+    date: 'Tomorrow (Starts in < 48h)',
+    time: '09:00 AM - 01:00 PM',
+    title: 'Urgent Youth Leadership Summit 2026',
+    location: 'NIBM Innovation Auditorium, Kandy',
+    category: 'Leadership',
+    description: 'High-intensity leadership colloquium on sustainable community tech innovation and youth leadership (Starts in < 48 hours).',
+    image: 'https://images.unsplash.com/photo-1544531586-fde5298cdd40?auto=format&fit=crop&q=80&w=800',
+    isRegisterable: true,
+    status: 'Upcoming (< 48h)'
   }
 ];
 
@@ -239,6 +251,34 @@ const RotaractWebsite = () => {
   const [newHoursValue, setNewHoursValue] = useState('');
   const [newHoursNote, setNewHoursNote] = useState('');
 
+  // Photo Gallery Management State
+  const [galleryImages, setGalleryImages] = useState([
+    { id: 1, title: 'Miles of Memories Summit Trek', category: 'Club Service', img: '/photos/miles-of-memories.jpeg' },
+    { id: 2, title: 'Feed the Paw Welfare Drive', category: 'Community Service', img: '/photos/feed-the-paw.png' },
+    { id: 3, title: 'Coffee and Chill Networking Meetup', category: 'Professional Development', img: '/photos/coffee-and-chill.jpeg' },
+    { id: 4, title: 'Rotaract Installation Ceremony', category: 'Leadership', img: 'https://images.unsplash.com/photo-1511578314322-379afb476865?auto=format&fit=crop&q=80&w=800' }
+  ]);
+  const [showAddGalleryModal, setShowAddGalleryModal] = useState(false);
+  const [newGalleryTitle, setNewGalleryTitle] = useState('');
+  const [newGalleryCategory, setNewGalleryCategory] = useState('Club Service');
+  const [newGalleryImg, setNewGalleryImg] = useState('');
+  const [gallerySubmitting, setGallerySubmitting] = useState(false);
+
+  // Cancelled Passes, Re-Registration & Non-Approved Candidates State
+  const [cancelledPassesList, setCancelledPassesList] = useState([]);
+  const [unapprovedEmailsList, setUnapprovedEmailsList] = useState([]);
+  const [reregistrationModalData, setReregistrationModalData] = useState({
+    show: false,
+    eventId: 1,
+    eventTitle: '',
+    attendeeName: '',
+    attendeeEmail: '',
+    contactNo: '',
+    reason: ''
+  });
+  const [reregistrationReason, setReregistrationReason] = useState('');
+  const [reregistrationSubmitting, setReregistrationSubmitting] = useState(false);
+
   // Authentication & Registration Modal State
   const [authModalTab, setAuthModalTab] = useState('signin'); // 'signin' | 'register'
   const [authError, setAuthError] = useState('');
@@ -274,6 +314,43 @@ const RotaractWebsite = () => {
     }
     return () => { if (timer) clearInterval(timer); };
   }, [otpSent, isEmailVerified, otpRemainingSeconds]);
+
+  // Initial Fetch: Gallery, Cancelled Passes Archive & Unapproved Candidate Log
+  const fetchGallery = async () => {
+    try {
+      const res = await fetch('http://localhost:5000/api/gallery');
+      const data = await res.json();
+      if (data.success && data.gallery && data.gallery.length > 0) {
+        setGalleryImages(data.gallery);
+      }
+    } catch (e) {}
+  };
+
+  const fetchCancelledPasses = async () => {
+    try {
+      const res = await fetch('http://localhost:5000/api/registrations/cancelled-passes');
+      const data = await res.json();
+      if (data.success && data.cancelledPasses) {
+        setCancelledPassesList(data.cancelledPasses);
+      }
+    } catch (e) {}
+  };
+
+  const fetchUnapprovedEmails = async () => {
+    try {
+      const res = await fetch('http://localhost:5000/api/auth/unapproved-emails');
+      const data = await res.json();
+      if (data.success && data.unapprovedEmails) {
+        setUnapprovedEmailsList(data.unapprovedEmails);
+      }
+    } catch (e) {}
+  };
+
+  useEffect(() => {
+    fetchGallery();
+    fetchCancelledPasses();
+    fetchUnapprovedEmails();
+  }, []);
 
   const [passSearchTerm, setPassSearchTerm] = useState('');
   const [passEventFilter, setPassEventFilter] = useState('All');
@@ -899,16 +976,120 @@ const RotaractWebsite = () => {
     }
   };
 
+  const handleReviewReRegistration = async (id, action, comment = '') => {
+    const reviewer = currentUser?.name ? `${currentUser.name} (${currentUser.role})` : 'Executive Board';
+    try {
+      const res = await fetch('http://localhost:5000/api/registrations/review-reregistration', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id, action, reviewerName: reviewer, comment })
+      });
+      const data = await res.json();
+      if (data.success) {
+        alert(`Re-registration request has been ${action === 'approve' ? 'APPROVED' : (action === 'decline' ? 'DECLINED' : 'DELETED')}.`);
+        fetchCancelledPasses();
+      }
+    } catch (e) {
+      alert('Could not update request.');
+    }
+  };
+
+  const handleAddGalleryImage = async (e) => {
+    e.preventDefault();
+    if (!newGalleryTitle || !newGalleryImg) {
+      alert('Please provide an image title and image URL / select a preset.');
+      return;
+    }
+    setGallerySubmitting(true);
+    try {
+      const uploader = currentUser?.name ? `${currentUser.name} (${currentUser.role})` : 'Executive Board';
+      const res = await fetch('http://localhost:5000/api/gallery', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          title: newGalleryTitle,
+          category: newGalleryCategory,
+          img: newGalleryImg,
+          uploadedBy: uploader
+        })
+      });
+      const data = await res.json();
+      if (data.success) {
+        alert('✅ Photo successfully added to the Club Gallery!');
+        setNewGalleryTitle('');
+        setNewGalleryImg('');
+        setShowAddGalleryModal(false);
+        fetchGallery();
+      } else {
+        alert(`Error: ${data.error || 'Failed to add image.'}`);
+      }
+    } catch (err) {
+      alert('Could not connect to server.');
+    } finally {
+      setGallerySubmitting(false);
+    }
+  };
+
+  const handleDeleteGalleryImage = async (id) => {
+    if (!window.confirm('Are you sure you want to remove this image from the gallery?')) return;
+    try {
+      const res = await fetch(`http://localhost:5000/api/gallery/${id}`, { method: 'DELETE' });
+      const data = await res.json();
+      if (data.success) {
+        fetchGallery();
+      }
+    } catch (e) {}
+  };
+
+  const handleSendReregistrationRequest = async (e) => {
+    e.preventDefault();
+    setReregistrationSubmitting(true);
+    try {
+      const res = await fetch('http://localhost:5000/api/registrations/request-reregistration', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          eventId: reregistrationModalData.eventId,
+          attendeeEmail: reregistrationModalData.attendeeEmail,
+          attendeeName: reregistrationModalData.attendeeName,
+          contactNo: reregistrationModalData.contactNo,
+          reason: reregistrationReason
+        })
+      });
+      const data = await res.json();
+      if (data.success) {
+        alert(`✅ Re-Registration Request Sent!\n\n${data.message}`);
+        setReregistrationModalData({ show: false, eventId: 1, eventTitle: '', attendeeName: '', attendeeEmail: '', contactNo: '', reason: '' });
+        setReregistrationReason('');
+        fetchCancelledPasses();
+      } else {
+        alert(`Request Error: ${data.error || 'Could not submit request.'}`);
+      }
+    } catch (err) {
+      alert('Could not submit re-registration request.');
+    } finally {
+      setReregistrationSubmitting(false);
+    }
+  };
+
   const handleCancelActivity = async (activityId, title) => {
-    const confirmed = window.confirm(`Are you sure you want to cancel your registration for "${title}"?\n\nThis will release your reserved slot for other attendees.`);
+    const confirmed = window.confirm(`Cancellation Policy:\n• Passes can ONLY be cancelled at least 48 hours (2 days) prior to the event.\n• If less than 48 hours remain, cancellations are strictly locked.\n• Note: Cancelling archives your pass, and re-registering requires Executive Board authorization.\n\nAre you sure you want to cancel your pass for "${title}"?`);
     if (!confirmed) return;
 
     try {
-      await fetch('http://localhost:5000/api/registrations/cancel', {
+      const response = await fetch('http://localhost:5000/api/registrations/cancel', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ passCode: activityId })
       });
+      const data = await response.json();
+
+      if (!data.success) {
+        alert(`❌ Cancellation Blocked:\n\n${data.error || 'This pass cannot be cancelled.'}`);
+        return;
+      }
+
+      alert(`✅ Pass Cancelled:\n\n${data.message}`);
     } catch (err) {
       console.warn('Offline mode: Cancelled locally.');
     }
@@ -925,7 +1106,7 @@ const RotaractWebsite = () => {
       setVolunteerConfirmation(null);
     }
 
-    alert(`Your registration for "${title}" has been cancelled and removed from your passes.`);
+    fetchCancelledPasses();
   };
 
   const handleFormSubmit = async (formType, e, itemContext = null) => {
@@ -954,6 +1135,30 @@ const RotaractWebsite = () => {
           })
         });
         const data = await response.json();
+
+        if (!data.success) {
+          if (data.code === 'REQUIRES_BOARD_APPROVAL') {
+            setShowEventModal(null);
+            setReregistrationModalData({
+              show: true,
+              eventId: itemContext?.id || 1,
+              eventTitle: itemContext?.title || 'Rotaract Club Initiative',
+              attendeeName: name,
+              attendeeEmail: email,
+              contactNo: phone,
+              reason: ''
+            });
+            return;
+          } else if (data.code === 'PENDING_BOARD_APPROVAL') {
+            alert(`⏳ Re-Registration Pending Board Review:\n\n${data.error || 'Your re-registration request is currently pending review by the Executive Board.'}`);
+            setShowEventModal(null);
+            return;
+          } else {
+            alert(`Registration Error: ${data.error || 'Could not complete registration.'}`);
+            return;
+          }
+        }
+
         if (data.success && data.pass) {
           regId = data.pass.passCode;
           console.log(' [MySQL] Saved event registration to event_registrations table in phpMyAdmin:', data.pass);
@@ -1108,13 +1313,6 @@ const RotaractWebsite = () => {
       status: 'Completed',
       details: 'Organized in collaboration with medical experts, Heal&Care delivers free basic health checks, eye test clinics, and wellness seminars.'
     }
-  ];
-
-  const galleryImages = [
-    { id: 1, title: 'Miles of Memories Summit Trek', category: 'Club Service', img: '/photos/miles-of-memories.jpeg' },
-    { id: 2, title: 'Feed the Paw Welfare Drive', category: 'Community', img: '/photos/feed-the-paw.png' },
-    { id: 3, title: 'Coffee and Chill Networking Meetup', category: 'Professional Dev', img: '/photos/coffee-and-chill.jpeg' },
-    { id: 4, title: 'Rotaract Installation Ceremony', category: 'Leadership', img: 'https://images.unsplash.com/photo-1511578314322-379afb476865?auto=format&fit=crop&q=80&w=800' }
   ];
 
   const achievements = [
@@ -1684,6 +1882,22 @@ const RotaractWebsite = () => {
                 </button>
               ))}
             </div>
+
+            {/* Board Quick Action Shortcut */}
+            {currentUser && (currentUser.role === 'Admin' || currentUser.role === 'Director') && (
+              <div className="mt-4">
+                <button
+                  onClick={() => {
+                    setShowAdminDashboard(true);
+                    setAdminTab('gallery');
+                  }}
+                  className="inline-flex items-center space-x-2 px-4 py-2 rounded-xl bg-[#00205B] hover:bg-[#00153D] text-white text-xs font-bold transition shadow-sm"
+                >
+                  <Camera size={14} />
+                  <span>Executive Board: Add & Manage Photos ({galleryImages.length})</span>
+                </button>
+              </div>
+            )}
           </div>
 
           {/* Photo Gallery Grid */}
@@ -2218,7 +2432,9 @@ const RotaractWebsite = () => {
                   { id: 'overview', label: 'Overview', icon: Shield },
                   { id: 'members', label: `Member Approvals (${membersList.filter(m => m.status === 'Pending Approval').length} Pending)`, icon: UserCheck },
                   { id: 'events', label: `Events (${eventsList.length})`, icon: Calendar },
-                  { id: 'registrations', label: `Passes & Attendance (${adminPassesList.length})`, icon: Users },
+                  { id: 'registrations', label: `Passes & Cancellations (${adminPassesList.length})`, icon: Users },
+                  { id: 'gallery', label: `Club Gallery (${galleryImages.length})`, icon: Camera },
+                  { id: 'unapproved', label: `Unapproved Candidates (${unapprovedEmailsList.length})`, icon: AlertTriangle },
                   { id: 'volunteer', label: `Volunteer Hours (${volunteerReviewList.filter(v => v.status === 'Pending Review').length} Pending)`, icon: Award },
                   { id: 'avenues', label: 'Rotary Avenues (4)', icon: Compass }
                 ].map(tab => {
@@ -2783,6 +2999,289 @@ const RotaractWebsite = () => {
                     </div>
                   </div>
 
+                  {/* DEDICATED DATABASE TABLE: CANCELLED PASSES & RE-REGISTRATION REQUESTS */}
+                  <div className="mt-8 pt-6 border-t border-slate-200">
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4">
+                      <div>
+                        <div className="flex items-center space-x-2">
+                          <Ban size={18} className="text-rose-600" />
+                          <h4 className="text-base font-black text-slate-900">Cancelled Passes & Re-Registration Requests Database</h4>
+                        </div>
+                        <p className="text-xs text-slate-500 mt-0.5">
+                          Dedicated table (<code className="bg-slate-100 px-1 py-0.5 rounded text-[11px] font-mono text-slate-700">cancelled_passes</code>) tracking revoked registrations. Re-registering after cancellation requires Board authorization.
+                        </p>
+                      </div>
+
+                      <div className="flex items-center space-x-2">
+                        <span className="px-2.5 py-1 rounded-full bg-rose-50 text-rose-700 text-xs font-bold border border-rose-200">
+                          {cancelledPassesList.length} Archived ({cancelledPassesList.filter(cp => cp.status === 'Re-Registration Requested').length} Requests)
+                        </span>
+                        <button
+                          onClick={fetchCancelledPasses}
+                          className="px-2.5 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 transition text-xs font-bold flex items-center space-x-1"
+                          title="Refresh cancelled passes"
+                        >
+                          <RefreshCw size={13} />
+                          <span>Refresh</span>
+                        </button>
+                      </div>
+                    </div>
+
+                    {cancelledPassesList.length === 0 ? (
+                      <div className="p-8 text-center bg-slate-50 rounded-2xl border border-slate-200">
+                        <CheckCircle2 size={32} className="mx-auto text-emerald-500 mb-2" />
+                        <p className="text-xs font-bold text-slate-700">No cancelled passes recorded</p>
+                        <p className="text-[11px] text-slate-400 mt-0.5">Any attendee who cancels a pass will be archived here, preventing unauthorized re-registration.</p>
+                      </div>
+                    ) : (
+                      <div className="bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-sm">
+                        <div className="overflow-x-auto">
+                          <table className="w-full text-left text-xs">
+                            <thead className="bg-slate-100 text-slate-700 font-bold border-b border-slate-200 uppercase text-[10px]">
+                              <tr>
+                                <th className="p-3">Pass Code</th>
+                                <th className="p-3">Attendee Details</th>
+                                <th className="p-3">Event Initiative</th>
+                                <th className="p-3">Cancelled On</th>
+                                <th className="p-3">Status / Reason</th>
+                                <th className="p-3 text-right">Board Action</th>
+                              </tr>
+                            </thead>
+                            <tbody className="divide-y divide-slate-100 text-slate-800 font-medium">
+                              {cancelledPassesList.map((cp) => (
+                                <tr key={cp.id || cp.pass_code} className="hover:bg-slate-50">
+                                  <td className="p-3 font-mono font-bold text-slate-600">
+                                    {cp.pass_code}
+                                  </td>
+                                  <td className="p-3">
+                                    <p className="font-bold text-slate-900">{cp.attendee_name}</p>
+                                    <p className="text-[10px] text-slate-400">{cp.attendee_email} {cp.contact_no ? `• ${cp.contact_no}` : ''}</p>
+                                  </td>
+                                  <td className="p-3">
+                                    <p className="font-semibold text-slate-800">{cp.event_title}</p>
+                                    <p className="text-[10px] text-slate-400">Event #{cp.event_id}</p>
+                                  </td>
+                                  <td className="p-3 text-slate-500 text-[11px]">
+                                    {new Date(cp.cancelled_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })}
+                                  </td>
+                                  <td className="p-3">
+                                    <div className="space-y-1">
+                                      {cp.status === 'Re-Registration Requested' ? (
+                                        <span className="inline-flex items-center space-x-1 px-2.5 py-0.5 rounded-full text-[10px] font-black bg-amber-100 text-amber-900 border border-amber-300 animate-pulse">
+                                          <Clock size={10} />
+                                          <span>Re-Registration Requested</span>
+                                        </span>
+                                      ) : cp.status === 'Re-Registration Approved' ? (
+                                        <span className="inline-flex items-center space-x-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-emerald-100 text-emerald-800 border border-emerald-200">
+                                          <Check size={10} />
+                                          <span>Allowed by Board</span>
+                                        </span>
+                                      ) : cp.status === 'Re-Registration Declined' ? (
+                                        <span className="inline-flex items-center space-x-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-rose-100 text-rose-800 border border-rose-200">
+                                          <Ban size={10} />
+                                          <span>Declined</span>
+                                        </span>
+                                      ) : (
+                                        <span className="inline-flex items-center space-x-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-slate-100 text-slate-700 border border-slate-200">
+                                          <span>Cancelled (Locked)</span>
+                                        </span>
+                                      )}
+
+                                      {cp.request_reason && (
+                                        <p className="text-[10px] text-slate-600 italic bg-slate-50 p-1.5 rounded border border-slate-200 max-w-xs">
+                                          "{cp.request_reason}"
+                                        </p>
+                                      )}
+                                      {cp.board_decision_by && (
+                                        <p className="text-[9px] text-slate-400">
+                                          Decision by: {cp.board_decision_by}
+                                        </p>
+                                      )}
+                                    </div>
+                                  </td>
+                                  <td className="p-3 text-right">
+                                    <div className="flex items-center justify-end space-x-1.5">
+                                      {cp.status !== 'Re-Registration Approved' && (
+                                        <button
+                                          onClick={() => handleReviewReRegistration(cp.id, 'approve')}
+                                          className="px-2.5 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white text-[11px] font-bold transition shadow-sm flex items-center space-x-1"
+                                          title="Authorize this attendee to re-register"
+                                        >
+                                          <Check size={11} />
+                                          <span>Allow Re-registration</span>
+                                        </button>
+                                      )}
+
+                                      {cp.status === 'Re-Registration Requested' && (
+                                        <button
+                                          onClick={() => handleReviewReRegistration(cp.id, 'decline')}
+                                          className="px-2.5 py-1.5 rounded-lg bg-rose-50 hover:bg-rose-100 text-rose-700 text-[11px] font-bold transition border border-rose-200"
+                                          title="Decline re-registration request"
+                                        >
+                                          Decline
+                                        </button>
+                                      )}
+
+                                      <button
+                                        onClick={() => handleReviewReRegistration(cp.id, 'delete')}
+                                        className="p-1.5 rounded-lg text-slate-400 hover:text-rose-600 hover:bg-slate-100 transition"
+                                        title="Purge record"
+                                      >
+                                        <Trash2 size={13} />
+                                      </button>
+                                    </div>
+                                  </td>
+                                </tr>
+                              ))}
+                            </tbody>
+                          </table>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+
+                </div>
+              )}
+
+              {/* TAB: CLUB PHOTO GALLERY MANAGEMENT (FROM BOARD ACCOUNTS) */}
+              {adminTab === 'gallery' && (
+                <div className="space-y-6">
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-2 border-b border-slate-200">
+                    <div>
+                      <div className="flex items-center space-x-2">
+                        <Camera size={20} className="text-[#00205B]" />
+                        <h4 className="text-base font-black text-slate-900">Club Photo Gallery Management</h4>
+                      </div>
+                      <p className="text-xs text-slate-500">Board members can add new photographs, showcase project milestones, and curate the public gallery.</p>
+                    </div>
+
+                    <button
+                      onClick={() => setShowAddGalleryModal(true)}
+                      className="px-4 py-2 rounded-xl bg-[#00205B] hover:bg-[#00153D] text-white text-xs font-bold transition flex items-center space-x-1.5 shadow-sm"
+                    >
+                      <Plus size={15} />
+                      <span>+ Add Image to Gallery</span>
+                    </button>
+                  </div>
+
+                  {/* Gallery Grid in Admin */}
+                  <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                    {galleryImages.map((img) => (
+                      <div key={img.id} className="bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-sm flex flex-col group">
+                        <div className="relative h-44 bg-slate-100 overflow-hidden">
+                          <img 
+                            src={img.img} 
+                            alt={img.title} 
+                            className="w-full h-full object-cover group-hover:scale-105 transition duration-300"
+                          />
+                          <span className="absolute top-2.5 left-2.5 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-[#00205B] text-white shadow-sm">
+                            {img.category}
+                          </span>
+                        </div>
+                        <div className="p-3.5 flex-1 flex flex-col justify-between">
+                          <div>
+                            <h5 className="font-bold text-slate-900 text-xs line-clamp-1">{img.title}</h5>
+                            <p className="text-[10px] text-slate-400 mt-1">Uploaded by: {img.uploaded_by || 'Board'}</p>
+                          </div>
+                          <div className="mt-3 pt-2.5 border-t border-slate-100 flex items-center justify-between">
+                            <span className="text-[10px] text-slate-400">ID #{img.id}</span>
+                            <button
+                              onClick={() => handleDeleteGalleryImage(img.id)}
+                              className="text-[11px] font-bold text-rose-600 hover:text-rose-700 hover:bg-rose-50 px-2 py-1 rounded transition flex items-center space-x-1"
+                            >
+                              <Trash2 size={12} />
+                              <span>Remove</span>
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* TAB: UNAPPROVED & NON-APPROVED REGISTRATIONS DATABASE */}
+              {adminTab === 'unapproved' && (
+                <div className="space-y-4">
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-2 border-b border-slate-200">
+                    <div>
+                      <div className="flex items-center space-x-2">
+                        <AlertTriangle size={20} className="text-amber-600" />
+                        <h4 className="text-base font-black text-slate-900">Unapproved & Non-Approved Registrations Database</h4>
+                      </div>
+                      <p className="text-xs text-slate-500">Dedicated table (<code className="bg-slate-100 px-1 py-0.5 rounded text-[11px] font-mono text-slate-700">unapproved_emails</code>) tracking pending 3,000 LKR applicants, unverified OTP attempts, and invalid domain logs.</p>
+                    </div>
+
+                    <button
+                      onClick={fetchUnapprovedEmails}
+                      className="px-3 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 transition text-xs font-bold flex items-center space-x-1"
+                    >
+                      <RefreshCw size={13} />
+                      <span>Refresh Candidate Log</span>
+                    </button>
+                  </div>
+
+                  <div className="bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-sm">
+                    <div className="overflow-x-auto">
+                      <table className="w-full text-left text-xs">
+                        <thead className="bg-slate-100 text-slate-700 font-bold border-b border-slate-200 uppercase text-[10px]">
+                          <tr>
+                            <th className="p-3">Email Address</th>
+                            <th className="p-3">Applicant Name & Phone</th>
+                            <th className="p-3">Attempt Classification</th>
+                            <th className="p-3">Induction Fee Status</th>
+                            <th className="p-3">Current State</th>
+                            <th className="p-3">Audit Details & Timestamp</th>
+                          </tr>
+                        </thead>
+                        <tbody className="divide-y divide-slate-100 text-slate-800 font-medium">
+                          {unapprovedEmailsList.map((item) => (
+                            <tr key={item.id || item.email} className="hover:bg-slate-50">
+                              <td className="p-3 font-mono font-bold text-[#00205B]">
+                                {item.email}
+                              </td>
+                              <td className="p-3">
+                                <p className="font-bold text-slate-900">{item.full_name || 'Anonymous'}</p>
+                                <p className="text-[10px] text-slate-400">{item.phone || 'No phone recorded'}</p>
+                              </td>
+                              <td className="p-3">
+                                <span className={`inline-block px-2 py-0.5 rounded text-[10px] font-bold ${
+                                  item.attempt_type === 'Membership Application'
+                                    ? 'bg-purple-100 text-purple-800'
+                                    : item.attempt_type === 'Invalid Domain Attempt'
+                                    ? 'bg-rose-100 text-rose-800'
+                                    : 'bg-amber-100 text-amber-800'
+                                }`}>
+                                  {item.attempt_type}
+                                </span>
+                              </td>
+                              <td className="p-3">
+                                <span className="font-bold text-slate-900">{item.fee_amount || 3000} LKR</span>
+                                <span className="block text-[10px] text-amber-600 font-medium">Pending Verification</span>
+                              </td>
+                              <td className="p-3">
+                                <span className={`inline-flex items-center space-x-1 px-2.5 py-0.5 rounded-full text-[10px] font-black ${
+                                  item.status === 'Pending Board Approval'
+                                    ? 'bg-amber-100 text-amber-900 border border-amber-300'
+                                    : item.status === 'Invalid'
+                                    ? 'bg-rose-100 text-rose-900 border border-rose-300'
+                                    : 'bg-slate-100 text-slate-700'
+                                }`}>
+                                  <span>{item.status}</span>
+                                </span>
+                              </td>
+                              <td className="p-3 text-[11px] text-slate-500">
+                                <p className="line-clamp-1">{item.details}</p>
+                                <p className="text-[9px] text-slate-400 mt-0.5">
+                                  {item.created_at ? new Date(item.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' }) : 'N/A'}
+                                </p>
+                              </td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
                 </div>
               )}
 
@@ -3760,6 +4259,16 @@ const RotaractWebsite = () => {
                   className="w-full px-4 py-3 rounded-xl bg-slate-50 border border-slate-300 text-slate-900 text-sm focus:outline-none focus:border-[#7A3B9E]"
                 />
               </div>
+              {/* 48-Hour Cancellation Policy Reminder */}
+              <div className="p-3.5 rounded-2xl bg-amber-50 border border-amber-200 text-xs text-amber-950 space-y-1">
+                <div className="flex items-center space-x-2 font-bold text-amber-900">
+                  <Clock size={15} className="text-amber-700 shrink-0" />
+                  <span>Cancellation Rule: Allowed up to 48 Hours Before Event</span>
+                </div>
+                <p className="text-[11px] text-amber-800 leading-relaxed">
+                  Passes can <strong>only be cancelled before 2 days (48 hours)</strong> are left for the event. Once less than 48 hours remain, cancellations are strictly locked. Cancelling archives your ticket, and re-registration will require Executive Board approval.
+                </p>
+              </div>
 
               <button 
                 type="submit"
@@ -4120,6 +4629,17 @@ const RotaractWebsite = () => {
               </div>
             </div>
 
+            {/* Cancellation 48-Hour Policy Alert */}
+            <div className="mb-4 p-3.5 rounded-2xl bg-amber-50 border border-amber-200 text-xs text-amber-950 flex items-start space-x-2.5">
+              <Clock size={16} className="text-amber-700 shrink-0 mt-0.5" />
+              <div>
+                <span className="font-bold text-amber-900">Official Cancellation Rule (48-Hour Cut-off):</span>
+                <p className="text-[11px] text-amber-800 mt-0.5 leading-relaxed">
+                  Passes can <strong>only be cancelled before 2 days (48 hours)</strong> are left for the event. Once less than 48 hours remain, cancellations are locked. If you cancel an event pass, your ticket is removed from active seats and archived in Board records. Re-registering for that event will require Executive Board approval.
+                </p>
+              </div>
+            </div>
+
             {myVolunteerActivities.length === 0 ? (
               <div className="text-center py-12 bg-slate-50 rounded-2xl border border-slate-200">
                 <Award size={40} className="mx-auto text-slate-300 mb-2" />
@@ -4176,6 +4696,195 @@ const RotaractWebsite = () => {
                 Close Pass Drawer
               </button>
             </div>
+          </div>
+        </div>
+      )}
+
+      {/* MODAL 8: RE-REGISTRATION BOARD REQUEST MODAL */}
+      {reregistrationModalData.show && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/85 backdrop-blur-md">
+          <div className="relative w-full max-w-lg p-6 sm:p-8 rounded-3xl bg-white border border-slate-200 shadow-2xl">
+            <button 
+              onClick={() => setReregistrationModalData(prev => ({ ...prev, show: false }))}
+              className="absolute top-4 right-4 p-2 text-slate-400 hover:text-slate-700 rounded-full hover:bg-slate-100"
+            >
+              <X size={20} />
+            </button>
+
+            <div className="mb-5 flex items-center space-x-3">
+              <div className="w-12 h-12 bg-rose-100 text-rose-700 rounded-2xl flex items-center justify-center">
+                <Ban size={24} />
+              </div>
+              <div>
+                <h3 className="text-xl font-bold text-slate-900">Re-Registration Blocked</h3>
+                <p className="text-xs text-slate-500">Board Authorization Required</p>
+              </div>
+            </div>
+
+            <div className="p-3.5 rounded-2xl bg-amber-50 border border-amber-200 text-xs text-amber-900 mb-4 leading-relaxed">
+              <p className="font-bold text-amber-950 mb-1">Notice for {reregistrationModalData.attendeeName}:</p>
+              You previously cancelled your registration for <strong>"{reregistrationModalData.eventTitle}"</strong>.
+              To prevent quota abuse, cancelled tickets cannot be re-booked directly. You may submit a request below explaining why you wish to re-register. The Executive Board will review and authorize your request.
+            </div>
+
+            <form onSubmit={handleSendReregistrationRequest} className="space-y-4">
+              <div>
+                <label className="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1">
+                  Reason for Requesting Re-Registration *
+                </label>
+                <textarea
+                  required
+                  rows={3}
+                  value={reregistrationReason}
+                  onChange={(e) => setReregistrationReason(e.target.value)}
+                  placeholder="e.g. My academic schedule conflict has been cleared and I am committed to attending this initiative..."
+                  className="w-full px-4 py-2.5 rounded-xl bg-slate-50 border border-slate-300 text-slate-900 text-xs focus:outline-none focus:border-[#00205B]"
+                />
+              </div>
+
+              <div className="p-2.5 rounded-xl bg-slate-100 text-[11px] text-slate-600">
+                • Target Event: <strong>{reregistrationModalData.eventTitle}</strong><br/>
+                • Registered Email: <strong>{reregistrationModalData.attendeeEmail}</strong>
+              </div>
+
+              <div className="flex items-center space-x-3 pt-2">
+                <button
+                  type="button"
+                  onClick={() => setReregistrationModalData(prev => ({ ...prev, show: false }))}
+                  className="flex-1 py-3 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold rounded-xl text-xs transition"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  disabled={reregistrationSubmitting}
+                  className="flex-1 py-3 bg-[#00205B] hover:bg-black text-white font-bold rounded-xl text-xs transition shadow-md flex items-center justify-center space-x-1.5"
+                >
+                  <Send size={14} />
+                  <span>{reregistrationSubmitting ? 'Submitting...' : 'Send Request to Board'}</span>
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* MODAL 9: BOARD ADD IMAGE TO GALLERY MODAL */}
+      {showAddGalleryModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/85 backdrop-blur-md">
+          <div className="relative w-full max-w-lg p-6 sm:p-8 rounded-3xl bg-white border border-slate-200 shadow-2xl">
+            <button 
+              onClick={() => setShowAddGalleryModal(false)}
+              className="absolute top-4 right-4 p-2 text-slate-400 hover:text-slate-700 rounded-full hover:bg-slate-100"
+            >
+              <X size={20} />
+            </button>
+
+            <div className="mb-5 flex items-center space-x-3">
+              <div className="w-12 h-12 bg-purple-100 text-[#4B0082] rounded-2xl flex items-center justify-center">
+                <Camera size={24} />
+              </div>
+              <div>
+                <h3 className="text-xl font-bold text-slate-900">Add Image to Club Gallery</h3>
+                <p className="text-xs text-slate-500">Curate public gallery visuals from Executive Board accounts</p>
+              </div>
+            </div>
+
+            <form onSubmit={handleAddGalleryImage} className="space-y-4">
+              <div>
+                <label className="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1">
+                  Photo Title / Initiative Caption *
+                </label>
+                <input
+                  type="text"
+                  required
+                  value={newGalleryTitle}
+                  onChange={(e) => setNewGalleryTitle(e.target.value)}
+                  placeholder="e.g. Annual Blood Donation & Health Screening Camp"
+                  className="w-full px-4 py-2.5 rounded-xl bg-slate-50 border border-slate-300 text-slate-900 text-xs focus:outline-none focus:border-[#00205B]"
+                />
+              </div>
+
+              <div>
+                <label className="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1">
+                  Avenue / Category *
+                </label>
+                <select
+                  value={newGalleryCategory}
+                  onChange={(e) => setNewGalleryCategory(e.target.value)}
+                  className="w-full px-3 py-2.5 rounded-xl bg-slate-50 border border-slate-300 text-slate-900 text-xs font-semibold focus:outline-none"
+                >
+                  <option value="Club Service">Club Service</option>
+                  <option value="Community Service">Community Service</option>
+                  <option value="Professional Development">Professional Development</option>
+                  <option value="International Service">International Service</option>
+                  <option value="Leadership">Leadership</option>
+                  <option value="Environment">Environment</option>
+                  <option value="Health">Health</option>
+                </select>
+              </div>
+
+              <div>
+                <label className="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1">
+                  Image URL / Asset Path *
+                </label>
+                <input
+                  type="text"
+                  required
+                  value={newGalleryImg}
+                  onChange={(e) => setNewGalleryImg(e.target.value)}
+                  placeholder="e.g. /photos/feed-the-paw.png or https://images.unsplash.com/..."
+                  className="w-full px-4 py-2.5 rounded-xl bg-slate-50 border border-slate-300 text-slate-900 text-xs focus:outline-none focus:border-[#00205B]"
+                />
+                
+                {/* Preset Suggestions */}
+                <div className="mt-2">
+                  <p className="text-[10px] text-slate-400 font-bold mb-1">Quick Select Club Photos:</p>
+                  <div className="flex flex-wrap gap-1.5">
+                    {[
+                      { name: 'Feed the Paw', url: '/photos/feed-the-paw.png' },
+                      { name: 'Coffee & Chill', url: '/photos/coffee-and-chill.jpeg' },
+                      { name: 'Mountain Hike', url: '/photos/miles-of-memories.jpeg' },
+                      { name: 'Club Ceremony', url: 'https://images.unsplash.com/photo-1511578314322-379afb476865?auto=format&fit=crop&q=80&w=800' }
+                    ].map(preset => (
+                      <button
+                        type="button"
+                        key={preset.name}
+                        onClick={() => setNewGalleryImg(preset.url)}
+                        className="px-2 py-1 rounded bg-slate-100 hover:bg-slate-200 text-slate-700 text-[10px] font-semibold border border-slate-200"
+                      >
+                        {preset.name}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              </div>
+
+              {newGalleryImg && (
+                <div className="p-2 bg-slate-50 rounded-xl border border-slate-200 text-center">
+                  <p className="text-[10px] text-slate-400 font-semibold mb-1">Preview:</p>
+                  <img src={newGalleryImg} alt="Preview" className="h-28 mx-auto object-cover rounded-lg shadow-sm" />
+                </div>
+              )}
+
+              <div className="flex items-center space-x-3 pt-2">
+                <button
+                  type="button"
+                  onClick={() => setShowAddGalleryModal(false)}
+                  className="flex-1 py-3 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold rounded-xl text-xs transition"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  disabled={gallerySubmitting}
+                  className="flex-1 py-3 bg-[#00205B] hover:bg-black text-white font-bold rounded-xl text-xs transition shadow-md flex items-center justify-center space-x-1.5"
+                >
+                  <Plus size={14} />
+                  <span>{gallerySubmitting ? 'Publishing...' : 'Publish to Gallery'}</span>
+                </button>
+              </div>
+            </form>
           </div>
         </div>
       )}

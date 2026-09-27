@@ -1,4 +1,5 @@
 const User = require('../models/User');
+const UnapprovedEmail = require('../models/UnapprovedEmail');
 
 // In-memory verification code registry: email -> { code, expiresAt, verified }
 // 45-minute expiration window as requested
@@ -39,6 +40,13 @@ exports.sendVerificationCode = async (req, res) => {
 
     // Verify email format and domain validity
     if (!isValidEmailDomain(cleanEmail)) {
+      await UnapprovedEmail.logAttempt({
+        email: cleanEmail,
+        attemptType: 'Invalid Domain Attempt',
+        status: 'Invalid',
+        details: 'Attempted registration with nonexistent or invalid email domain'
+      });
+
       return res.status(400).json({
         success: false,
         error: 'This email address does not exist or has an invalid domain. Please enter a valid, active email address.'
@@ -65,6 +73,16 @@ exports.sendVerificationCode = async (req, res) => {
     });
 
     console.log(`[EMAIL DISPATCH] 45-Min Verification Code for ${cleanEmail}: ${code} (Expires in 45m)`);
+
+    // Log to UnapprovedEmail database
+    await UnapprovedEmail.logAttempt({
+      email: cleanEmail,
+      attemptType: 'OTP Unverified',
+      status: 'Pending Verification',
+      otpCode: code,
+      codeExpiresAt: new Date(expiresAt).toISOString(),
+      details: '45-minute verification code dispatched. Verification pending'
+    });
 
     return res.json({
       success: true,
@@ -101,6 +119,7 @@ exports.verifyCode = async (req, res) => {
     // Check 45-minute expiration
     if (Date.now() > record.expiresAt) {
       OTP_STORE.delete(cleanEmail);
+      await UnapprovedEmail.updateStatus(cleanEmail, 'Expired', '45-minute OTP code expired without verification');
       return res.status(400).json({
         success: false,
         error: 'This verification code has expired after 45 minutes. Please request a new code.'
@@ -118,6 +137,8 @@ exports.verifyCode = async (req, res) => {
     // Mark as verified
     record.verified = true;
     OTP_STORE.set(cleanEmail, record);
+
+    await UnapprovedEmail.updateStatus(cleanEmail, 'Pending Board Approval', 'Email verified via 45-min OTP. Awaiting membership submission');
 
     return res.json({
       success: true,
@@ -175,6 +196,17 @@ exports.register = async (req, res) => {
 
     // Cleanup OTP store
     OTP_STORE.delete(cleanEmail);
+
+    // Record in UnapprovedEmail database
+    await UnapprovedEmail.logAttempt({
+      email: cleanEmail,
+      fullName,
+      phone: contactNo || '',
+      attemptType: 'Membership Application',
+      status: 'Pending Board Approval',
+      feeAmount: 3000,
+      details: 'Registered candidate awaiting 3,000 LKR fee induction & President/VP authorization'
+    });
 
     return res.status(201).json({
       success: true,
@@ -252,6 +284,12 @@ exports.approveMember = async (req, res) => {
 
     const approver = approverName || 'President';
     const result = await User.approveMember(userId, approver);
+
+    const user = await User.findById(userId);
+    if (user && user.email) {
+      await UnapprovedEmail.updateStatus(user.email, 'Approved', `Approved by ${approver}`);
+    }
+
     return res.json(result);
   } catch (err) {
     return res.status(500).json({ success: false, error: err.message });
@@ -268,7 +306,13 @@ exports.rejectMember = async (req, res) => {
       return res.status(400).json({ success: false, error: 'User ID is required.' });
     }
 
+    const user = await User.findById(userId);
     const result = await User.rejectMember(userId, reason);
+
+    if (user && user.email) {
+      await UnapprovedEmail.updateStatus(user.email, 'Rejected', `Declined by Board: ${reason || 'Unspecified'}`);
+    }
+
     return res.json(result);
   } catch (err) {
     return res.status(500).json({ success: false, error: err.message });
@@ -319,6 +363,18 @@ exports.getProfile = async (req, res) => {
 
     const { password_hash, ...safeUser } = user;
     return res.json({ success: true, profile: safeUser });
+  } catch (err) {
+    return res.status(500).json({ success: false, error: err.message });
+  }
+};
+
+/**
+ * 11. Get Unapproved & Non-Verified Email Registrations (For Board Audit)
+ */
+exports.getUnapprovedEmails = async (req, res) => {
+  try {
+    const list = await UnapprovedEmail.findAll();
+    return res.json({ success: true, count: list.length, unapprovedEmails: list });
   } catch (err) {
     return res.status(500).json({ success: false, error: err.message });
   }

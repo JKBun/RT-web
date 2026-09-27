@@ -10,7 +10,7 @@
       "status": "Active",
       "membership_fee": 3000,
       "fee_status": "Paid",
-      "service_hours": 65.0,
+      "service_hours": 65,
       "approved_by": "Rotary District 3220 Governor",
       "approved_at": "2024-07-01T08:00:00.000Z",
       "contact_no": "+94 77 123 4567",
@@ -42,7 +42,7 @@
       "status": "Active",
       "membership_fee": 3000,
       "fee_status": "Paid",
-      "service_hours": 48.0,
+      "service_hours": 48,
       "approved_by": "Rtr. Dilshika Rasalingam (President)",
       "approved_at": "2024-07-01T08:00:00.000Z",
       "contact_no": "+94 76 555 1234",
@@ -58,7 +58,7 @@
       "status": "Active",
       "membership_fee": 3000,
       "fee_status": "Paid",
-      "service_hours": 42.0,
+      "service_hours": 42,
       "approved_by": "Rtr. Dilshika Rasalingam (President)",
       "approved_at": "2024-07-01T08:00:00.000Z",
       "contact_no": "+94 77 444 8899",
@@ -90,7 +90,7 @@
       "status": "Pending Approval",
       "membership_fee": 3000,
       "fee_status": "Pending Verification",
-      "service_hours": 0.0,
+      "service_hours": 0,
       "approved_by": null,
       "approved_at": null,
       "contact_no": "+94 77 987 6543",
@@ -106,7 +106,7 @@
       "status": "Pending Approval",
       "membership_fee": 3000,
       "fee_status": "Pending Verification",
-      "service_hours": 0.0,
+      "service_hours": 0,
       "approved_by": null,
       "approved_at": null,
       "contact_no": "+94 71 333 9922",
@@ -163,6 +163,18 @@
       "registered_count": 68,
       "status": "Upcoming",
       "image_url": "https://images.unsplash.com/photo-1574629810360-7efbbe195018?auto=format&fit=crop&q=80&w=800"
+    },
+    {
+      "id": 3,
+      "title": "Urgent Youth Leadership Summit 2026",
+      "description": "High-intensity leadership colloquium on sustainable community tech innovation and youth leadership.",
+      "event_date": "2026-09-28 06:08:45",
+      "location": "NIBM Innovation Auditorium, Kandy",
+      "avenue_id": 3,
+      "max_capacity": 80,
+      "registered_count": 25,
+      "status": "Upcoming",
+      "image_url": "https://images.unsplash.com/photo-1544531586-fde5298cdd40?auto=format&fit=crop&q=80&w=800"
     }
   ],
   "event_registrations": [
@@ -232,7 +244,7 @@
       "title": "Feed the Paw: Stray Animal Welfare Drive",
       "avenue_id": 2,
       "summary": "A compassionate community welfare drive providing nutritious food, hydration, and care to 75-100 stray dogs and cats in Kandy.",
-      "funds_raised": 45000.0,
+      "funds_raised": 45000,
       "image_url": "/photos/feed-the-paw.png",
       "impact": "75-100 Animals Fed",
       "status": "Completed"
@@ -242,7 +254,7 @@
       "title": "Coffee and Chill: Member Networking Evening",
       "avenue_id": 3,
       "summary": "An informal networking evening for brainstorming, skill sharing, and building lifelong professional friendships over coffee with 25+ attendees.",
-      "funds_raised": 15000.0,
+      "funds_raised": 15000,
       "image_url": "/photos/coffee-and-chill.jpeg",
       "impact": "25+ Attendees",
       "status": "Completed"
@@ -252,10 +264,120 @@
       "title": "Miles of Memories: Hanthana Mountain Hike",
       "avenue_id": 1,
       "summary": "An adventurous hiking expedition up the scenic Hanthana mountain range fostering outdoor fellowship and team spirit.",
-      "funds_raised": 25000.0,
+      "funds_raised": 25000,
       "image_url": "/photos/miles-of-memories.jpeg",
       "impact": "40+ Members Summited",
       "status": "Completed"
+    }
+  ],
+  "cancelled_passes": [
+    {
+      "id": 1,
+      "pass_code": "RT-NIBM-1-C98F",
+      "event_id": 1,
+      "event_title": "Rotaract Hope: Cancer Awareness Run 2026",
+      "attendee_name": "Saman Kumara",
+      "attendee_email": "saman.kumara@gmail.com",
+      "contact_no": "+94 77 111 2233",
+      "cancelled_at": "2026-09-20T10:15:00.000Z",
+      "status": "Re-Registration Requested",
+      "request_reason": "I accidentally cancelled due to exam clash, but exam was moved. Please allow me to re-register.",
+      "board_decision_by": null,
+      "board_decision_at": null,
+      "board_comment": null
+    },
+    {
+      "id": 2,
+      "pass_code": "RT-NIBM-2-B411",
+      "event_id": 2,
+      "event_title": "Rotaract Rugby Clash 2026",
+      "attendee_name": "Praveen Silva",
+      "attendee_email": "praveen.silva@gmail.com",
+      "contact_no": "+94 71 888 7766",
+      "cancelled_at": "2026-09-22T14:40:00.000Z",
+      "status": "Cancelled",
+      "request_reason": null,
+      "board_decision_by": null,
+      "board_decision_at": null,
+      "board_comment": null
+    }
+  ],
+  "unapproved_emails": [
+    {
+      "id": 1,
+      "email": "kasun.jayasuriya@gmail.com",
+      "full_name": "Kasun Jayasuriya",
+      "phone": "+94 77 987 6543",
+      "attempt_type": "Membership Application",
+      "status": "Pending Board Approval",
+      "fee_amount": 3000,
+      "otp_code": "839201",
+      "code_expires_at": "2026-09-24T15:15:00.000Z",
+      "details": "Application submitted, pending 3,000 LKR fee receipt & President/VP authorization",
+      "created_at": "2026-09-24T14:30:00.000Z",
+      "updated_at": "2026-09-24T14:30:00.000Z"
+    },
+    {
+      "id": 2,
+      "email": "nimasha.wick@gmail.com",
+      "full_name": "Nimasha Wickramasinghe",
+      "phone": "+94 71 333 9922",
+      "attempt_type": "Membership Application",
+      "status": "Pending Board Approval",
+      "fee_amount": 3000,
+      "otp_code": "521940",
+      "code_expires_at": "2026-09-25T10:00:00.000Z",
+      "details": "Application submitted, pending 3,000 LKR fee receipt & President/VP authorization",
+      "created_at": "2026-09-25T09:15:00.000Z",
+      "updated_at": "2026-09-25T09:15:00.000Z"
+    },
+    {
+      "id": 3,
+      "email": "unknown.user@notreal123.com",
+      "full_name": "Test Attempter",
+      "phone": "+94 70 000 0000",
+      "attempt_type": "Invalid Domain Attempt",
+      "status": "Invalid",
+      "fee_amount": 3000,
+      "otp_code": null,
+      "code_expires_at": null,
+      "details": "Rejected: Nonexistent or fake email domain provided",
+      "created_at": "2026-09-26T18:10:00.000Z",
+      "updated_at": "2026-09-26T18:10:00.000Z"
+    }
+  ],
+  "gallery": [
+    {
+      "id": 1,
+      "title": "Miles of Memories Summit Trek",
+      "category": "Club Service",
+      "img": "/photos/miles-of-memories.jpeg",
+      "uploaded_by": "Board",
+      "created_at": "2026-08-15T10:00:00Z"
+    },
+    {
+      "id": 2,
+      "title": "Feed the Paw Welfare Drive",
+      "category": "Community Service",
+      "img": "/photos/feed-the-paw.png",
+      "uploaded_by": "Board",
+      "created_at": "2026-08-20T11:30:00Z"
+    },
+    {
+      "id": 3,
+      "title": "Coffee and Chill Networking Meetup",
+      "category": "Professional Development",
+      "img": "/photos/coffee-and-chill.jpeg",
+      "uploaded_by": "Board",
+      "created_at": "2026-09-02T14:15:00Z"
+    },
+    {
+      "id": 4,
+      "title": "Rotaract Installation Ceremony",
+      "category": "Leadership",
+      "img": "https://images.unsplash.com/photo-1511578314322-379afb476865?auto=format&fit=crop&q=80&w=800",
+      "uploaded_by": "President",
+      "created_at": "2026-09-10T16:00:00Z"
     }
   ]
 }

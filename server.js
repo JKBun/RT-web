@@ -39,6 +39,7 @@ app.use('/api/registrations', require('./controllers/routes/registrationRoutes')
 app.use('/api/volunteer', require('./controllers/routes/volunteerRoutes'));
 app.use('/api/projects', require('./controllers/routes/projectRoutes'));
 app.use('/api/reports', require('./controllers/routes/reportRoutes'));
+app.use('/api/gallery', require('./controllers/routes/galleryRoutes'));
 
 // 4. System Health Check Endpoint
 app.get('/api/health', (req, res) => {
