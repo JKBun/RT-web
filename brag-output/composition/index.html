@@ -1,0 +1,506 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=1920, height=1080" />
+    <title>Rotaract NIBM Launch Brag Video</title>
+    <!-- GSAP for precise timeline seeking & rendering -->
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      html, body {
+        margin: 0;
+        width: 1920px;
+        height: 1080px;
+        overflow: hidden;
+        background: #080314;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        color: #ffffff;
+        -webkit-font-smoothing: antialiased;
+      }
+      #root {
+        position: relative;
+        width: 1920px;
+        height: 1080px;
+        overflow: hidden;
+        background: radial-gradient(circle at 50% 25%, #2a0b4d 0%, #0d041e 50%, #06020c 100%);
+      }
+
+      /* Ambient Flowing Neon Gradients & Cyber Aura */
+      .glow-orb-1 {
+        position: absolute;
+        top: -150px;
+        left: 20%;
+        width: 650px;
+        height: 650px;
+        background: radial-gradient(circle, rgba(168, 85, 247, 0.35) 0%, rgba(75, 0, 130, 0) 70%);
+        filter: blur(80px);
+        pointer-events: none;
+      }
+      .glow-orb-2 {
+        position: absolute;
+        bottom: -150px;
+        right: 15%;
+        width: 750px;
+        height: 750px;
+        background: radial-gradient(circle, rgba(236, 72, 153, 0.25) 0%, rgba(122, 59, 158, 0) 70%);
+        filter: blur(90px);
+        pointer-events: none;
+      }
+
+      /* Cyber Grid Lines */
+      .cyber-grid {
+        position: absolute;
+        inset: 0;
+        background-image: 
+          linear-gradient(rgba(122, 59, 158, 0.08) 1px, transparent 1px),
+          linear-gradient(90deg, rgba(122, 59, 158, 0.08) 1px, transparent 1px);
+        background-size: 60px 60px;
+        perspective: 1000px;
+        transform: rotateX(45deg) scale(1.5);
+        transform-origin: center bottom;
+        opacity: 0.6;
+        pointer-events: none;
+      }
+
+      /* Common Scene Styles */
+      .scene {
+        position: absolute;
+        inset: 0;
+        width: 1920px;
+        height: 1080px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        opacity: 0;
+        visibility: hidden;
+        padding: 60px 80px;
+      }
+
+      .badge-pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 8px 24px;
+        border-radius: 9999px;
+        background: rgba(122, 59, 158, 0.25);
+        border: 1px solid rgba(168, 85, 247, 0.5);
+        color: #d8b4fe;
+        font-size: 15px;
+        font-weight: 800;
+        letter-spacing: 0.15em;
+        text-transform: uppercase;
+        margin-bottom: 24px;
+        backdrop-filter: blur(12px);
+        box-shadow: 0 0 25px rgba(168, 85, 247, 0.3);
+      }
+
+      .glass-card {
+        background: rgba(22, 9, 41, 0.85);
+        border: 1px solid rgba(168, 85, 247, 0.25);
+        border-radius: 28px;
+        box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5), 0 0 35px rgba(122, 59, 158, 0.2);
+        backdrop-filter: blur(16px);
+      }
+
+      /* Neon Text Glow */
+      .neon-text {
+        text-shadow: 0 0 30px rgba(168, 85, 247, 0.6), 0 0 60px rgba(236, 72, 153, 0.4);
+      }
+
+      /* SVG Flowing Curves */
+      .flowing-waves {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        pointer-events: none;
+        opacity: 0.45;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Composition Root -->
+    <div
+      id="root"
+      data-composition-id="main"
+      data-start="0"
+      data-duration="20"
+      data-width="1920"
+      data-height="1080"
+    >
+      <!-- Background Ambient Elements -->
+      <div class="glow-orb-1"></div>
+      <div class="glow-orb-2"></div>
+      <div class="cyber-grid"></div>
+
+      <!-- Flowing Decorative Neon Lines -->
+      <svg class="flowing-waves" viewBox="0 0 1920 1080" fill="none" xmlns="http://www.w3.org/2000/svg" data-layout-allow-overflow>
+        <path d="M-100 850 C 400 450, 800 1100, 1400 700 C 1700 500, 1950 650, 2100 600" stroke="url(#gradient-line-1)" stroke-width="3" opacity="0.6" data-layout-allow-overflow />
+        <path d="M-100 650 C 350 950, 950 400, 1550 850 C 1850 1050, 2050 800, 2150 750" stroke="url(#gradient-line-2)" stroke-width="2" opacity="0.5" data-layout-allow-overflow />
+        <defs>
+          <linearGradient id="gradient-line-1" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" stop-color="#7A3B9E" stop-opacity="0.2"/>
+            <stop offset="50%" stop-color="#EC4899" stop-opacity="0.9"/>
+            <stop offset="100%" stop-color="#A855F7" stop-opacity="0.2"/>
+          </linearGradient>
+          <linearGradient id="gradient-line-2" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" stop-color="#4B0082" stop-opacity="0.2"/>
+            <stop offset="50%" stop-color="#38BDF8" stop-opacity="0.8"/>
+            <stop offset="100%" stop-color="#EC4899" stop-opacity="0.2"/>
+          </linearGradient>
+        </defs>
+      </svg>
+
+      <!-- AUDIO TRACKS -->
+      <!-- Main Music Bed -->
+      <audio
+        id="bgm"
+        data-start="0"
+        data-duration="20"
+        data-track-index="10"
+        data-volume="0.65"
+        src="assets/music/happy-beats-business-moves-vol-10-by-ende-dot-app.mp3"
+      ></audio>
+
+      <!-- Sound Effects -->
+      <audio id="sfx-hook" data-start="0.1" data-duration="1.48" data-track-index="11" data-volume="0.80" src="assets/sfx/impact/impactBell_heavy_000.ogg"></audio>
+      <audio id="sfx-click" data-start="3.2" data-duration="0.10" data-track-index="12" data-volume="0.75" src="assets/sfx/interface/click_001.ogg"></audio>
+      <audio id="sfx-pass" data-start="4.8" data-duration="0.62" data-track-index="13" data-volume="0.80" src="assets/sfx/interface/switch_001.ogg"></audio>
+      <audio id="sfx-board" data-start="7.8" data-duration="0.50" data-track-index="14" data-volume="0.80" src="assets/sfx/interface/switch_004.ogg"></audio>
+      <audio id="sfx-blog" data-start="12.3" data-duration="0.11" data-track-index="15" data-volume="0.75" src="assets/sfx/interface/drop_001.ogg"></audio>
+      <audio id="sfx-outro" data-start="16.7" data-duration="1.48" data-track-index="16" data-volume="0.85" src="assets/sfx/impact/impactBell_heavy_000.ogg"></audio>
+
+
+      <!-- ================= SCENE 1: THE COSMIC HOOK (0s - 3.2s) ================= -->
+      <div id="scene-1" class="scene">
+        <div id="hook-badge" class="badge-pill">
+          <span>★ ROTARY INTERNATIONAL DISTRICT 3220 ★</span>
+        </div>
+        <div id="hook-logo" style="margin-bottom: 24px;">
+          <img src="assets/images/rotaract.png" alt="Rotaract Logo" style="height: 110px; filter: drop-shadow(0 0 25px rgba(168,85,247,0.8));" />
+        </div>
+        <h1 id="hook-title" class="neon-text" style="font-size: 78px; font-weight: 900; letter-spacing: -0.02em; text-align: center; line-height: 1.1; margin-bottom: 20px;">
+          ROTARACT CLUB OF NIBM
+        </h1>
+        <p id="hook-sub" style="font-size: 28px; font-weight: 700; color: #e9d5ff; letter-spacing: 0.12em; text-transform: uppercase; text-align: center; max-width: 1200px;">
+          Youth Leadership • Community Impact • Beyond Campus
+        </p>
+      </div>
+
+      <!-- ================= SCENE 2: LIVE INITIATIVES & DIGITAL PASSES (3.2s - 7.6s) ================= -->
+      <div id="scene-2" class="scene" data-layout-allow-overlap data-layout-allow-occlusion>
+        <div class="badge-pill" data-layout-allow-overlap>
+          <span>EVENT DISCOVERY & LIVE REGISTRATION</span>
+        </div>
+        <h2 id="scene-2-title" style="font-size: 52px; font-weight: 900; margin-bottom: 30px; text-align: center;" class="neon-text" data-layout-allow-overlap data-layout-allow-occlusion>
+          Instant Digital Admission Passes
+        </h2>
+
+        <!-- Event Cards Container -->
+        <div id="event-cards" style="display: flex; gap: 32px; width: 1440px; justify-content: center; position: relative;" data-layout-allow-overlap data-layout-allow-occlusion>
+          <!-- Event 1 -->
+          <div class="glass-card" style="width: 440px; padding: 28px; border-top: 4px solid #EC4899;" data-layout-allow-overlap data-layout-allow-occlusion>
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+              <span style="background: rgba(236, 72, 153, 0.25); color: #f472b6; font-size: 13px; font-weight: 800; padding: 4px 14px; border-radius: 9999px;">HEALTH AVENUE</span>
+              <span style="color: #cbd5e1; font-size: 13px; font-weight: 700;">OCT 18, 2026</span>
+            </div>
+            <h3 style="font-size: 22px; font-weight: 800; margin-bottom: 12px; line-height: 1.3;">Cancer Awareness Run 2026</h3>
+            <p style="color: #cbd5e1; font-size: 14px; line-height: 1.5; margin-bottom: 24px;">5km charity run & community health screening supporting cancer awareness across Kandy.</p>
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+              <span style="color: #38bdf8; font-weight: 700; font-size: 14px;">📍 Kandy Lake Round</span>
+              <span style="background: #7A3B9E; color: white; padding: 8px 18px; border-radius: 12px; font-size: 13px; font-weight: 800;">Get Pass →</span>
+            </div>
+          </div>
+
+          <!-- Event 2 -->
+          <div class="glass-card" style="width: 440px; padding: 28px; border-top: 4px solid #A855F7;" data-layout-allow-overlap data-layout-allow-occlusion>
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+              <span style="background: rgba(168, 85, 247, 0.25); color: #c084fc; font-size: 13px; font-weight: 800; padding: 4px 14px; border-radius: 9999px;">CLUB SERVICE</span>
+              <span style="color: #cbd5e1; font-size: 13px; font-weight: 700;">NOV 08, 2026</span>
+            </div>
+            <h3 style="font-size: 22px; font-weight: 800; margin-bottom: 12px; line-height: 1.3;">Rotaract Rugby Clash 2026</h3>
+            <p style="color: #cbd5e1; font-size: 14px; line-height: 1.5; margin-bottom: 24px;">7-a-side inter-avenue rugby championship celebrating youth fellowship & teamwork.</p>
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+              <span style="color: #38bdf8; font-weight: 700; font-size: 14px;">📍 Bogambara Stadium</span>
+              <span style="background: #7A3B9E; color: white; padding: 8px 18px; border-radius: 12px; font-size: 13px; font-weight: 800;">Get Pass →</span>
+            </div>
+          </div>
+
+          <!-- Event 3 -->
+          <div class="glass-card" style="width: 440px; padding: 28px; border-top: 4px solid #38BDF8;" data-layout-allow-overlap data-layout-allow-occlusion>
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+              <span style="background: rgba(56, 189, 248, 0.25); color: #38bdf8; font-size: 13px; font-weight: 800; padding: 4px 14px; border-radius: 9999px;">LEADERSHIP</span>
+              <span style="color: #f43f5e; font-size: 13px; font-weight: 800;">STARTS IN &lt; 48H</span>
+            </div>
+            <h3 style="font-size: 22px; font-weight: 800; margin-bottom: 12px; line-height: 1.3;">Youth Leadership Summit</h3>
+            <p style="color: #cbd5e1; font-size: 14px; line-height: 1.5; margin-bottom: 24px;">High-intensity colloquium on sustainable community tech innovation and governance.</p>
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+              <span style="color: #38bdf8; font-weight: 700; font-size: 14px;">📍 NIBM Auditorium</span>
+              <span style="background: #7A3B9E; color: white; padding: 8px 18px; border-radius: 12px; font-size: 13px; font-weight: 800;">Get Pass →</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Glowing VIP Digital Pass Popout Modal (Centered cleanly below header) -->
+        <div id="live-pass-modal" class="glass-card" style="position: absolute; top: 380px; width: 680px; padding: 36px 44px; border: 2px solid #EC4899; box-shadow: 0 0 60px rgba(236, 72, 153, 0.4), 0 25px 60px rgba(0,0,0,0.8); z-index: 20; transform: scale(0.6); opacity: 0;" data-layout-allow-overlap data-layout-allow-occlusion>
+          <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px dashed rgba(255,255,255,0.2); padding-bottom: 18px; margin-bottom: 20px;" data-layout-allow-overlap data-layout-allow-occlusion>
+            <div style="display: flex; align-items: center; gap: 14px;" data-layout-allow-overlap data-layout-allow-occlusion>
+              <div style="width: 44px; height: 44px; border-radius: 12px; background: linear-gradient(135deg, #7A3B9E, #EC4899); display: flex; align-items: center; justify-content: center; font-weight: 900; font-size: 20px;" data-layout-allow-overlap>✓</div>
+              <div data-layout-allow-overlap>
+                <h4 style="font-size: 20px; font-weight: 900; color: white;" data-layout-allow-overlap>OFFICIAL ADMISSION PASS</h4>
+                <p style="font-size: 12px; font-weight: 700; color: #10b981; letter-spacing: 0.05em;" data-layout-allow-overlap>● ADMISSION CONFIRMED & VERIFIED</p>
+              </div>
+            </div>
+            <span style="background: rgba(16, 185, 129, 0.2); border: 1px solid #10b981; color: #10b981; padding: 6px 14px; border-radius: 9999px; font-size: 12px; font-weight: 900;" data-layout-allow-overlap>PASS #RT-NIBM-9824</span>
+          </div>
+          <div style="display: flex; gap: 24px; align-items: center;" data-layout-allow-overlap data-layout-allow-occlusion>
+            <div style="flex: 1;" data-layout-allow-overlap data-layout-allow-occlusion>
+              <p style="font-size: 12px; color: #94a3b8; font-weight: 700; text-transform: uppercase;" data-layout-allow-overlap>Event Title</p>
+              <h5 style="font-size: 18px; font-weight: 800; color: white; margin-bottom: 12px;" data-layout-allow-overlap>Cancer Awareness Run 2026</h5>
+              <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;" data-layout-allow-overlap>
+                <div data-layout-allow-overlap>
+                  <p style="font-size: 11px; color: #94a3b8; font-weight: 700;" data-layout-allow-overlap>ATTENDEE</p>
+                  <p style="font-size: 14px; font-weight: 800; color: #e2e8f0;" data-layout-allow-overlap>Rtr. Dilshika R.</p>
+                </div>
+                <div data-layout-allow-overlap>
+                  <p style="font-size: 11px; color: #94a3b8; font-weight: 700;" data-layout-allow-overlap>PASS TYPE</p>
+                  <p style="font-size: 14px; font-weight: 800; color: #f472b6;" data-layout-allow-overlap>VIP ACCESS</p>
+                </div>
+              </div>
+            </div>
+            <!-- Mock QR Code -->
+            <div style="width: 110px; height: 110px; background: white; border-radius: 16px; padding: 8px; display: grid; grid-template-columns: repeat(4, 1fr); gap: 4px; box-shadow: 0 0 20px rgba(255,255,255,0.4);" data-layout-allow-overlap>
+              <div style="background: #080314; border-radius: 4px;"></div>
+              <div style="background: #080314; border-radius: 4px;"></div>
+              <div style="background: #080314; border-radius: 4px;"></div>
+              <div style="background: #7A3B9E; border-radius: 4px;"></div>
+              <div style="background: #080314; border-radius: 4px;"></div>
+              <div style="background: white; border-radius: 4px;"></div>
+              <div style="background: #080314; border-radius: 4px;"></div>
+              <div style="background: #080314; border-radius: 4px;"></div>
+              <div style="background: #EC4899; border-radius: 4px;"></div>
+              <div style="background: #080314; border-radius: 4px;"></div>
+              <div style="background: #080314; border-radius: 4px;"></div>
+              <div style="background: #080314; border-radius: 4px;"></div>
+              <div style="background: #080314; border-radius: 4px;"></div>
+              <div style="background: #7A3B9E; border-radius: 4px;"></div>
+              <div style="background: #080314; border-radius: 4px;"></div>
+              <div style="background: #080314; border-radius: 4px;"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ================= SCENE 3: ANNUAL BOARD SUCCESSION GOVERNANCE (7.6s - 12.0s) ================= -->
+      <div id="scene-3" class="scene">
+        <div class="badge-pill">
+          <span>DISTRICT 3220 GOVERNANCE</span>
+        </div>
+        <h2 style="font-size: 52px; font-weight: 900; margin-bottom: 12px; text-align: center;" class="neon-text">
+          Annual Board Succession & Leadership Matrix
+        </h2>
+        <p style="font-size: 20px; color: #cbd5e1; margin-bottom: 40px; text-align: center;">
+          Decentralized executive role transfers for seamless annual leadership continuity.
+        </p>
+
+        <!-- 3 Executive Leadership Cards -->
+        <div id="leader-cards" style="display: flex; gap: 36px; width: 1440px; justify-content: center;">
+          <!-- President -->
+          <div class="glass-card" style="width: 380px; padding: 28px; text-align: center; border: 2px solid #A855F7; position: relative;">
+            <div style="position: absolute; top: -14px; left: 50%; transform: translateX(-50%); background: #f59e0b; color: #71320e; font-size: 11px; font-weight: 900; padding: 4px 16px; border-radius: 9999px;">
+              👑 CLUB PRESIDENT
+            </div>
+            <img src="assets/images/dilshika-rasalingam-president.png" alt="President" style="width: 140px; height: 140px; border-radius: 9999px; object-fit: cover; margin: 12px auto 16px; border: 3px solid #f59e0b; box-shadow: 0 0 25px rgba(245, 158, 11, 0.4);" />
+            <h4 style="font-size: 22px; font-weight: 800; margin-bottom: 4px;">Rtr. Dilshika Rasalingam</h4>
+            <p style="font-size: 14px; color: #c084fc; font-weight: 700; margin-bottom: 16px;">Charter President 2026/27</p>
+            <span style="display: inline-block; background: rgba(16, 185, 129, 0.2); border: 1px solid #10b981; color: #10b981; padding: 6px 16px; border-radius: 9999px; font-size: 12px; font-weight: 800;">Clearance: Executive</span>
+          </div>
+
+          <!-- Vice President -->
+          <div class="glass-card" style="width: 380px; padding: 28px; text-align: center; border: 1px solid rgba(168,85,247,0.3); position: relative;">
+            <div style="position: absolute; top: -14px; left: 50%; transform: translateX(-50%); background: #7A3B9E; color: white; font-size: 11px; font-weight: 900; padding: 4px 16px; border-radius: 9999px;">
+              VICE PRESIDENT
+            </div>
+            <img src="assets/images/sankalpa-bandara-vice-president.png" alt="VP" style="width: 140px; height: 140px; border-radius: 9999px; object-fit: cover; margin: 12px auto 16px; border: 3px solid #7A3B9E; box-shadow: 0 0 25px rgba(122, 59, 158, 0.4);" />
+            <h4 style="font-size: 22px; font-weight: 800; margin-bottom: 4px;">Rtr. Sankalpa Bandara</h4>
+            <p style="font-size: 14px; color: #cbd5e1; font-weight: 700; margin-bottom: 16px;">Executive Operations</p>
+            <span style="display: inline-block; background: rgba(56, 189, 248, 0.2); border: 1px solid #38bdf8; color: #38bdf8; padding: 6px 16px; border-radius: 9999px; font-size: 12px; font-weight: 800;">Clearance: Officer</span>
+          </div>
+
+          <!-- IPP -->
+          <div class="glass-card" style="width: 380px; padding: 28px; text-align: center; border: 1px solid rgba(168,85,247,0.3); position: relative;">
+            <div style="position: absolute; top: -14px; left: 50%; transform: translateX(-50%); background: #334155; color: #e2e8f0; font-size: 11px; font-weight: 900; padding: 4px 16px; border-radius: 9999px;">
+              IMMEDIATE PAST PRESIDENT
+            </div>
+            <img src="assets/images/ishan-walisinghe-ipp.png" alt="IPP" style="width: 140px; height: 140px; border-radius: 9999px; object-fit: cover; margin: 12px auto 16px; border: 3px solid #64748b; box-shadow: 0 0 20px rgba(100, 116, 139, 0.3);" />
+            <h4 style="font-size: 22px; font-weight: 800; margin-bottom: 4px;">Rtr. Ishan Walisinghe</h4>
+            <p style="font-size: 14px; color: #94a3b8; font-weight: 700; margin-bottom: 16px;">Advisory & Governance</p>
+            <span style="display: inline-block; background: rgba(148, 163, 184, 0.2); border: 1px solid #94a3b8; color: #94a3b8; padding: 6px 16px; border-radius: 9999px; font-size: 12px; font-weight: 800;">Advisory Board</span>
+          </div>
+        </div>
+
+        <!-- Role Succession Floating Notification -->
+        <div id="role-transfer-banner" class="glass-card" style="margin-top: 32px; padding: 14px 32px; display: flex; align-items: center; gap: 16px; border: 1px solid #10b981; box-shadow: 0 0 30px rgba(16, 185, 129, 0.3);">
+          <span style="background: #10b981; color: #054232; font-size: 14px; font-weight: 900; padding: 4px 12px; border-radius: 8px;">SUCCESSION LOG</span>
+          <span style="font-size: 15px; font-weight: 700; color: #e2e8f0;">Annual Portfolio Transfer: Rtr. Ishan Walisinghe ➔ Rtr. Dilshika Rasalingam (Authorized & Sealed)</span>
+        </div>
+      </div>
+
+      <!-- ================= SCENE 4: OFFICIAL BLOG & NEWSROOM (12.0s - 16.5s) ================= -->
+      <div id="scene-4" class="scene">
+        <div class="badge-pill">
+          <span>THE NIBM NEWSROOM</span>
+        </div>
+        <h2 style="font-size: 52px; font-weight: 900; margin-bottom: 12px; text-align: center;" class="neon-text">
+          Club Editorial & Presidential Publishing Studio
+        </h2>
+        <p style="font-size: 20px; color: #cbd5e1; margin-bottom: 36px; text-align: center;">
+          Official presidential dispatches, youth leadership reflections, and community impact reports.
+        </p>
+
+        <!-- Magazine Article Card Layout -->
+        <div id="blog-feature-card" class="glass-card" style="width: 1200px; display: flex; overflow: hidden; border: 2px solid #EC4899; box-shadow: 0 25px 60px rgba(0,0,0,0.6), 0 0 40px rgba(236, 72, 153, 0.3);">
+          <!-- Article Image -->
+          <div style="width: 500px; position: relative;">
+            <img src="assets/images/miles-of-memories.jpeg" alt="Blog cover" style="width: 100%; height: 100%; object-fit: cover;" />
+            <div style="position: absolute; top: 20px; left: 20px;">
+              <span style="background: rgba(0,0,0,0.75); color: #f476b8; border: 1px solid #EC4899; font-size: 13px; font-weight: 800; padding: 6px 16px; border-radius: 9999px;">★ LEADERSHIP DISPATCH</span>
+            </div>
+          </div>
+          <!-- Article Content -->
+          <div style="flex: 1; padding: 44px; display: flex; flex-direction: column; justify-content: space-between;">
+            <div>
+              <div style="display: flex; gap: 12px; margin-bottom: 16px;">
+                <span style="background: rgba(168, 85, 247, 0.2); color: #c084fc; padding: 4px 12px; border-radius: 8px; font-size: 12px; font-weight: 800;">Leadership</span>
+                <span style="background: rgba(56, 189, 248, 0.2); color: #38bdf8; padding: 4px 12px; border-radius: 8px; font-size: 12px; font-weight: 800;">Community Service</span>
+                <span style="background: rgba(245, 158, 11, 0.2); color: #fbbf24; padding: 4px 12px; border-radius: 8px; font-size: 12px; font-weight: 800;">Fellowship</span>
+              </div>
+              <h3 style="font-size: 32px; font-weight: 900; line-height: 1.25; margin-bottom: 18px; color: white;">
+                Empowering Youth Leadership: Strategic Vision for Rotaract NIBM 2026/27
+              </h3>
+              <p style="color: #cbd5e1; font-size: 16px; line-height: 1.6; margin-bottom: 24px;">
+                "A comprehensive roadmap outlining campus innovation, regional humanitarian service, and global networking across Rotary International District 3220."
+              </p>
+            </div>
+            <!-- Author Footnote & President Clearance -->
+            <div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 20px;">
+              <div style="display: flex; align-items: center; gap: 14px;">
+                <div style="width: 42px; height: 42px; border-radius: 9999px; background: #7A3B9E; display: flex; align-items: center; justify-content: center; font-weight: 900;">D</div>
+                <div>
+                  <p style="font-size: 14px; font-weight: 800; color: white;">Rtr. Dilshika Rasalingam</p>
+                  <p style="font-size: 12px; color: #c084fc; font-weight: 700;">Club President • 4 min read</p>
+                </div>
+              </div>
+              <div style="background: linear-gradient(135deg, #7A3B9E, #EC4899); color: white; padding: 10px 22px; border-radius: 12px; font-size: 13px; font-weight: 900; box-shadow: 0 0 20px rgba(236,72,153,0.5);">
+                👑 Presidential Studio Active
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ================= SCENE 5: GRAND FINALE / OUTRO (16.5s - 20.0s) ================= -->
+      <div id="scene-5" class="scene">
+        <!-- Center Floating Shield & Crest -->
+        <div id="outro-emblem" style="position: relative; margin-bottom: 28px;">
+          <div style="position: absolute; inset: -30px; border-radius: 9999px; background: radial-gradient(circle, rgba(236,72,153,0.5) 0%, rgba(122,59,158,0) 70%); filter: blur(35px);"></div>
+          <img src="assets/images/rotaract.png" alt="Rotaract Logo" style="position: relative; height: 160px; filter: drop-shadow(0 0 35px rgba(168,85,247,0.9));" />
+        </div>
+
+        <h1 id="outro-title" class="neon-text" style="font-size: 82px; font-weight: 900; letter-spacing: -0.02em; text-align: center; margin-bottom: 12px;">
+          ROTARACT CLUB OF NIBM
+        </h1>
+        <p id="outro-tagline" style="font-size: 26px; font-weight: 800; color: #f472b6; letter-spacing: 0.15em; text-transform: uppercase; margin-bottom: 36px; text-align: center;">
+          Fellowship Through Service • Rotary District 3220
+        </p>
+
+        <!-- Big Launch CTA Pill -->
+        <div id="outro-cta" style="background: linear-gradient(90deg, #7A3B9E, #EC4899); padding: 18px 54px; border-radius: 9999px; font-size: 24px; font-weight: 900; letter-spacing: 0.05em; color: white; box-shadow: 0 0 50px rgba(236, 72, 153, 0.7);">
+          join.rotaractnibm.org
+        </div>
+      </div>
+
+    </div>
+
+    <!-- GSAP TIMELINE SCRIPT -->
+    <script>
+      const tl = gsap.timeline({ paused: true });
+
+      // ================= TIMELINE CHOREOGRAPHY =================
+      // Scene 1: Hook (0.0s - 3.2s)
+      tl.set("#scene-1", { autoAlpha: 1 }, 0);
+      tl.fromTo("#hook-badge", { opacity: 0, y: -30 }, { opacity: 1, y: 0, duration: 0.6, ease: "back.out(1.7)" }, 0.2);
+      tl.fromTo("#hook-logo", { opacity: 0, scale: 0.6 }, { opacity: 1, scale: 1, duration: 0.7, ease: "back.out(2)" }, 0.35);
+      tl.fromTo("#hook-title", { opacity: 0, scale: 0.9, y: 30 }, { opacity: 1, scale: 1, y: 0, duration: 0.8, ease: "power3.out" }, 0.5);
+      tl.fromTo("#hook-sub", { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: 0.7, ease: "power2.out" }, 0.8);
+      tl.to("#scene-1", { opacity: 0, scale: 1.05, duration: 0.4, ease: "power2.in" }, 2.8);
+      tl.set("#scene-1", { autoAlpha: 0 }, 3.2);
+
+      // Scene 2: Event Discovery & Live Pass (3.2s - 7.6s)
+      tl.set("#scene-2", { autoAlpha: 1 }, 3.2);
+      tl.fromTo("#scene-2 h2", { opacity: 0, y: -25 }, { opacity: 1, y: 0, duration: 0.5, ease: "power2.out" }, 3.2);
+      tl.fromTo("#event-cards > div", 
+        { opacity: 0, y: 50, scale: 0.9 }, 
+        { opacity: 1, y: 0, scale: 1, stagger: 0.15, duration: 0.6, ease: "back.out(1.4)" }, 
+        3.4
+      );
+      // Hide title and cards cleanly when the VIP Pass pops up to avoid any overlap
+      tl.to("#scene-2-title", { opacity: 0, y: -20, duration: 0.3 }, 4.5);
+      tl.to("#event-cards", { opacity: 0, scale: 0.9, duration: 0.3 }, 4.5);
+      tl.fromTo("#live-pass-modal", 
+        { opacity: 0, scale: 0.4, rotation: -4 }, 
+        { opacity: 1, scale: 1, rotation: 0, duration: 0.7, ease: "back.out(1.8)" }, 
+        4.6
+      );
+      tl.to("#scene-2", { opacity: 0, scale: 0.95, duration: 0.4, ease: "power2.in" }, 7.2);
+      tl.set("#scene-2", { autoAlpha: 0 }, 7.6);
+
+      // Scene 3: Annual Board Succession (7.6s - 12.0s)
+      tl.set("#scene-3", { autoAlpha: 1 }, 7.6);
+      tl.fromTo("#scene-3 h2", { opacity: 0, y: -25 }, { opacity: 1, y: 0, duration: 0.5, ease: "power2.out" }, 7.6);
+      tl.fromTo("#leader-cards > div", 
+        { opacity: 0, y: 60, rotationY: 20 }, 
+        { opacity: 1, y: 0, rotationY: 0, stagger: 0.18, duration: 0.7, ease: "back.out(1.5)" }, 
+        7.8
+      );
+      tl.fromTo("#role-transfer-banner", 
+        { opacity: 0, y: 30 }, 
+        { opacity: 1, y: 0, duration: 0.6, ease: "power3.out" }, 
+        9.0
+      );
+      tl.to("#scene-3", { opacity: 0, scale: 1.05, duration: 0.4, ease: "power2.in" }, 11.6);
+      tl.set("#scene-3", { autoAlpha: 0 }, 12.0);
+
+      // Scene 4: Blog & Presidential Studio (12.0s - 16.5s)
+      tl.set("#scene-4", { autoAlpha: 1 }, 12.0);
+      tl.fromTo("#scene-4 h2", { opacity: 0, y: -25 }, { opacity: 1, y: 0, duration: 0.5, ease: "power2.out" }, 12.0);
+      tl.fromTo("#blog-feature-card", 
+        { opacity: 0, scale: 0.85, y: 40 }, 
+        { opacity: 1, scale: 1, y: 0, duration: 0.8, ease: "back.out(1.4)" }, 
+        12.3
+      );
+      tl.to("#scene-4", { opacity: 0, scale: 0.92, duration: 0.4, ease: "power2.in" }, 16.1);
+      tl.set("#scene-4", { autoAlpha: 0 }, 16.5);
+
+      // Scene 5: Grand Finale Outro (16.5s - 20.0s)
+      tl.set("#scene-5", { autoAlpha: 1 }, 16.5);
+      tl.fromTo("#outro-emblem", { opacity: 0, scale: 0.4 }, { opacity: 1, scale: 1, duration: 0.8, ease: "back.out(2)" }, 16.6);
+      tl.fromTo("#outro-title", { opacity: 0, y: 25 }, { opacity: 1, y: 0, duration: 0.6, ease: "power2.out" }, 16.9);
+      tl.fromTo("#outro-tagline", { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: 0.6, ease: "power2.out" }, 17.2);
+      tl.fromTo("#outro-cta", { opacity: 0, scale: 0.8 }, { opacity: 1, scale: 1, duration: 0.7, ease: "back.out(1.8)" }, 17.5);
+
+      // Settle smoothly until the end
+      tl.to("#outro-emblem", { scale: 1.05, duration: 2.0, ease: "sine.inOut" }, 17.8);
+
+      window.__timelines = { main: tl };
+      tl.seek(0);
+    </script>
+  </body>
+</html>
